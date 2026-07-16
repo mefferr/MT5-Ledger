@@ -241,7 +241,11 @@ def modify_position(req: ModifyRequest):
     if result is None:
         err = mt5.last_error()
         logger.error("order_send returned None: %s", err)
-        raise HTTPException(status_code=500, detail=f"order_send failed: {err}")
+        return {
+            "success": False,
+            "retcode": err[0] if isinstance(err, tuple) else -1,
+            "comment": err[1] if isinstance(err, tuple) else str(err)
+        }
 
     success = result.retcode == mt5.TRADE_RETCODE_DONE
     logger.info(
@@ -316,7 +320,11 @@ def open_position(req: OpenRequest):
     if result is None:
         err = mt5.last_error()
         logger.error("order_send returned None: %s", err)
-        raise HTTPException(status_code=500, detail=f"order_send failed: {err}")
+        return {
+            "success": False,
+            "retcode": err[0] if isinstance(err, tuple) else -1,
+            "comment": err[1] if isinstance(err, tuple) else str(err)
+        }
 
     success = result.retcode == mt5.TRADE_RETCODE_DONE
     logger.info(
