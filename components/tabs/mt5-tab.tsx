@@ -278,11 +278,11 @@ export function Mt5Tab() {
       }
     }
 
+    setIsRunning(false)
     if (!signal.aborted) {
-      setIsRunning(false)
       toast.success(`Completed: ${successCount} OK, ${failCount} failed`)
-      fetchState()
     }
+    fetchState()
   }
 
   const openBatch = async () => {
@@ -342,11 +342,11 @@ export function Mt5Tab() {
       }
     }
 
+    setIsRunning(false)
     if (!signal.aborted) {
-      setIsRunning(false)
       toast.success(`Completed: ${successCount} opened, ${failCount} failed`)
-      fetchState()
     }
+    fetchState()
   }
 
   if (loading) {
