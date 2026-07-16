@@ -442,13 +442,13 @@ export function Mt5Tab() {
                     <AlertDialogTitle>Apply SL/TP to all positions?</AlertDialogTitle>
                     <AlertDialogDescription>
                       This will modify {positions.length} position(s).
-                      <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
-                        <div className="flex justify-between"><span>Mode:</span> <span className="uppercase text-muted-foreground">{mode}</span></div>
-                        <div className="flex justify-between"><span>SL:</span> <span className={cn(slEnabled && "text-destructive font-bold")}>{slEnabled ? slValue : "Skip"}</span></div>
-                        <div className="flex justify-between"><span>TP:</span> <span className={cn(tpEnabled && "text-primary font-bold")}>{tpEnabled ? tpValue : "Skip"}</span></div>
-                        <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{sltpDelay}ms</span></div>
-                      </div>
                     </AlertDialogDescription>
+                    <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
+                      <div className="flex justify-between"><span>Mode:</span> <span className="uppercase text-muted-foreground">{mode}</span></div>
+                      <div className="flex justify-between"><span>SL:</span> <span className={cn(slEnabled && "text-destructive font-bold")}>{slEnabled ? slValue : "Skip"}</span></div>
+                      <div className="flex justify-between"><span>TP:</span> <span className={cn(tpEnabled && "text-primary font-bold")}>{tpEnabled ? tpValue : "Skip"}</span></div>
+                      <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{sltpDelay}ms</span></div>
+                    </div>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -513,13 +513,13 @@ export function Mt5Tab() {
                   <AlertDialogTitle>Execute batch order?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This will send {openCount} market orders sequentially.
-                    <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
-                      <div className="flex justify-between"><span>Symbol:</span> <span className="font-bold">{openSymbol}</span></div>
-                      <div className="flex justify-between"><span>Action:</span> <span className={cn("font-bold", openDir === 'buy' ? 'text-primary' : 'text-destructive')}>{openDir.toUpperCase()}</span></div>
-                      <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseFloat(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
-                      <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{openDelay}ms</span></div>
-                    </div>
                   </AlertDialogDescription>
+                  <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
+                    <div className="flex justify-between"><span>Symbol:</span> <span className="font-bold">{openSymbol}</span></div>
+                    <div className="flex justify-between"><span>Action:</span> <span className={cn("font-bold", openDir === 'buy' ? 'text-primary' : 'text-destructive')}>{openDir.toUpperCase()}</span></div>
+                    <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseFloat(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
+                    <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{openDelay}ms</span></div>
+                  </div>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
