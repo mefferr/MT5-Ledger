@@ -1,0 +1,200 @@
+[
+  {
+    "id": "gen_1",
+    "category": "Diet & Food",
+    "type": "subscription",
+    "name": "Raw Meat & Organs Delivery (Local Farm)",
+    "price": 0,
+    "monthlyMaintenance": 800,
+    "image": "🥩"
+  },
+  {
+    "id": "gen_2",
+    "category": "Diet & Food",
+    "type": "subscription",
+    "name": "A5 Wagyu Monthly Subscription",
+    "price": 0,
+    "monthlyMaintenance": 1500,
+    "image": "🥩"
+  },
+  {
+    "id": "gen_3",
+    "category": "Diet & Food",
+    "type": "subscription",
+    "name": "Raw Dairy Farm Direct",
+    "price": 0,
+    "monthlyMaintenance": 300,
+    "image": "🥛"
+  },
+  {
+    "id": "gen_4",
+    "category": "Diet & Food",
+    "type": "subscription",
+    "name": "Private Primal Chef (Daily)",
+    "price": 0,
+    "monthlyMaintenance": 5000,
+    "image": "👨‍🍳"
+  },
+  {
+    "id": "gen_5",
+    "category": "Diet & Food",
+    "type": "subscription",
+    "name": "Michelin Star Dining (Weekly)",
+    "price": 0,
+    "monthlyMaintenance": 4000,
+    "image": "🍽️"
+  },
+  {
+    "id": "gen_6",
+    "category": "Diet & Food",
+    "type": "subscription",
+    "name": "Basic Grocery Delivery",
+    "price": 0,
+    "monthlyMaintenance": 500,
+    "image": "🛒"
+  },
+  {
+    "id": "gen_7",
+    "category": "Biohacking & Health",
+    "type": "subscription",
+    "name": "TRT & Peptides Clinic",
+    "price": 0,
+    "monthlyMaintenance": 1200,
+    "image": "💉"
+  },
+  {
+    "id": "gen_8",
+    "category": "Biohacking & Health",
+    "type": "subscription",
+    "name": "Hyperbaric Oxygen Chamber Lease",
+    "price": 0,
+    "monthlyMaintenance": 2500,
+    "image": "🧘"
+  },
+  {
+    "id": "gen_9",
+    "category": "Biohacking & Health",
+    "type": "subscription",
+    "name": "Elite Personal Trainer (5x/week)",
+    "price": 0,
+    "monthlyMaintenance": 3000,
+    "image": "💪"
+  },
+  {
+    "id": "gen_10",
+    "category": "Biohacking & Health",
+    "type": "subscription",
+    "name": "Equinox Gym Membership",
+    "price": 0,
+    "monthlyMaintenance": 300,
+    "image": "🏋️"
+  },
+  {
+    "id": "gen_11",
+    "category": "Biohacking & Health",
+    "type": "subscription",
+    "name": "Stem Cell Therapy (Annual amortized)",
+    "price": 0,
+    "monthlyMaintenance": 2000,
+    "image": "🧬"
+  },
+  {
+    "id": "gen_12",
+    "category": "Biohacking & Health",
+    "type": "subscription",
+    "name": "Comprehensive Bloodwork (Monthly)",
+    "price": 0,
+    "monthlyMaintenance": 500,
+    "image": "🩸"
+  },
+  {
+    "id": "gen_13",
+    "category": "Vehicles",
+    "type": "asset",
+    "name": "Porsche 911 GT3 RS",
+    "price": 300000,
+    "monthlyMaintenance": 1500,
+    "image": "🏎️"
+  },
+  {
+    "id": "gen_14",
+    "category": "Vehicles",
+    "type": "asset",
+    "name": "Lamborghini Huracan Evo",
+    "price": 250000,
+    "monthlyMaintenance": 2000,
+    "image": "🏎️"
+  },
+  {
+    "id": "gen_15",
+    "category": "Vehicles",
+    "type": "asset",
+    "name": "Ferrari SF90 Stradale",
+    "price": 500000,
+    "monthlyMaintenance": 3000,
+    "image": "🏎️"
+  },
+  {
+    "id": "gen_16",
+    "category": "Vehicles",
+    "type": "asset",
+    "name": "Mercedes G63 AMG",
+    "price": 180000,
+    "monthlyMaintenance": 1200,
+    "image": "🚙"
+  },
+  {
+    "id": "gen_17",
+    "category": "Vehicles",
+    "type": "asset",
+    "name": "Range Rover SV",
+    "price": 220000,
+    "monthlyMaintenance": 1000,
+    "image": "🚙"
+  },
+  {
+    "id": "gen_18",
+    "category": "Vehicles",
+    "type": "asset",
+    "name": "Toyota Prius",
+    "price": 30000,
+    "monthlyMaintenance": 200,
+    "image": "🚗"
+  },
+  {
+    "id": "gen_19",
+    "category": "Watches",
+    "type": "asset",
+    "name": "Rolex Daytona (Panda)",
+    "price": 35000,
+    "monthlyMaintenance": 50,
+    "image": "⌚"
+  },
+  {
+    "id": "gen_20",
+    "category": "Watches",
+    "type": "asset",
+    "name": "Patek Philippe Nautilus 5711",
+    "price": 120000,
+    "monthlyMaintenance": 150,
+    "image": "⌚"
+  },
+  {
+    "id": "gen_21",
+    "category": "Watches",
+    "type": "asset",
+    "name": "Audemars Piguet Royal Oak",
+    "price": 60000,
+    "monthlyMaintenance": 100,
+    "image": "⌚"
+  },
+  {
+    "id": "gen_22",
+    "category": "Watches",
+    "type": "asset",
+    "name": "Casio G-Shock",
+    "price": 100,
+    "monthlyMaintenance": 0,
+    "image": "⌚"
+  }
+]
