@@ -259,11 +259,17 @@ export function Mt5Tab() {
           failCount++
           if (data.retcode === 10018) {
             toast.error("Market is closed!")
-            if (abortController.current) abortController.current.abort()
+          } else {
+            toast.error(`Order failed: ${data.comment || data.retcode || 'Unknown error'}`)
           }
+          if (abortController.current) abortController.current.abort()
         }
-      } catch (e) {
-        if (!signal.aborted) failCount++
+      } catch (e: any) {
+        if (!signal.aborted) {
+          failCount++
+          toast.error(`Execution error: ${e.message}`)
+          if (abortController.current) abortController.current.abort()
+        }
       }
       
       setProgress({ current: i + 1, total: positions.length, success: successCount, fail: failCount })
@@ -317,11 +323,17 @@ export function Mt5Tab() {
           failCount++
           if (data.retcode === 10018) {
             toast.error("Market is closed!")
-            if (abortController.current) abortController.current.abort()
+          } else {
+            toast.error(`Order failed: ${data.comment || data.retcode || 'Unknown error'}`)
           }
+          if (abortController.current) abortController.current.abort()
         }
-      } catch (e) {
-        if (!signal.aborted) failCount++
+      } catch (e: any) {
+        if (!signal.aborted) {
+          failCount++
+          toast.error(`Execution error: ${e.message}`)
+          if (abortController.current) abortController.current.abort()
+        }
       }
       
       setProgress({ current: i + 1, total: count, success: successCount, fail: failCount })
