@@ -22,8 +22,13 @@ The system is split into two completely decoupled layers:
 
 When you load a statement or sync live data, the analytics engine calculates metrics that actually matter. It doesn't just add up raw profits.
 
-### Capital Normalization
-Most basic equity curves break if you deposit or withdraw money midway through trading. The engine parses the chronological order of your trades and balance entries. It determines the exact timestamp of your **first trade** and calculates the "Active Starting Capital" by summing all deposits prior to that moment. The equity curve then charts pure trading performance, completely ignoring subsequent cash injections.
+### The GOYA Tab (Get Off Your Ass)
+This isn't your standard P&L tracker. The GOYA tab strips away the dollar signs (which are just volume multipliers) and forces you to look at raw market execution: **Pip Extraction**. The philosophy is brutal and simple:
+
+1. **Stacking Pips > Everything:** Focus entirely on capturing raw market distance. $1,000 made on a 2-pip scalp with 50 lots is garbage execution masquerading as a win. $100 made on 500 pips with 0.02 lots is a bulletproof, scalable edge. Stack the pips, and the money scales itself.
+2. **Win Rate is Irrelevant:** Stop trying to be right. A high win rate usually means you're choking your winners and eating large drawdowns just to avoid taking a loss. GOYA embraces extreme asymmetry: risk 30 pips to catch 600. When your Risk:Reward is 1:20, a 15% win rate makes you untouchable. One big runner pays for 15 small probes. 
+3. **Losses as Business Expenses:** Stop looking at red trades as failures or emotional damage. They are simply fixed operational costs paid to the market to find a runner. The `Cost Per Probe` metric tracks exactly how much you spend to uncover the next massive move.
+4. **Campaign Pyramiding:** The system automatically detects tranches. If you stack 5 tickets on the same trend within a 4-hour window, GOYA groups them into a single "Campaign." This tracks your aggregate pip extraction (e.g., 5 tickets × 200 pips = 1,000 aggregate pips) so you can measure how effectively you press your winners.
 
 ### Advanced Risk Metrics
 - **Sharpe Ratio:** Calculated using the per-trade P/L variance relative to the mean return, rather than annualized time-series approximations.

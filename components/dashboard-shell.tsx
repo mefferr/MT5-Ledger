@@ -31,7 +31,6 @@ import { SessionsTab } from "@/components/tabs/sessions-tab"
 import { RiskTab } from "@/components/tabs/risk-tab"
 import { StreaksTab } from "@/components/tabs/streaks-tab"
 import { GoyaTab } from "@/components/tabs/goya-tab"
-import { LifestyleTab } from "@/components/tabs/lifestyle-tab"
 import { Mt5Tab } from "@/components/tabs/mt5-tab"
 import { Terminal } from "lucide-react"
 
@@ -46,7 +45,6 @@ const TABS = [
   { id: "streaks", label: "Streaks", icon: Flame },
   { id: "trades", label: "Trades", icon: ListOrdered },
   { id: "goya", label: "GOYA", icon: Zap },
-  { id: "lifestyle", label: "Lifestyle", icon: Wallet },
   { id: "mt5", label: "Live MT5", icon: Terminal },
 ] as const
 
@@ -168,7 +166,6 @@ export function DashboardShell() {
         {active === "streaks" && <StreaksTab />}
         {active === "trades" && <TradesTab />}
         {active === "goya" && <GoyaTab />}
-        {active === "lifestyle" && <LifestyleTab />}
         {active === "mt5" && <Mt5Tab />}
       </main>
     </div>
