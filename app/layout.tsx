@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   generator: "v0.app",
 }
 
+import { SetupWizard } from "@/components/setup-wizard"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +31,7 @@ export default function RootLayout({
     <html lang="en" className={`dark ${geistSans.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased bg-background text-foreground">
         {children}
+        <SetupWizard />
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
