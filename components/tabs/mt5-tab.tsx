@@ -253,8 +253,15 @@ export function Mt5Tab() {
           signal
         })
         const data = await res.json()
-        if (data.success) successCount++
-        else failCount++
+        if (data.success) {
+          successCount++
+        } else {
+          failCount++
+          if (data.retcode === 10018) {
+            toast.error("Market is closed!")
+            if (abortController.current) abortController.current.abort()
+          }
+        }
       } catch (e) {
         if (!signal.aborted) failCount++
       }
@@ -304,8 +311,15 @@ export function Mt5Tab() {
           signal
         })
         const data = await res.json()
-        if (data.success) successCount++
-        else failCount++
+        if (data.success) {
+          successCount++
+        } else {
+          failCount++
+          if (data.retcode === 10018) {
+            toast.error("Market is closed!")
+            if (abortController.current) abortController.current.abort()
+          }
+        }
       } catch (e) {
         if (!signal.aborted) failCount++
       }
