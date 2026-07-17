@@ -96,13 +96,16 @@ class ModifyRequest(BaseModel):
     symbol: str
     sl: float
     tp: float
-
+    is_pending: bool = False
+    price: float = 0.0
 
 class OpenRequest(BaseModel):
     symbol: str
     type: str  # "buy", "sell", "buy_limit", "sell_limit"
     volume: float
     price: float | None = None
+    sl: float | None = None
+    tp: float | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -153,40 +156,70 @@ def get_account():
 def get_positions():
     _require_mt5()
     positions = mt5.positions_get()
-    if positions is None:
-        logger.warning("positions_get() returned None: %s", mt5.last_error())
-        return []
-
+    orders = mt5.orders_get()
+    
     result = []
-    for pos in positions:
-        # Determine current price: bid for BUY, ask for SELL
-        tick = mt5.symbol_info_tick(pos.symbol)
-        if tick:
-            price_current = tick.bid if pos.type == mt5.ORDER_TYPE_BUY else tick.ask
-        else:
-            price_current = pos.price_current
+    if positions is not None:
+        for pos in positions:
+            # Determine current price: bid for BUY, ask for SELL
+            tick = mt5.symbol_info_tick(pos.symbol)
+            if tick:
+                price_current = tick.bid if pos.type == mt5.ORDER_TYPE_BUY else tick.ask
+            else:
+                price_current = pos.price_current
 
-        sym_info = mt5.symbol_info(pos.symbol)
-        contract_size = sym_info.trade_contract_size if sym_info else 100.0
+            sym_info = mt5.symbol_info(pos.symbol)
+            contract_size = sym_info.trade_contract_size if sym_info else 100.0
 
-        result.append(
-            {
-                "ticket": pos.ticket,
-                "symbol": pos.symbol,
-                "type": "buy" if pos.type == mt5.ORDER_TYPE_BUY else "sell",
-                "volume": pos.volume,
-                "price_open": pos.price_open,
-                "price_current": price_current,
-                "sl": pos.sl,
-                "tp": pos.tp,
-                "profit": pos.profit,
-                "swap": pos.swap,
-                "time": _ts_to_iso(pos.time),
-                "contract_size": contract_size,
-            }
-        )
+            result.append(
+                {
+                    "ticket": pos.ticket,
+                    "symbol": pos.symbol,
+                    "type": "buy" if pos.type == mt5.ORDER_TYPE_BUY else "sell",
+                    "volume": pos.volume,
+                    "price_open": pos.price_open,
+                    "price_current": price_current,
+                    "sl": pos.sl,
+                    "tp": pos.tp,
+                    "profit": pos.profit,
+                    "swap": pos.swap,
+                    "time": _ts_to_iso(pos.time),
+                    "contract_size": contract_size,
+                    "is_pending": False,
+                }
+            )
 
-    logger.info("Returning %d open position(s).", len(result))
+    if orders is not None:
+        for ord in orders:
+            is_buy = ord.type in [mt5.ORDER_TYPE_BUY_LIMIT, mt5.ORDER_TYPE_BUY_STOP]
+            tick = mt5.symbol_info_tick(ord.symbol)
+            if tick:
+                price_current = tick.ask if is_buy else tick.bid
+            else:
+                price_current = ord.price_current
+
+            sym_info = mt5.symbol_info(ord.symbol)
+            contract_size = sym_info.trade_contract_size if sym_info else 100.0
+
+            result.append(
+                {
+                    "ticket": ord.ticket,
+                    "symbol": ord.symbol,
+                    "type": "buy" if is_buy else "sell",
+                    "volume": ord.volume_initial,
+                    "price_open": ord.price_open,
+                    "price_current": price_current,
+                    "sl": ord.sl,
+                    "tp": ord.tp,
+                    "profit": 0.0,
+                    "swap": 0.0,
+                    "time": _ts_to_iso(ord.time_setup),
+                    "contract_size": contract_size,
+                    "is_pending": True,
+                }
+            )
+
+    logger.info("Returning %d active position(s) and pending order(s).", len(result))
     return result
 
 
@@ -223,20 +256,31 @@ def get_symbol_info(symbol: str):
 def modify_position(req: ModifyRequest):
     _require_mt5()
     logger.info(
-        "Modifying ticket=%d  symbol=%s  SL=%.5f  TP=%.5f",
+        "Modifying ticket=%d  symbol=%s  SL=%.5f  TP=%.5f  pending=%s",
         req.ticket,
         req.symbol,
         req.sl,
         req.tp,
+        req.is_pending,
     )
 
-    request = {
-        "action": mt5.TRADE_ACTION_SLTP,
-        "position": req.ticket,
-        "symbol": req.symbol,
-        "sl": req.sl,
-        "tp": req.tp,
-    }
+    if req.is_pending:
+        request = {
+            "action": mt5.TRADE_ACTION_MODIFY,
+            "order": req.ticket,
+            "symbol": req.symbol,
+            "price": req.price,
+            "sl": req.sl,
+            "tp": req.tp,
+        }
+    else:
+        request = {
+            "action": mt5.TRADE_ACTION_SLTP,
+            "position": req.ticket,
+            "symbol": req.symbol,
+            "sl": req.sl,
+            "tp": req.tp,
+        }
 
     result = mt5.order_send(request)
     if result is None:
@@ -327,6 +371,11 @@ def open_position(req: OpenRequest):
         "type_time": mt5.ORDER_TIME_GTC,
     }
     
+    if req.sl is not None and req.sl > 0:
+        request["sl"] = req.sl
+    if req.tp is not None and req.tp > 0:
+        request["tp"] = req.tp
+
     if action == mt5.TRADE_ACTION_DEAL:
         request["deviation"] = 20
         request["type_filling"] = mt5.ORDER_FILLING_IOC

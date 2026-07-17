@@ -52,6 +52,7 @@ interface Position {
   swap: number
   time: string
   contract_size?: number
+  is_pending?: boolean
 }
 
 interface AccountInfo {
@@ -101,6 +102,8 @@ export function Mt5Tab() {
   const [openDir, setOpenDir] = useState<"buy" | "sell">("buy")
   const [openExecType, setOpenExecType] = useState<"market" | "limit">("market")
   const [openPrice, setOpenPrice] = useState("")
+  const [openLimitSl, setOpenLimitSl] = useState("")
+  const [openLimitTp, setOpenLimitTp] = useState("")
   const [openLots, setOpenLots] = useState("0.01")
   const [openCount, setOpenCount] = useState("1")
   const [openDelay, setOpenDelay] = useState("300")
@@ -267,7 +270,14 @@ export function Mt5Tab() {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "true"
           },
-          body: JSON.stringify({ ticket: p.ticket, symbol: p.symbol, sl: newSl, tp: newTp }),
+          body: JSON.stringify({ 
+            ticket: p.ticket, 
+            symbol: p.symbol, 
+            sl: newSl, 
+            tp: newTp,
+            is_pending: p.is_pending || false,
+            price: p.price_open
+          }),
           signal
         })
         const data = await res.json()
@@ -337,7 +347,9 @@ export function Mt5Tab() {
             symbol: openSymbol, 
             type: openExecType === "market" ? openDir : `${openDir}_limit`, 
             volume: lots,
-            price: openExecType === "limit" ? price : undefined
+            price: openExecType === "limit" ? price : undefined,
+            sl: openExecType === "limit" && openLimitSl ? parseFloat(openLimitSl) : undefined,
+            tp: openExecType === "limit" && openLimitTp ? parseFloat(openLimitTp) : undefined
           }),
           signal
         })
@@ -553,10 +565,20 @@ export function Mt5Tab() {
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               {openExecType === "limit" && (
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase text-primary font-bold">Limit Price</Label>
-                  <Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono text-center sm:text-left border-primary" placeholder="0.0000" />
-                </div>
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase text-primary font-bold">Limit Price</Label>
+                    <Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono text-center sm:text-left border-primary" placeholder="0.0000" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase text-destructive font-bold">Limit SL</Label>
+                    <Input value={openLimitSl} onChange={(e) => setOpenLimitSl(e.target.value)} className="font-mono text-center sm:text-left border-destructive" placeholder="Optional" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase text-profit font-bold">Limit TP</Label>
+                    <Input value={openLimitTp} onChange={(e) => setOpenLimitTp(e.target.value)} className="font-mono text-center sm:text-left border-profit" placeholder="Optional" />
+                  </div>
+                </>
               )}
               <div className="space-y-2">
                 <Label className="text-xs uppercase text-muted-foreground">Lots</Label>
@@ -588,7 +610,12 @@ export function Mt5Tab() {
                     <div className="flex justify-between"><span>Symbol:</span> <span className="font-bold">{openSymbol}</span></div>
                     <div className="flex justify-between"><span>Action:</span> <span className={cn("font-bold", openDir === 'buy' ? 'text-primary' : 'text-destructive')}>{openDir.toUpperCase()} {openExecType === 'limit' && 'LIMIT'}</span></div>
                     {openExecType === 'limit' && (
-                      <div className="flex justify-between"><span>Target Price:</span> <span className="text-primary font-bold">{openPrice}</span></div>
+                      <>
+                        <div className="flex justify-between"><span>Target Price:</span> <span className="text-primary font-bold">{openPrice}</span></div>
+                        {(openLimitSl || openLimitTp) && (
+                          <div className="flex justify-between"><span>Stops:</span> <span>SL: {openLimitSl || '—'} / TP: {openLimitTp || '—'}</span></div>
+                        )}
+                      </>
                     )}
                     <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseFloat(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
                     <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{openDelay}ms</span></div>
@@ -713,7 +740,7 @@ export function Mt5Tab() {
                       <TableCell className="font-medium">{p.symbol}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={cn("text-[10px] uppercase font-bold tracking-wider", p.type === 'buy' ? "text-primary border-primary/30 bg-primary/5" : "text-destructive border-destructive/30 bg-destructive/5")}>
-                          {p.type}
+                          {p.type} {p.is_pending && "LMT"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono text-sm tnum text-muted-foreground">{p.volume.toFixed(2)}</TableCell>
@@ -725,8 +752,8 @@ export function Mt5Tab() {
                       <TableCell className="text-right font-mono text-sm tnum text-primary">
                         {p.tp > 0 ? p.tp.toFixed(5) : "—"}
                       </TableCell>
-                      <TableCell className={cn("text-right font-mono text-sm tnum font-bold", p.profit >= 0 ? "text-primary" : "text-destructive")}>
-                        {p.profit >= 0 ? "+" : ""}{p.profit.toFixed(2)}
+                      <TableCell className={cn("text-right font-mono text-sm tnum font-bold", p.is_pending ? "text-muted-foreground" : (p.profit >= 0 ? "text-primary" : "text-destructive"))}>
+                        {p.is_pending ? "—" : `${p.profit >= 0 ? "+" : ""}${p.profit.toFixed(2)}`}
                       </TableCell>
                     </TableRow>
                   ))
