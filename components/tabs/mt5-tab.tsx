@@ -97,8 +97,10 @@ export function Mt5Tab() {
   // Open Position State
   const [openSymbol, setOpenSymbol] = useState("XAUUSD")
   const [openDir, setOpenDir] = useState<"buy" | "sell">("buy")
+  const [openExecType, setOpenExecType] = useState<"market" | "limit">("market")
+  const [openPrice, setOpenPrice] = useState("")
   const [openLots, setOpenLots] = useState("0.01")
-  const [openCount, setOpenCount] = useState("50")
+  const [openCount, setOpenCount] = useState("1")
   const [openDelay, setOpenDelay] = useState("300")
 
   // Progress State
@@ -289,11 +291,13 @@ export function Mt5Tab() {
     const lots = parseFloat(openLots)
     const count = parseInt(openCount)
     const delay = parseInt(openDelay)
+    const price = parseFloat(openPrice)
     
     if (!openSymbol) return toast.error("Symbol required")
     if (isNaN(lots) || lots <= 0) return toast.error("Invalid lot size")
     if (isNaN(count) || count <= 0) return toast.error("Invalid count")
     if (isNaN(delay) || delay < 0) return toast.error("Invalid delay")
+    if (openExecType === "limit" && (isNaN(price) || price <= 0)) return toast.error("Invalid limit price")
 
     setIsRunning(true)
     setProgress({ current: 0, total: count, success: 0, fail: 0 })
@@ -313,7 +317,12 @@ export function Mt5Tab() {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "true"
           },
-          body: JSON.stringify({ symbol: openSymbol, type: openDir, volume: lots }),
+          body: JSON.stringify({ 
+            symbol: openSymbol, 
+            type: openExecType === "market" ? openDir : `${openDir}_limit`, 
+            volume: lots,
+            price: openExecType === "limit" ? price : undefined
+          }),
           signal
         })
         const data = await res.json()
@@ -493,7 +502,7 @@ export function Mt5Tab() {
             <CardDescription>Rapidly deploy multiple positions</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className="text-xs uppercase text-muted-foreground font-semibold">Symbol</Label>
                 <Input value={openSymbol} onChange={(e) => setOpenSymbol(e.target.value.toUpperCase())} className="font-mono uppercase text-lg" />
@@ -511,9 +520,28 @@ export function Mt5Tab() {
                   </div>
                 </RadioGroup>
               </div>
+              <div className="space-y-2">
+                <Label className="text-xs uppercase text-muted-foreground font-semibold">Order Type</Label>
+                <RadioGroup value={openExecType} onValueChange={(v: any) => setOpenExecType(v)} className="flex h-10 items-center gap-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="market" id="o-market" />
+                    <Label htmlFor="o-market" className="font-bold tracking-widest">MKT</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="limit" id="o-limit" />
+                    <Label htmlFor="o-limit" className="font-bold tracking-widest text-primary">LMT</Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              {openExecType === "limit" && (
+                <div className="space-y-2">
+                  <Label className="text-xs uppercase text-primary font-bold">Limit Price</Label>
+                  <Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono text-center sm:text-left border-primary" placeholder="0.0000" />
+                </div>
+              )}
               <div className="space-y-2">
                 <Label className="text-xs uppercase text-muted-foreground">Lots</Label>
                 <Input value={openLots} onChange={(e) => setOpenLots(e.target.value)} className="font-mono text-center sm:text-left" />
@@ -538,11 +566,14 @@ export function Mt5Tab() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Execute batch order?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will send {openCount} market orders sequentially.
+                    This will send {openCount} {openExecType} orders sequentially.
                   </AlertDialogDescription>
                   <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
                     <div className="flex justify-between"><span>Symbol:</span> <span className="font-bold">{openSymbol}</span></div>
-                    <div className="flex justify-between"><span>Action:</span> <span className={cn("font-bold", openDir === 'buy' ? 'text-primary' : 'text-destructive')}>{openDir.toUpperCase()}</span></div>
+                    <div className="flex justify-between"><span>Action:</span> <span className={cn("font-bold", openDir === 'buy' ? 'text-primary' : 'text-destructive')}>{openDir.toUpperCase()} {openExecType === 'limit' && 'LIMIT'}</span></div>
+                    {openExecType === 'limit' && (
+                      <div className="flex justify-between"><span>Target Price:</span> <span className="text-primary font-bold">{openPrice}</span></div>
+                    )}
                     <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseFloat(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
                     <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{openDelay}ms</span></div>
                   </div>

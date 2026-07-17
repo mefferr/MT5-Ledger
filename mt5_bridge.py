@@ -100,8 +100,9 @@ class ModifyRequest(BaseModel):
 
 class OpenRequest(BaseModel):
     symbol: str
-    type: str  # "buy" or "sell"
+    type: str  # "buy", "sell", "buy_limit", "sell_limit"
     volume: float
+    price: float | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -290,9 +291,19 @@ def open_position(req: OpenRequest):
     elif order_type_str == "sell":
         order_type = mt5.ORDER_TYPE_SELL
         price = tick.bid
+    elif order_type_str == "buy_limit":
+        order_type = mt5.ORDER_TYPE_BUY_LIMIT
+        if req.price is None or req.price <= 0:
+            raise HTTPException(400, "Price is required for limit orders")
+        price = req.price
+    elif order_type_str == "sell_limit":
+        order_type = mt5.ORDER_TYPE_SELL_LIMIT
+        if req.price is None or req.price <= 0:
+            raise HTTPException(400, "Price is required for limit orders")
+        price = req.price
     else:
         raise HTTPException(
-            status_code=400, detail=f"Invalid order type '{req.type}'. Use 'buy' or 'sell'."
+            status_code=400, detail=f"Invalid order type '{req.type}'."
         )
 
     logger.info(
@@ -303,18 +314,22 @@ def open_position(req: OpenRequest):
         price,
     )
 
+    action = mt5.TRADE_ACTION_PENDING if "limit" in order_type_str else mt5.TRADE_ACTION_DEAL
+
     request = {
-        "action": mt5.TRADE_ACTION_DEAL,
+        "action": action,
         "symbol": symbol,
         "volume": req.volume,
         "type": order_type,
         "price": price,
-        "deviation": 20,
         "magic": 123456,
         "comment": "Batch open",
         "type_time": mt5.ORDER_TIME_GTC,
-        "type_filling": mt5.ORDER_FILLING_IOC,
     }
+    
+    if action == mt5.TRADE_ACTION_DEAL:
+        request["deviation"] = 20
+        request["type_filling"] = mt5.ORDER_FILLING_IOC
 
     result = mt5.order_send(request)
     if result is None:
