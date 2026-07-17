@@ -85,6 +85,8 @@ export function Mt5Tab() {
   const [positions, setPositions] = useState<Position[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedTickets, setSelectedTickets] = useState<number[]>([])
+  const knownTickets = useRef<Set<number>>(new Set())
   
   // SL/TP State
   const [mode, setMode] = useState<"pips" | "breakeven" | "absolute">("pips")
@@ -136,6 +138,14 @@ export function Mt5Tab() {
     return () => clearInterval(interval)
   }, [fetchState])
 
+  useEffect(() => {
+    const newTickets = positions.map(p => p.ticket).filter(t => !knownTickets.current.has(t))
+    if (newTickets.length > 0) {
+      newTickets.forEach(t => knownTickets.current.add(t))
+      setSelectedTickets(prev => [...prev, ...newTickets])
+    }
+  }, [positions])
+
   const breakeven = useMemo(() => calcBreakeven(positions), [positions])
 
   const { totalRisk, totalReward } = useMemo(() => {
@@ -172,6 +182,12 @@ export function Mt5Tab() {
       toast.error("No open positions to modify")
       return
     }
+    
+    const targets = positions.filter(p => selectedTickets.includes(p.ticket))
+    if (targets.length === 0) {
+      toast.error("No positions selected to modify")
+      return
+    }
 
     const sl = parseFloat(slValue)
     const tp = parseFloat(tpValue)
@@ -182,7 +198,7 @@ export function Mt5Tab() {
     if (isNaN(delay) || delay < 0) return toast.error("Invalid delay")
 
     setIsRunning(true)
-    setProgress({ current: 0, total: positions.length, success: 0, fail: 0 })
+    setProgress({ current: 0, total: targets.length, success: 0, fail: 0 })
     abortController.current = new AbortController()
     const signal = abortController.current.signal
 
@@ -217,10 +233,10 @@ export function Mt5Tab() {
       }
     }
 
-    for (let i = 0; i < positions.length; i++) {
+    for (let i = 0; i < targets.length; i++) {
       if (signal.aborted) break
       
-      const p = positions[i]
+      const p = targets[i]
       let newSl = p.sl
       let newTp = p.tp
       
@@ -274,8 +290,8 @@ export function Mt5Tab() {
         }
       }
       
-      setProgress({ current: i + 1, total: positions.length, success: successCount, fail: failCount })
-      if (i < positions.length - 1 && !signal.aborted) {
+      setProgress({ current: i + 1, total: targets.length, success: successCount, fail: failCount })
+      if (i < targets.length - 1 && !signal.aborted) {
         await new Promise(r => setTimeout(r, delay))
       }
     }
@@ -468,15 +484,15 @@ export function Mt5Tab() {
               
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="w-full sm:w-2/3" disabled={isRunning || positions.length === 0 || (!slEnabled && !tpEnabled)}>
-                    <Zap className="mr-2 h-4 w-4" /> Apply to All
+                  <Button className="w-full sm:w-2/3" disabled={isRunning || selectedTickets.length === 0 || (!slEnabled && !tpEnabled)}>
+                    <Zap className="mr-2 h-4 w-4" /> Apply to {selectedTickets.length} Selected
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Apply SL/TP to all positions?</AlertDialogTitle>
+                    <AlertDialogTitle>Apply SL/TP to selected positions?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will modify {positions.length} position(s).
+                      This will modify {selectedTickets.length} position(s).
                     </AlertDialogDescription>
                     <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
                       <div className="flex justify-between"><span>Mode:</span> <span className="uppercase text-muted-foreground">{mode}</span></div>
@@ -643,6 +659,13 @@ export function Mt5Tab() {
               </div>
             </div>
           </div>
+          <div className="flex items-center gap-2 mt-6 text-xs font-mono overflow-x-auto thin-scroll pb-1">
+            <span className="text-muted-foreground uppercase tracking-wider mr-2 shrink-0">Select:</span>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] shrink-0" onClick={() => setSelectedTickets(positions.map(p => p.ticket))}>All</Button>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] shrink-0" onClick={() => setSelectedTickets([])}>None</Button>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] text-primary border-primary/20 shrink-0" onClick={() => setSelectedTickets(positions.filter(p => p.profit > 0).map(p => p.ticket))}>Winning</Button>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] text-destructive border-destructive/20 shrink-0" onClick={() => setSelectedTickets(positions.filter(p => p.profit <= 0).map(p => p.ticket))}>Losing</Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border border-border w-full overflow-hidden">
@@ -650,6 +673,12 @@ export function Mt5Tab() {
               <Table>
                 <TableHeader className="bg-secondary/40">
                   <TableRow>
+                    <TableHead className="w-[40px] text-center">
+                      <Checkbox 
+                        checked={positions.length > 0 && selectedTickets.length === positions.length}
+                        onCheckedChange={(checked) => setSelectedTickets(checked ? positions.map(p => p.ticket) : [])}
+                      />
+                    </TableHead>
                     <TableHead className="w-[100px] whitespace-nowrap">Ticket</TableHead>
                     <TableHead className="whitespace-nowrap">Symbol</TableHead>
                     <TableHead className="whitespace-nowrap">Type</TableHead>
@@ -670,7 +699,16 @@ export function Mt5Tab() {
                   </TableRow>
                 ) : (
                   [...positions].sort((a, b) => b.ticket - a.ticket).map((p) => (
-                    <TableRow key={p.ticket} className="hover:bg-secondary/20 transition-colors">
+                    <TableRow key={p.ticket} className={cn("transition-colors", selectedTickets.includes(p.ticket) ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-secondary/20")}>
+                      <TableCell className="text-center">
+                        <Checkbox 
+                          checked={selectedTickets.includes(p.ticket)}
+                          onCheckedChange={(checked) => {
+                            if (checked) setSelectedTickets(prev => [...prev, p.ticket])
+                            else setSelectedTickets(prev => prev.filter(t => t !== p.ticket))
+                          }}
+                        />
+                      </TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground">{p.ticket}</TableCell>
                       <TableCell className="font-medium">{p.symbol}</TableCell>
                       <TableCell>
