@@ -242,7 +242,7 @@ function computeGoyaMetrics(statement: ParsedStatement, kpi: KPI, breakevenTicke
   // ─── Business P&L ───
   const grossRevenue = kpi.grossProfit
   const businessExpenses = Math.abs(kpi.grossLoss)
-  const operatingCosts = Math.abs(kpi.totalCommission) + Math.abs(kpi.totalSwap)
+  const operatingCosts = Math.abs(kpi.totalCommission) - kpi.totalSwap
   const netBusinessIncome = grossRevenue - businessExpenses - operatingCosts
   const expenseRatio = grossRevenue > 0 ? businessExpenses / grossRevenue : 0
   const profitMargin = grossRevenue > 0 ? netBusinessIncome / grossRevenue : 0
