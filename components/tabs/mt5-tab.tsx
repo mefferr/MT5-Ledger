@@ -101,6 +101,7 @@ export function Mt5Tab() {
   const [openSymbol, setOpenSymbol] = useState("XAUUSD")
   const [openDir, setOpenDir] = useState<"buy" | "sell">("buy")
   const [openExecType, setOpenExecType] = useState<"market" | "limit">("market")
+  const [openLimitMode, setOpenLimitMode] = useState<"pips" | "price">("pips")
   const [openPrice, setOpenPrice] = useState("")
   const [openLimitSl, setOpenLimitSl] = useState("")
   const [openLimitTp, setOpenLimitTp] = useState("")
@@ -333,8 +334,44 @@ export function Mt5Tab() {
     let successCount = 0
     let failCount = 0
 
+    let point = 0.01
+    let digits = 2
+    if (openExecType === "limit" && openLimitMode === "pips" && (openLimitSl || openLimitTp)) {
+      try {
+        const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, {
+          headers: { "ngrok-skip-browser-warning": "true" }
+        })
+        if (symRes.ok) {
+          const symInfo = await symRes.json()
+          point = symInfo.point
+          digits = symInfo.digits
+        }
+      } catch (e) {
+        console.error("Failed to fetch symbol info, using defaults", e)
+      }
+    }
+
     for (let i = 0; i < count; i++) {
       if (signal.aborted) break
+      
+      let finalSl = undefined
+      let finalTp = undefined
+      
+      if (openExecType === "limit") {
+        if (openLimitMode === "price") {
+          finalSl = openLimitSl ? parseFloat(openLimitSl) : undefined
+          finalTp = openLimitTp ? parseFloat(openLimitTp) : undefined
+        } else if (openLimitMode === "pips") {
+          const pipsToPrice = (pips: number) => pips * 10 * point
+          if (openDir === "buy") {
+            if (openLimitSl) finalSl = Number((price - pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((price + pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
+          } else {
+            if (openLimitSl) finalSl = Number((price + pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((price - pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
+          }
+        }
+      }
       
       try {
         const res = await fetch("/api/mt5/open", {
@@ -348,8 +385,8 @@ export function Mt5Tab() {
             type: openExecType === "market" ? openDir : `${openDir}_limit`, 
             volume: lots,
             price: openExecType === "limit" ? price : undefined,
-            sl: openExecType === "limit" && openLimitSl ? parseFloat(openLimitSl) : undefined,
-            tp: openExecType === "limit" && openLimitTp ? parseFloat(openLimitTp) : undefined
+            sl: finalSl,
+            tp: finalTp
           }),
           signal
         })
@@ -570,13 +607,30 @@ export function Mt5Tab() {
                     <Label className="text-xs uppercase text-primary font-bold">Limit Price</Label>
                     <Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono text-center sm:text-left border-primary" placeholder="0.0000" />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase text-destructive font-bold">Limit SL</Label>
-                    <Input value={openLimitSl} onChange={(e) => setOpenLimitSl(e.target.value)} className="font-mono text-center sm:text-left border-destructive" placeholder="Optional" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase text-profit font-bold">Limit TP</Label>
-                    <Input value={openLimitTp} onChange={(e) => setOpenLimitTp(e.target.value)} className="font-mono text-center sm:text-left border-profit" placeholder="Optional" />
+                  <div className="space-y-2 col-span-1 sm:col-span-3">
+                    <div className="flex items-center gap-4 mb-2">
+                      <Label className="text-xs uppercase text-muted-foreground font-semibold">Stops Mode</Label>
+                      <RadioGroup value={openLimitMode} onValueChange={(v: any) => setOpenLimitMode(v)} className="flex h-5 items-center gap-3">
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="pips" id="olm-pips" className="w-3 h-3" />
+                          <Label htmlFor="olm-pips" className="text-[10px] uppercase cursor-pointer">Pips</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="price" id="olm-price" className="w-3 h-3" />
+                          <Label htmlFor="olm-price" className="text-[10px] uppercase cursor-pointer">Price</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="space-y-2 w-full">
+                        <Label className="text-xs uppercase text-destructive font-bold">Limit SL {openLimitMode === "pips" ? "(pips)" : ""}</Label>
+                        <Input value={openLimitSl} onChange={(e) => setOpenLimitSl(e.target.value)} className="font-mono text-center sm:text-left border-destructive" placeholder="Optional" />
+                      </div>
+                      <div className="space-y-2 w-full">
+                        <Label className="text-xs uppercase text-profit font-bold">Limit TP {openLimitMode === "pips" ? "(pips)" : ""}</Label>
+                        <Input value={openLimitTp} onChange={(e) => setOpenLimitTp(e.target.value)} className="font-mono text-center sm:text-left border-profit" placeholder="Optional" />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
@@ -613,7 +667,7 @@ export function Mt5Tab() {
                       <>
                         <div className="flex justify-between"><span>Target Price:</span> <span className="text-primary font-bold">{openPrice}</span></div>
                         {(openLimitSl || openLimitTp) && (
-                          <div className="flex justify-between"><span>Stops:</span> <span>SL: {openLimitSl || '—'} / TP: {openLimitTp || '—'}</span></div>
+                          <div className="flex justify-between"><span>Stops:</span> <span>SL: {openLimitSl || '—'} / TP: {openLimitTp || '—'} ({openLimitMode})</span></div>
                         )}
                       </>
                     )}
