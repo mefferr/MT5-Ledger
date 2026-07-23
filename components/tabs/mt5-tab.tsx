@@ -108,6 +108,10 @@ export function Mt5Tab() {
   const [openLots, setOpenLots] = useState("0.01")
   const [openCount, setOpenCount] = useState("1")
   const [openDelay, setOpenDelay] = useState("300")
+  
+  // Table filters
+  const [entryFilter1, setEntryFilter1] = useState("")
+  const [entryFilter2, setEntryFilter2] = useState("")
 
   // Progress State
   const [isRunning, setIsRunning] = useState(false)
@@ -423,6 +427,36 @@ export function Mt5Tab() {
     fetchState()
   }
 
+  const filteredPositions = positions.filter((p) => {
+    let match = true;
+    const checkFilter = (filterStr: string, price: number) => {
+      const f = filterStr.trim()
+      if (!f) return true
+      const op = f.charAt(0)
+      if (['<', '>'].includes(op)) {
+        const hasEq = f.charAt(1) === '='
+        const valStr = hasEq ? f.substring(2) : f.substring(1)
+        const val = parseFloat(valStr)
+        if (isNaN(val)) return true
+        if (op === '<' && hasEq) return price <= val
+        if (op === '<' && !hasEq) return price < val
+        if (op === '>' && hasEq) return price >= val
+        if (op === '>' && !hasEq) return price > val
+      } else if (op === '=') {
+        const val = parseFloat(f.substring(1))
+        if (isNaN(val)) return true
+        return price === val
+      } else {
+        const val = parseFloat(f)
+        if (!isNaN(val)) return price === val
+      }
+      return true
+    }
+    if (entryFilter1) match = match && checkFilter(entryFilter1, p.price_open)
+    if (entryFilter2) match = match && checkFilter(entryFilter2, p.price_open)
+    return match;
+  });
+
   if (loading) {
     return <div className="flex justify-center items-center h-96 text-muted-foreground animate-pulse">Connecting to MT5 Bridge...</div>
   }
@@ -716,7 +750,7 @@ export function Mt5Tab() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <CardTitle>Open Positions</CardTitle>
-              <CardDescription>{positions.length} active positions</CardDescription>
+              <CardDescription>{filteredPositions.length} active positions</CardDescription>
             </div>
             <div className="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-6 sm:text-right font-mono text-sm">
               <div className="flex flex-col sm:items-end">
@@ -733,19 +767,26 @@ export function Mt5Tab() {
               </div>
               <div className="flex flex-col sm:items-end w-full sm:w-auto">
                 <span className="text-muted-foreground uppercase text-[10px] tracking-wider mb-1">Current P/L</span>
-                <span className={cn("font-bold text-lg", positions.reduce((a,b)=>a+b.profit,0) >= 0 ? "text-primary" : "text-destructive")}>
-                  {positions.reduce((a,b)=>a+b.profit,0) >= 0 ? "+" : ""}
-                  {positions.reduce((a,b)=>a+b.profit,0).toFixed(2)}
+                <span className={cn("font-bold text-lg", filteredPositions.reduce((a,b)=>a+b.profit,0) >= 0 ? "text-primary" : "text-destructive")}>
+                  {filteredPositions.reduce((a,b)=>a+b.profit,0) >= 0 ? "+" : ""}
+                  {filteredPositions.reduce((a,b)=>a+b.profit,0).toFixed(2)}
                 </span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-6 text-xs font-mono overflow-x-auto thin-scroll pb-1">
+          <div className="flex flex-wrap items-center gap-4 mt-4">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Entry Filter:</span>
+              <Input value={entryFilter1} onChange={(e) => setEntryFilter1(e.target.value)} placeholder="<4038" className="h-8 w-24 font-mono text-xs" />
+              <Input value={entryFilter2} onChange={(e) => setEntryFilter2(e.target.value)} placeholder=">4010" className="h-8 w-24 font-mono text-xs" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-4 text-xs font-mono overflow-x-auto thin-scroll pb-1">
             <span className="text-muted-foreground uppercase tracking-wider mr-2 shrink-0">Select:</span>
-            <Button variant="outline" size="sm" className="h-7 text-[10px] shrink-0" onClick={() => setSelectedTickets(positions.map(p => p.ticket))}>All</Button>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] shrink-0" onClick={() => setSelectedTickets(filteredPositions.map(p => p.ticket))}>All</Button>
             <Button variant="outline" size="sm" className="h-7 text-[10px] shrink-0" onClick={() => setSelectedTickets([])}>None</Button>
-            <Button variant="outline" size="sm" className="h-7 text-[10px] text-primary border-primary/20 shrink-0" onClick={() => setSelectedTickets(positions.filter(p => p.profit > 0).map(p => p.ticket))}>Winning</Button>
-            <Button variant="outline" size="sm" className="h-7 text-[10px] text-destructive border-destructive/20 shrink-0" onClick={() => setSelectedTickets(positions.filter(p => p.profit <= 0).map(p => p.ticket))}>Losing</Button>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] text-primary border-primary/20 shrink-0" onClick={() => setSelectedTickets(filteredPositions.filter(p => p.profit > 0).map(p => p.ticket))}>Winning</Button>
+            <Button variant="outline" size="sm" className="h-7 text-[10px] text-destructive border-destructive/20 shrink-0" onClick={() => setSelectedTickets(filteredPositions.filter(p => p.profit <= 0).map(p => p.ticket))}>Losing</Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -756,8 +797,8 @@ export function Mt5Tab() {
                   <TableRow>
                     <TableHead className="w-[40px] text-center">
                       <Checkbox 
-                        checked={positions.length > 0 && selectedTickets.length === positions.length}
-                        onCheckedChange={(checked) => setSelectedTickets(checked ? positions.map(p => p.ticket) : [])}
+                        checked={filteredPositions.length > 0 && selectedTickets.length === filteredPositions.length}
+                        onCheckedChange={(checked) => setSelectedTickets(checked ? filteredPositions.map(p => p.ticket) : [])}
                       />
                     </TableHead>
                     <TableHead className="w-[100px] whitespace-nowrap">Ticket</TableHead>
@@ -772,14 +813,14 @@ export function Mt5Tab() {
                   </TableRow>
                 </TableHeader>
               <TableBody>
-                {positions.length === 0 ? (
+                {filteredPositions.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="h-32 text-center text-muted-foreground">
-                      No open positions found.
+                      No open positions found matching criteria.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  [...positions].sort((a, b) => b.ticket - a.ticket).map((p) => (
+                  [...filteredPositions].sort((a, b) => b.ticket - a.ticket).map((p) => (
                     <TableRow key={p.ticket} className={cn("transition-colors", selectedTickets.includes(p.ticket) ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-secondary/20")}>
                       <TableCell className="text-center">
                         <Checkbox 
