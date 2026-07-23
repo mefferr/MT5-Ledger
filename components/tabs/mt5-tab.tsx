@@ -427,6 +427,74 @@ export function Mt5Tab() {
     fetchState()
   }
 
+  const closeBatch = async () => {
+    if (selectedTickets.length === 0) return toast.error("No positions selected")
+    
+    setIsRunning(true)
+    setProgress({ current: 0, total: selectedTickets.length, success: 0, fail: 0 })
+    abortController.current = new AbortController()
+    const signal = abortController.current.signal
+    
+    let successCount = 0
+    let failCount = 0
+    const delay = parseInt(sltpDelay) || 300
+    
+    const targets = positions.filter(p => selectedTickets.includes(p.ticket))
+    
+    for (let i = 0; i < targets.length; i++) {
+      if (signal.aborted) break
+      const p = targets[i]
+      
+      try {
+        const res = await fetch("/api/mt5/close", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+          },
+          body: JSON.stringify({
+            ticket: p.ticket,
+            symbol: p.symbol,
+            type: p.type,
+            volume: p.volume,
+            is_pending: p.is_pending || false
+          }),
+          signal
+        })
+        const data = await res.json()
+        if (data.success) {
+          successCount++
+        } else {
+          failCount++
+          if (data.retcode === 10018) {
+            toast.error("Market is closed!")
+          } else {
+            toast.error(`Close failed for ${p.ticket}: ${data.comment}`)
+          }
+          if (abortController.current) abortController.current.abort()
+        }
+      } catch (e: any) {
+        if (!signal.aborted) {
+          failCount++
+          toast.error(`Execution error: ${e.message}`)
+          if (abortController.current) abortController.current.abort()
+        }
+      }
+      
+      setProgress({ current: i + 1, total: targets.length, success: successCount, fail: failCount })
+      if (i < targets.length - 1 && !signal.aborted) {
+        await new Promise(r => setTimeout(r, delay))
+      }
+    }
+    
+    setIsRunning(false)
+    if (!signal.aborted) {
+      toast.success(`Completed: ${successCount} closed, ${failCount} failed`)
+    }
+    setSelectedTickets([])
+    fetchState()
+  }
+
   const filteredPositions = positions.filter((p) => {
     let match = true;
     const checkFilter = (filterStr: string, price: number) => {
@@ -787,6 +855,28 @@ export function Mt5Tab() {
             <Button variant="outline" size="sm" className="h-7 text-[10px] shrink-0" onClick={() => setSelectedTickets([])}>None</Button>
             <Button variant="outline" size="sm" className="h-7 text-[10px] text-primary border-primary/20 shrink-0" onClick={() => setSelectedTickets(filteredPositions.filter(p => p.profit > 0).map(p => p.ticket))}>Winning</Button>
             <Button variant="outline" size="sm" className="h-7 text-[10px] text-destructive border-destructive/20 shrink-0" onClick={() => setSelectedTickets(filteredPositions.filter(p => p.profit <= 0).map(p => p.ticket))}>Losing</Button>
+            
+            <div className="flex-1"></div>
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="h-7 text-[10px] font-bold" disabled={selectedTickets.length === 0 || isRunning}>
+                  Close Selected ({selectedTickets.length})
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Close Selected Trades?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently close {selectedTickets.length} position(s). This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={closeBatch} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Confirm Close</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </CardHeader>
         <CardContent>

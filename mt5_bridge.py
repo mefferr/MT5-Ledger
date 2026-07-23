@@ -107,6 +107,12 @@ class OpenRequest(BaseModel):
     sl: float | None = None
     tp: float | None = None
 
+class CloseRequest(BaseModel):
+    ticket: int
+    symbol: str
+    type: str
+    volume: float
+    is_pending: bool = False
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -403,6 +409,63 @@ def open_position(req: OpenRequest):
         "retcode": result.retcode,
         "comment": result.comment,
         "ticket": result.order,
+    }
+
+
+# ---------------------------------------------------------------------------
+# POST /close
+# ---------------------------------------------------------------------------
+
+@app.post("/close")
+def close_position(req: CloseRequest):
+    _require_mt5()
+    
+    if req.is_pending:
+        logger.info("Removing pending order ticket=%d", req.ticket)
+        request = {
+            "action": mt5.TRADE_ACTION_REMOVE,
+            "order": req.ticket,
+        }
+    else:
+        logger.info("Closing active position ticket=%d symbol=%s volume=%.2f type=%s", req.ticket, req.symbol, req.volume, req.type)
+        tick = mt5.symbol_info_tick(req.symbol)
+        if not tick:
+            raise HTTPException(500, f"Cannot get tick data for {req.symbol}")
+            
+        is_buy = req.type.lower() == "buy"
+        order_type = mt5.ORDER_TYPE_SELL if is_buy else mt5.ORDER_TYPE_BUY
+        price = tick.bid if is_buy else tick.ask
+        
+        request = {
+            "action": mt5.TRADE_ACTION_DEAL,
+            "symbol": req.symbol,
+            "volume": req.volume,
+            "type": order_type,
+            "position": req.ticket,
+            "price": price,
+            "deviation": 20,
+            "magic": 123456,
+            "comment": "Batch close",
+            "type_filling": mt5.ORDER_FILLING_IOC,
+        }
+
+    result = mt5.order_send(request)
+    if result is None:
+        err = mt5.last_error()
+        logger.error("order_send returned None: %s", err)
+        return {
+            "success": False,
+            "retcode": err[0] if isinstance(err, tuple) else -1,
+            "comment": err[1] if isinstance(err, tuple) else str(err)
+        }
+
+    success = result.retcode == mt5.TRADE_RETCODE_DONE
+    logger.info("Close result: retcode=%d comment='%s' success=%s", result.retcode, result.comment, success)
+    
+    return {
+        "success": success,
+        "retcode": result.retcode,
+        "comment": result.comment,
     }
 
 
