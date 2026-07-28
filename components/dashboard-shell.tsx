@@ -221,16 +221,20 @@ function SimulatePopover() {
   const { statement, isSimulated, simulateAccount, resetSimulation } = useStatement()
   const [open, setOpen] = useState(false)
 
-  const initialDeposit = statement?.initialDeposit || 10000
-  const [depositInput, setDepositInput] = useState(initialDeposit.toString())
-  const [multiplierInput, setMultiplierInput] = useState("1")
+  const currentDeposit = statement?.initialDeposit || 10000
+  const totalVolume = statement?.trades.reduce((sum, t) => sum + t.size, 0) || 0
+  const tradeCount = statement?.trades.length || 1
+  const avgLotSize = totalVolume > 0 ? totalVolume / tradeCount : 1
+
+  const [depositInput, setDepositInput] = useState(currentDeposit.toString())
+  const [targetLotInput, setTargetLotInput] = useState((Math.round(avgLotSize * 100) / 100).toString())
   const [autoLink, setAutoLink] = useState(true)
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen)
     if (isOpen && statement) {
       setDepositInput(statement.initialDeposit.toString())
-      setMultiplierInput("1")
+      setTargetLotInput((Math.round(avgLotSize * 100) / 100).toString())
       setAutoLink(true)
     }
   }
@@ -238,17 +242,19 @@ function SimulatePopover() {
   const handleDepositChange = (val: string) => {
     setDepositInput(val)
     const num = parseFloat(val)
-    if (autoLink && !isNaN(num) && num > 0 && initialDeposit > 0) {
-      const ratio = num / initialDeposit
-      setMultiplierInput((Math.round(ratio * 100) / 100).toString())
+    if (autoLink && !isNaN(num) && num > 0 && currentDeposit > 0) {
+      const ratio = num / currentDeposit
+      const suggestedLot = Math.max(0.01, Math.round(avgLotSize * ratio * 100) / 100)
+      setTargetLotInput(suggestedLot.toString())
     }
   }
 
   const handleApply = () => {
     const dep = parseFloat(depositInput)
-    const mult = parseFloat(multiplierInput)
-    if (!isNaN(dep) && dep > 0 && !isNaN(mult) && mult > 0) {
-      simulateAccount(dep, mult)
+    const targetLot = parseFloat(targetLotInput)
+    if (!isNaN(dep) && dep > 0 && !isNaN(targetLot) && targetLot > 0) {
+      const lotMultiplier = avgLotSize > 0 ? targetLot / avgLotSize : 1
+      simulateAccount(dep, lotMultiplier)
       setOpen(false)
     }
   }
@@ -280,7 +286,7 @@ function SimulatePopover() {
             )}
           </h4>
           <p className="text-xs text-muted-foreground">
-            Rescale initial deposit & lot sizes proportionally. Clamped at 0.01 lot minimum.
+            Rescale initial deposit & trade lot sizes proportionally.
           </p>
         </div>
 
@@ -291,14 +297,14 @@ function SimulatePopover() {
               type="number"
               value={depositInput}
               onChange={(e) => handleDepositChange(e.target.value)}
-              placeholder="e.g. 1000"
+              placeholder="e.g. 6460"
               className="h-8 text-xs font-mono"
             />
           </div>
 
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-muted-foreground">Lot Size Multiplier</label>
+              <label className="text-xs font-medium text-muted-foreground">Target Lot Size (per trade)</label>
               <button
                 type="button"
                 onClick={() => setAutoLink(!autoLink)}
@@ -311,16 +317,17 @@ function SimulatePopover() {
               <Input
                 type="number"
                 step="0.01"
-                value={multiplierInput}
+                min="0.01"
+                value={targetLotInput}
                 onChange={(e) => {
                   setAutoLink(false)
-                  setMultiplierInput(e.target.value)
+                  setTargetLotInput(e.target.value)
                 }}
-                placeholder="1.0"
-                className="h-8 text-xs font-mono pr-8"
+                placeholder="e.g. 0.01"
+                className="h-8 text-xs font-mono pr-12"
               />
               <span className="absolute right-2.5 top-2 text-xs font-mono text-muted-foreground pointer-events-none">
-                x
+                lots
               </span>
             </div>
           </div>

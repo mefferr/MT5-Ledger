@@ -499,7 +499,7 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       })
 
       const sumBalanceEntries = scaledBalanceEntries.reduce((sum, b) => sum + b.amount, 0)
-      const newBalance = newDeposit + sumBalanceEntries + totalClosedPL
+      const newBalance = (scaledBalanceEntries.length > 0 ? sumBalanceEntries : newDeposit) + totalClosedPL
 
       const nextMeta: StatementMeta = {
         ...baseMeta,
