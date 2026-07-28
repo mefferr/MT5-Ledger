@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
-import type { ParsedStatement, Trade, LifestyleConfig } from "./types"
+import type { ParsedStatement, Trade, LifestyleConfig, TradeType, BalanceEntry } from "./types"
 import { parseStatement } from "./parser"
 import {
   applyTradeMerges,

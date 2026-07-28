@@ -95,6 +95,7 @@ export interface LifestyleConfig {
   ownedItems: CatalogItem[]
   realEstate: RealEstateAsset[]
   bonds: BondAsset[]
+  baseLivingExpenses: number
   
   tycoonState?: TycoonState
 }
