@@ -109,9 +109,7 @@ interface StatementContextValue {
   loadFromMt5: (days?: number) => Promise<void>
   loadDemo: () => Promise<void>
   convertCurrency: (targetCurrency: string) => Promise<void>
-  isSimulated: boolean
-  simulateAccount: (newDeposit: number, lotMultiplier: number) => void
-  resetSimulation: () => void
+  simulateAccount: (newDepositAmount: number, targetLotSize: number) => void
   clear: () => void
   setAutoBurstMerge: (enabled: boolean) => void
   setMergeToleranceSec: (seconds: number) => void
@@ -145,9 +143,6 @@ function computeMergeStats(source: Trade[], settings: MergeSettings): MergeStats
 export function StatementProvider({ children }: { children: React.ReactNode }) {
   const [meta, setMeta] = useState<StatementMeta | null>(null)
   const [sourceTrades, setSourceTrades] = useState<Trade[]>([])
-  const [originalMeta, setOriginalMeta] = useState<StatementMeta | null>(null)
-  const [originalSourceTrades, setOriginalSourceTrades] = useState<Trade[]>([])
-  const [isSimulated, setIsSimulated] = useState(false)
   const [mergeSettings, setMergeSettings] = useState<MergeSettings>(DEFAULT_MERGE_SETTINGS)
   const [loading, setLoading] = useState(false)
   const [converting, setConverting] = useState(false)
@@ -173,9 +168,6 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     const nextSource = parsed.trades
     setMeta(nextMeta)
     setSourceTrades(nextSource)
-    setOriginalMeta(nextMeta)
-    setOriginalSourceTrades(nextSource)
-    setIsSimulated(false)
     setMergeSettings(nextMerge)
     persist(nextMeta, nextSource, nextMerge, [], lifestyleConfig)
   }, [lifestyleConfig])
@@ -204,9 +196,6 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       const { meta: storedMeta, sourceTrades: storedSource } = deserializePayload(parsed)
       setMeta(storedMeta)
       setSourceTrades(storedSource)
-      setOriginalMeta(storedMeta)
-      setOriginalSourceTrades(storedSource)
-      setIsSimulated(false)
       setMergeSettings(parsed.mergeSettings ?? DEFAULT_MERGE_SETTINGS)
       setBreakevenTickets(parsed.breakevenTickets ?? [])
       setLifestyleConfig(parsed.lifestyleConfig ?? DEFAULT_LIFESTYLE_CONFIG)
@@ -313,9 +302,6 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
   const clear = useCallback(() => {
     setMeta(null)
     setSourceTrades([])
-    setOriginalMeta(null)
-    setOriginalSourceTrades([])
-    setIsSimulated(false)
     setMergeSettings(DEFAULT_MERGE_SETTINGS)
     setBreakevenTickets([])
     setLifestyleConfig(DEFAULT_LIFESTYLE_CONFIG)
@@ -375,32 +361,66 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
 
       setMeta(nextMeta)
       setSourceTrades(scaledTrades)
-      if (originalMeta && originalSourceTrades.length) {
-        const scaledOrigTrades = originalSourceTrades.map((t) => ({
-          ...t,
-          commission: t.commission * rate,
-          taxes: t.taxes * rate,
-          swap: t.swap * rate,
-          profit: t.profit * rate,
-        }))
-        const nextOrigMeta: StatementMeta = {
-          ...originalMeta,
-          account: { ...originalMeta.account, currency: targetCurrency },
-          initialDeposit: originalMeta.initialDeposit * rate,
-          balanceEntries: originalMeta.balanceEntries.map((b) => ({
-            ...b,
-            amount: b.amount * rate,
-          })),
-        }
-        setOriginalMeta(nextOrigMeta)
-        setOriginalSourceTrades(scaledOrigTrades)
-      }
       persist(nextMeta, scaledTrades, mergeSettings, breakevenTickets, lifestyleConfig)
     } catch (e) {
       setError(e instanceof Error ? e.message : `Failed to convert to ${targetCurrency}.`)
     } finally {
       setConverting(false)
     }
+  }, [meta, sourceTrades, mergeSettings, breakevenTickets, lifestyleConfig])
+
+  const simulateAccount = useCallback((newDepositAmount: number, targetLotSize: number) => {
+    if (!meta || sourceTrades.length === 0) return
+
+    let totalLotSize = 0
+    for (const t of sourceTrades) {
+      totalLotSize += t.size
+    }
+    const averageLotSize = totalLotSize / sourceTrades.length || 1
+
+    const lotScalingFactor = targetLotSize / averageLotSize
+    
+    // Fallback logic for deposit ratio if original is <= 0
+    const originalDeposit = meta.initialDeposit > 0 ? meta.initialDeposit : 1
+    const depositScalingFactor = newDepositAmount / originalDeposit
+
+    const scaledTrades = sourceTrades.map((t) => {
+      const scaledSize = t.size * lotScalingFactor
+      return {
+        ...t,
+        size: Math.max(0.01, scaledSize),
+        commission: t.commission * lotScalingFactor,
+        taxes: t.taxes * lotScalingFactor,
+        swap: t.swap * lotScalingFactor,
+        profit: t.profit * lotScalingFactor,
+      }
+    })
+
+    let closedPL = 0
+    for (const t of scaledTrades) {
+      closedPL += t.profit + t.commission + t.swap + t.taxes
+    }
+
+    const nextMeta: StatementMeta = {
+      ...meta,
+      initialDeposit: newDepositAmount,
+      balanceEntries: meta.balanceEntries.map((b) => ({
+        ...b,
+        amount: b.amount * depositScalingFactor,
+      })),
+      summary: meta.summary
+        ? {
+            ...meta.summary,
+            closedPL,
+            balance: newDepositAmount + closedPL,
+            equity: newDepositAmount + closedPL, // Static equity assumption for statement
+          }
+        : undefined,
+    }
+
+    setMeta(nextMeta)
+    setSourceTrades(scaledTrades)
+    persist(nextMeta, scaledTrades, mergeSettings, breakevenTickets, lifestyleConfig)
   }, [meta, sourceTrades, mergeSettings, breakevenTickets, lifestyleConfig])
 
   const setAutoBurstMerge = useCallback(
@@ -464,77 +484,6 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     if (meta) persist(meta, sourceTrades, mergeSettings, [], lifestyleConfig)
   }, [meta, sourceTrades, mergeSettings, lifestyleConfig])
 
-  const simulateAccount = useCallback(
-    (newDeposit: number, lotMultiplier: number) => {
-      const baseMeta = originalMeta || meta
-      const baseTrades = originalSourceTrades.length ? originalSourceTrades : sourceTrades
-      if (!baseMeta || !baseTrades.length) return
-
-      const oldDeposit = baseMeta.initialDeposit > 0 ? baseMeta.initialDeposit : 1
-      const depositRatio = newDeposit / oldDeposit
-
-      const scaledBalanceEntries = baseMeta.balanceEntries.map((b) => ({
-        ...b,
-        amount: b.amount * depositRatio,
-      }))
-
-      let totalClosedPL = 0
-      const scaledTrades = baseTrades.map((t) => {
-        const origSize = t.size > 0 ? t.size : 0.01
-        const rawNewSize = origSize * lotMultiplier
-        const clampedNewSize = Math.max(0.01, Math.round(rawNewSize * 100) / 100)
-        const effectiveMultiplier = clampedNewSize / origSize
-
-        const profit = t.profit * effectiveMultiplier
-        totalClosedPL += profit
-
-        return {
-          ...t,
-          size: clampedNewSize,
-          commission: t.commission * effectiveMultiplier,
-          taxes: t.taxes * effectiveMultiplier,
-          swap: t.swap * effectiveMultiplier,
-          profit,
-        }
-      })
-
-      const sumBalanceEntries = scaledBalanceEntries.reduce((sum, b) => sum + b.amount, 0)
-      const newBalance = (scaledBalanceEntries.length > 0 ? sumBalanceEntries : newDeposit) + totalClosedPL
-
-      const nextMeta: StatementMeta = {
-        ...baseMeta,
-        initialDeposit: newDeposit,
-        balanceEntries: scaledBalanceEntries,
-        summary: baseMeta.summary
-          ? {
-              ...baseMeta.summary,
-              closedPL: totalClosedPL,
-              balance: newBalance,
-              equity: newBalance,
-              freeMargin: newBalance,
-            }
-          : undefined,
-      }
-
-      if (!originalMeta) setOriginalMeta(baseMeta)
-      if (!originalSourceTrades.length) setOriginalSourceTrades(baseTrades)
-
-      setMeta(nextMeta)
-      setSourceTrades(scaledTrades)
-      setIsSimulated(true)
-      persist(nextMeta, scaledTrades, mergeSettings, breakevenTickets, lifestyleConfig)
-    },
-    [meta, sourceTrades, originalMeta, originalSourceTrades, mergeSettings, breakevenTickets, lifestyleConfig],
-  )
-
-  const resetSimulation = useCallback(() => {
-    if (!originalMeta || !originalSourceTrades.length) return
-    setMeta(originalMeta)
-    setSourceTrades(originalSourceTrades)
-    setIsSimulated(false)
-    persist(originalMeta, originalSourceTrades, mergeSettings, breakevenTickets, lifestyleConfig)
-  }, [originalMeta, originalSourceTrades, mergeSettings, breakevenTickets, lifestyleConfig])
-
   const value = useMemo(
     () => ({
       statement,
@@ -551,9 +500,7 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       loadFromMt5,
       loadDemo,
       convertCurrency,
-      isSimulated,
       simulateAccount,
-      resetSimulation,
       clear,
       setAutoBurstMerge,
       setMergeToleranceSec,
@@ -578,9 +525,7 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       loadFromMt5,
       loadDemo,
       convertCurrency,
-      isSimulated,
       simulateAccount,
-      resetSimulation,
       clear,
       setAutoBurstMerge,
       setMergeToleranceSec,
