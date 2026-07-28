@@ -380,8 +380,15 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
 
     const lotScalingFactor = targetLotSize / averageLotSize
     
-    // Fallback logic for deposit ratio if original is <= 0
-    const originalDeposit = meta.initialDeposit > 0 ? meta.initialDeposit : 1
+    // Calculate actual original deposit directly from balanceEntries just like getStartingCapital does
+    const firstTradeTime = sourceTrades.length ? Math.min(...sourceTrades.map(t => t.openTime.getTime())) : 0
+    let capital = 0
+    for (const b of meta.balanceEntries) {
+      if (b.time.getTime() <= firstTradeTime) {
+        capital += b.amount
+      }
+    }
+    const originalDeposit = capital > 0 ? capital : (meta.initialDeposit > 0 ? meta.initialDeposit : 1)
     const depositScalingFactor = newDepositAmount / originalDeposit
 
     const scaledTrades = sourceTrades.map((t) => {
