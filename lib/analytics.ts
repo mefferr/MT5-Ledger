@@ -65,6 +65,18 @@ export interface MonthlyStat {
   winRate: number
 }
 
+export type Timeframe = "daily" | "weekly" | "monthly" | "yearly"
+
+export interface TimeframeStat {
+  key: string
+  label: string
+  profit: number
+  trades: number
+  wins: number
+  losses: number
+  winRate: number
+}
+
 export interface SymbolStat {
   symbol: string
   trades: number
@@ -341,24 +353,34 @@ export function monthlyStats(trades: Trade[], breakevenTickets: Set<number> = ne
   return list
 }
 
-export function weeklyStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): MonthlyStat[] {
-  const map = new Map<string, MonthlyStat>()
+export function timeframeStats(trades: Trade[], timeframe: Timeframe, breakevenTickets: Set<number> = new Set()): TimeframeStat[] {
+  const map = new Map<string, TimeframeStat>()
   for (const t of trades) {
     const d = t.closeTime
     if (Number.isNaN(d.getTime())) continue
     
-    // Calculate Monday of the week
-    const date = new Date(d)
-    const day = date.getDay()
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1)
-    const monday = new Date(date.setDate(diff))
+    let key = ""
+    let label = ""
     
-    const year = monday.getFullYear()
-    const monthStr = String(monday.getMonth() + 1).padStart(2, "0")
-    const dayStr = String(monday.getDate()).padStart(2, "0")
-    const key = `${year}-${monthStr}-${dayStr}`
-    const label = `${monday.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
-    
+    if (timeframe === "daily") {
+      key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+      label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    } else if (timeframe === "weekly") {
+      const ws = new Date(d)
+      const day = ws.getDay()
+      const diff = ws.getDate() - day + (day === 0 ? -6 : 1) // start on Monday
+      ws.setDate(diff)
+      ws.setHours(0,0,0,0)
+      key = ws.getTime().toString()
+      label = `Wk ${ws.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+    } else if (timeframe === "monthly") {
+      key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+      label = d.toLocaleDateString("en-US", { month: "short", year: "numeric" })
+    } else if (timeframe === "yearly") {
+      key = `${d.getFullYear()}`
+      label = `${d.getFullYear()}`
+    }
+
     const cur = map.get(key) ?? { key, label, profit: 0, trades: 0, wins: 0, losses: 0, winRate: 0 }
     cur.profit += t.profit + t.commission + t.swap
     cur.trades += 1
@@ -366,10 +388,16 @@ export function weeklyStats(trades: Trade[], breakevenTickets: Set<number> = new
     else if (isLoss(t, breakevenTickets)) cur.losses += 1
     map.set(key, cur)
   }
-  const list = Array.from(map.values()).sort((a, b) => (a.key < b.key ? -1 : 1))
-  for (const w of list) {
-    const nonBE = w.wins + w.losses
-    w.winRate = nonBE ? w.wins / nonBE : 0
+  
+  // Weekly needs numerical sort on the timestamp key
+  const list = Array.from(map.values()).sort((a, b) => {
+    if (timeframe === "weekly") return Number(a.key) - Number(b.key)
+    return a.key < b.key ? -1 : 1
+  })
+  
+  for (const item of list) {
+    const nonBE = item.wins + item.losses
+    item.winRate = nonBE ? item.wins / nonBE : 0
   }
   return list
 }
