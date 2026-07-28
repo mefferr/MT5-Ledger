@@ -58,7 +58,7 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"]
 
 export function DashboardShell() {
-  const { statement, clear, loadDemo, loadFromMt5, loading, converting, convertUsdToPln, mergeStats, breakevenTickets } = useStatement()
+  const { statement, clear, loadDemo, loadFromMt5, loading, converting, convertCurrency, mergeStats, breakevenTickets } = useStatement()
   const [active, setActive] = useState<TabId>("overview")
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
   const kpi = useMemo(() => (statement ? computeKPI(statement, breakevenSet) : null), [statement, breakevenSet])
