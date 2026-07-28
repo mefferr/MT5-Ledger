@@ -20,8 +20,11 @@ import {
   Zap,
   Wallet,
   ChevronDown,
+  SlidersHorizontal,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,7 +61,20 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"]
 
 export function DashboardShell() {
-  const { statement, clear, loadDemo, loadFromMt5, loading, converting, convertCurrency, mergeStats, breakevenTickets } = useStatement()
+  const {
+    statement,
+    clear,
+    loadDemo,
+    loadFromMt5,
+    loading,
+    converting,
+    convertCurrency,
+    isSimulated,
+    simulateAccount,
+    resetSimulation,
+    mergeStats,
+    breakevenTickets,
+  } = useStatement()
   const [active, setActive] = useState<TabId>("overview")
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
   const kpi = useMemo(() => (statement ? computeKPI(statement, breakevenSet) : null), [statement, breakevenSet])
@@ -140,6 +156,7 @@ export function DashboardShell() {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
+            <SimulatePopover />
             <Button size="sm" variant="secondary" onClick={clear} className="px-2 sm:px-3">
               <Upload className="h-3.5 w-3.5 sm:mr-2" /> 
               <span className="hidden sm:inline">New statement</span>
@@ -197,5 +214,137 @@ function InfoPair({ label, value }: { label: string; value: string }) {
       <span className="text-[10px] uppercase tracking-wider text-muted-foreground/80">{label}</span>
       <span className="font-mono text-xs text-foreground/90">{value}</span>
     </div>
+  )
+}
+
+function SimulatePopover() {
+  const { statement, isSimulated, simulateAccount, resetSimulation } = useStatement()
+  const [open, setOpen] = useState(false)
+
+  const initialDeposit = statement?.initialDeposit || 10000
+  const [depositInput, setDepositInput] = useState(initialDeposit.toString())
+  const [multiplierInput, setMultiplierInput] = useState("1")
+  const [autoLink, setAutoLink] = useState(true)
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen)
+    if (isOpen && statement) {
+      setDepositInput(statement.initialDeposit.toString())
+      setMultiplierInput("1")
+      setAutoLink(true)
+    }
+  }
+
+  const handleDepositChange = (val: string) => {
+    setDepositInput(val)
+    const num = parseFloat(val)
+    if (autoLink && !isNaN(num) && num > 0 && initialDeposit > 0) {
+      const ratio = num / initialDeposit
+      setMultiplierInput((Math.round(ratio * 100) / 100).toString())
+    }
+  }
+
+  const handleApply = () => {
+    const dep = parseFloat(depositInput)
+    const mult = parseFloat(multiplierInput)
+    if (!isNaN(dep) && dep > 0 && !isNaN(mult) && mult > 0) {
+      simulateAccount(dep, mult)
+      setOpen(false)
+    }
+  }
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <Button
+          size="sm"
+          variant={isSimulated ? "secondary" : "outline"}
+          className={cn("px-2 sm:px-3 relative", isSimulated && "border-amber-500/50 text-amber-400 bg-amber-500/10")}
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5 sm:mr-2" />
+          <span className="hidden sm:inline">{isSimulated ? "Simulated" : "Simulate Size"}</span>
+          <span className="sm:hidden">Sim</span>
+          {isSimulated && (
+            <span className="ml-1.5 flex h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80 p-4 space-y-4">
+        <div className="space-y-1">
+          <h4 className="font-semibold text-sm flex items-center justify-between">
+            <span>Account Size Simulator</span>
+            {isSimulated && (
+              <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded font-mono uppercase">
+                Active
+              </span>
+            )}
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            Rescale initial deposit & lot sizes proportionally. Clamped at 0.01 lot minimum.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">New Initial Deposit</label>
+            <Input
+              type="number"
+              value={depositInput}
+              onChange={(e) => handleDepositChange(e.target.value)}
+              placeholder="e.g. 1000"
+              className="h-8 text-xs font-mono"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-muted-foreground">Lot Size Multiplier</label>
+              <button
+                type="button"
+                onClick={() => setAutoLink(!autoLink)}
+                className="text-[10px] text-primary hover:underline"
+              >
+                {autoLink ? "Auto-linked (1:1)" : "Custom Override"}
+              </button>
+            </div>
+            <div className="relative">
+              <Input
+                type="number"
+                step="0.01"
+                value={multiplierInput}
+                onChange={(e) => {
+                  setAutoLink(false)
+                  setMultiplierInput(e.target.value)
+                }}
+                placeholder="1.0"
+                className="h-8 text-xs font-mono pr-8"
+              />
+              <span className="absolute right-2.5 top-2 text-xs font-mono text-muted-foreground pointer-events-none">
+                x
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 pt-1">
+          <Button size="sm" onClick={handleApply} className="flex-1 h-8 text-xs">
+            Apply Simulation
+          </Button>
+          {isSimulated && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                resetSimulation()
+                setOpen(false)
+              }}
+              className="h-8 text-xs text-destructive hover:text-destructive"
+            >
+              Reset
+            </Button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
