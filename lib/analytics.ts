@@ -341,6 +341,39 @@ export function monthlyStats(trades: Trade[], breakevenTickets: Set<number> = ne
   return list
 }
 
+export function weeklyStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): MonthlyStat[] {
+  const map = new Map<string, MonthlyStat>()
+  for (const t of trades) {
+    const d = t.closeTime
+    if (Number.isNaN(d.getTime())) continue
+    
+    // Calculate Monday of the week
+    const date = new Date(d)
+    const day = date.getDay()
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1)
+    const monday = new Date(date.setDate(diff))
+    
+    const year = monday.getFullYear()
+    const monthStr = String(monday.getMonth() + 1).padStart(2, "0")
+    const dayStr = String(monday.getDate()).padStart(2, "0")
+    const key = `${year}-${monthStr}-${dayStr}`
+    const label = `${monday.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+    
+    const cur = map.get(key) ?? { key, label, profit: 0, trades: 0, wins: 0, losses: 0, winRate: 0 }
+    cur.profit += t.profit + t.commission + t.swap
+    cur.trades += 1
+    if (isWin(t, breakevenTickets)) cur.wins += 1
+    else if (isLoss(t, breakevenTickets)) cur.losses += 1
+    map.set(key, cur)
+  }
+  const list = Array.from(map.values()).sort((a, b) => (a.key < b.key ? -1 : 1))
+  for (const w of list) {
+    const nonBE = w.wins + w.losses
+    w.winRate = nonBE ? w.wins / nonBE : 0
+  }
+  return list
+}
+
 export function symbolStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): SymbolStat[] {
   const map = new Map<string, SymbolStat>()
   for (const t of trades) {

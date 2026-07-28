@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useStatement } from "@/lib/store"
 import {
   buildEquityCurve,
@@ -10,6 +10,7 @@ import {
   formatCurrency,
   formatPct,
   monthlyStats,
+  weeklyStats,
   typeStats,
 } from "@/lib/analytics"
 import { KpiCard } from "@/components/kpi-card"
@@ -52,11 +53,30 @@ export function OverviewTab() {
 
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
 
+  const [plTimeframe, setPlTimeframe] = useState<"monthly" | "weekly" | "daily">("monthly")
+
   const kpi = useMemo(() => computeKPI(statement, breakevenSet), [statement, breakevenSet])
   const equity = useMemo(() => buildEquityCurve(statement), [statement])
   const months = useMemo(() => monthlyStats(statement.trades, breakevenSet), [statement, breakevenSet])
+  const weeks = useMemo(() => weeklyStats(statement.trades, breakevenSet), [statement, breakevenSet])
   const types = useMemo(() => typeStats(statement.trades, breakevenSet), [statement, breakevenSet])
   const days = useMemo(() => dailyStats(statement.trades, breakevenSet), [statement, breakevenSet])
+
+  const periodicData = useMemo(() => {
+    if (plTimeframe === "weekly") return weeks
+    if (plTimeframe === "daily") {
+      return days.map((d) => ({
+        key: d.date,
+        label: d.date.slice(5), // e.g. '07-23'
+        profit: d.profit,
+        trades: d.trades,
+        wins: d.wins,
+        losses: d.losses,
+        winRate: d.wins + d.losses > 0 ? d.wins / (d.wins + d.losses) : 0,
+      }))
+    }
+    return months
+  }, [plTimeframe, months, weeks, days])
 
   const equityData = equity.map((p, i) => ({
     i,
@@ -268,22 +288,43 @@ export function OverviewTab() {
         </div>
       </div>
 
-      {/* Monthly bar + best/worst */}
+      {/* Periodic P/L bar + best/worst */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <div className="overflow-hidden rounded-xl border border-border bg-card xl:col-span-2">
-          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <div>
-              <div className="text-sm font-medium">Monthly P/L</div>
-              <div className="text-xs text-muted-foreground">{months.length} months of activity</div>
+              <div className="text-sm font-medium">
+                {plTimeframe === "monthly" ? "Monthly" : plTimeframe === "weekly" ? "Weekly" : "Daily"} P/L
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {periodicData.length} {plTimeframe} periods of activity
+              </div>
             </div>
             <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+              <div className="flex items-center rounded-lg border border-border bg-secondary p-0.5 font-mono text-xs">
+                {(["monthly", "weekly", "daily"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setPlTimeframe(t)}
+                    className={cn(
+                      "px-2 py-0.5 rounded-md capitalize transition-colors",
+                      plTimeframe === t
+                        ? "bg-background text-foreground shadow-sm font-semibold"
+                        : "hover:text-foreground text-muted-foreground",
+                    )}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
               <Legend dot="bg-primary" label="Profit" />
               <Legend dot="bg-destructive" label="Loss" />
             </div>
           </div>
           <div className="h-72 w-full p-2">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={months} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+              <BarChart data={periodicData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="label" stroke="var(--muted-foreground)" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
                 <YAxis
@@ -296,7 +337,7 @@ export function OverviewTab() {
                 />
                 <Tooltip content={<GenericTooltip currency={currency} />} cursor={{ fill: "var(--secondary)", opacity: 0.4 }} />
                 <Bar dataKey="profit" radius={[4, 4, 0, 0]}>
-                  {months.map((m, i) => (
+                  {periodicData.map((m, i) => (
                     <Cell key={i} fill={m.profit >= 0 ? "var(--primary)" : "var(--destructive)"} />
                   ))}
                 </Bar>
