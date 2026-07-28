@@ -19,8 +19,15 @@ import {
   Upload,
   Zap,
   Wallet,
+  ChevronDown,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { OverviewTab } from "@/components/tabs/overview-tab"
 import { TradesTab } from "@/components/tabs/trades-tab"
 import { CalendarTab } from "@/components/tabs/calendar-tab"
@@ -60,7 +67,7 @@ export function DashboardShell() {
 
   const profitColor =
     kpi.netProfit > 0 ? "text-primary" : kpi.netProfit < 0 ? "text-destructive" : "text-muted-foreground"
-  const canConvertUsdToPln = statement.account.currency.toUpperCase() === "USD"
+  const canConvertCurrency = statement && statement.account.currency !== "—"
   const isMt5 = statement.account.title?.startsWith("MT5")
 
   return (
@@ -115,11 +122,23 @@ export function DashboardShell() {
               <RefreshCw className="h-3.5 w-3.5 sm:mr-2" /> 
               <span className="hidden sm:inline">Reload demo</span>
             </Button>
-            {canConvertUsdToPln && (
-              <Button size="sm" variant="outline" onClick={convertUsdToPln} disabled={converting} className="px-2 sm:px-3">
-                <span className="hidden sm:inline">{converting ? "Converting..." : "Convert USD -> PLN"}</span>
-                <span className="sm:hidden">{converting ? "..." : "PLN"}</span>
-              </Button>
+            {canConvertCurrency && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" disabled={converting} className="px-2 sm:px-3">
+                    <span className="hidden sm:inline">{converting ? "Converting..." : "Convert Currency"}</span>
+                    <span className="sm:hidden">{converting ? "..." : "$->"}</span>
+                    <ChevronDown className="ml-2 h-3.5 w-3.5 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {["USD", "EUR", "GBP", "AUD", "CAD", "PLN", "JPY", "CHF"].map(c => (
+                    <DropdownMenuItem key={c} onClick={() => convertCurrency(c)} disabled={statement.account.currency.toUpperCase() === c}>
+                      Convert to {c}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             <Button size="sm" variant="secondary" onClick={clear} className="px-2 sm:px-3">
               <Upload className="h-3.5 w-3.5 sm:mr-2" /> 

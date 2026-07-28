@@ -108,7 +108,7 @@ interface StatementContextValue {
   loadFromHtml: (html: string) => void
   loadFromMt5: (days?: number) => Promise<void>
   loadDemo: () => Promise<void>
-  convertUsdToPln: () => Promise<void>
+  convertCurrency: (targetCurrency: string) => Promise<void>
   clear: () => void
   setAutoBurstMerge: (enabled: boolean) => void
   setMergeToleranceSec: (seconds: number) => void
@@ -312,22 +312,24 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const convertUsdToPln = useCallback(async () => {
-    if (!meta || meta.account.currency.toUpperCase() !== "USD") return
+  const convertCurrency = useCallback(async (targetCurrency: string) => {
+    if (!meta || meta.account.currency.toUpperCase() === targetCurrency) return
+
+    const base = meta.account.currency.toUpperCase()
 
     setConverting(true)
     setError(null)
 
     try {
-      const res = await fetch("https://api.nbp.pl/api/exchangerates/rates/A/USD/?format=json", {
+      const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${base}`, {
         cache: "no-store",
       })
-      if (!res.ok) throw new Error("Failed to fetch USD/PLN exchange rate.")
+      if (!res.ok) throw new Error(`Failed to fetch ${base} exchange rates.`)
 
-      const payload = (await res.json()) as { rates?: Array<{ mid?: number }> }
-      const rate = payload.rates?.[0]?.mid
+      const payload = await res.json()
+      const rate = payload.rates?.[targetCurrency]
       if (!rate || !Number.isFinite(rate) || rate <= 0) {
-        throw new Error("Received invalid USD/PLN exchange rate.")
+        throw new Error(`Received invalid ${base}/${targetCurrency} exchange rate.`)
       }
 
       const scaledTrades = sourceTrades.map((t) => ({
@@ -340,16 +342,14 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
 
       const nextMeta: StatementMeta = {
         ...meta,
-        account: { ...meta.account, currency: "PLN" },
+        account: { ...meta.account, currency: targetCurrency },
         initialDeposit: meta.initialDeposit * rate,
         summary: meta.summary
           ? {
-              closedPL:
-                typeof meta.summary.closedPL === "number" ? meta.summary.closedPL * rate : undefined,
+              closedPL: typeof meta.summary.closedPL === "number" ? meta.summary.closedPL * rate : undefined,
               balance: typeof meta.summary.balance === "number" ? meta.summary.balance * rate : undefined,
               equity: typeof meta.summary.equity === "number" ? meta.summary.equity * rate : undefined,
-              freeMargin:
-                typeof meta.summary.freeMargin === "number" ? meta.summary.freeMargin * rate : undefined,
+              freeMargin: typeof meta.summary.freeMargin === "number" ? meta.summary.freeMargin * rate : undefined,
             }
           : undefined,
         balanceEntries: meta.balanceEntries.map((b) => ({
@@ -362,7 +362,7 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       setSourceTrades(scaledTrades)
       persist(nextMeta, scaledTrades, mergeSettings, breakevenTickets, lifestyleConfig)
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to convert USD to PLN.")
+      setError(e instanceof Error ? e.message : `Failed to convert to ${targetCurrency}.`)
     } finally {
       setConverting(false)
     }
