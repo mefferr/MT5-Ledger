@@ -93,7 +93,7 @@ If you don't have Python or MT5 installed, the script will gracefully complain a
 
 ## The GOYA Framework (Get Off Your Ass)
 
-P&L is a degenerate metric. It conflates execution quality with leverage exposure, producing a number that tells you almost nothing about whether your process is actually extractable. A trader netting $5,000 on a 3-pip scalp at 100 lots has demonstrated zero edge — they've simply borrowed variance from a fat tail they don't understand. A trader netting $40 on 400 pips at 0.01 lots has demonstrated a repeatable, distributional edge that scales linearly with capital.
+P&L is a degenerate metric. It conflates execution quality with leverage exposure, producing a number that tells you almost nothing about whether your process is actually extractable. A trader netting $5,000 on a 3-pip scalp at 100 lots has demonstrated zero edge — they've simply borrowed variance from a fat tail they don't understand. A trader netting $100 on 1000 pips at 0.01 lots has demonstrated a repeatable, distributional edge that scales linearly with capital.
 
 The GOYA engine in this dashboard strips the dollar signs and evaluates what actually matters: **raw pip extraction, risk geometry, and behavioral discipline.**
 
