@@ -954,7 +954,7 @@ export function Mt5Tab() {
               <Input value={autoBeThreshold} onChange={(e) => setAutoBeThreshold(e.target.value)} className="font-mono text-center sm:text-left" placeholder="200" disabled={autoBeEnabled} />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs uppercase text-profit font-bold">Target SL (Pips from VWAP)</Label>
+              <Label className="text-xs uppercase text-profit font-bold">Target SL (Pips from Entry)</Label>
               <Input value={autoBeSl} onChange={(e) => setAutoBeSl(e.target.value)} className="font-mono text-center sm:text-left text-profit border-profit/30" placeholder="0.1" disabled={autoBeEnabled} />
             </div>
           </div>

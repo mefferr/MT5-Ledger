@@ -89,15 +89,15 @@ async def auto_be_sentinel():
                     dist_pips = (vwap - current_price) / (10 * point)
 
                 if dist_pips >= threshold_pips:
-                    # Target SL
-                    if net_direction == "buy":
-                        target_sl = vwap + sl_pips * 10 * point
-                    else:
-                        target_sl = vwap - sl_pips * 10 * point
-                    
-                    target_sl = round(target_sl, digits)
-
                     for p in positions:
+                        # Target SL based on individual entry price
+                        if p.type == mt5.POSITION_TYPE_BUY:
+                            target_sl = p.price_open + sl_pips * 10 * point
+                        else:
+                            target_sl = p.price_open - sl_pips * 10 * point
+                            
+                        target_sl = round(target_sl, digits)
+
                         # Only modify if SL is not already exactly the target
                         if abs(p.sl - target_sl) > (point / 2):
                             req = {
