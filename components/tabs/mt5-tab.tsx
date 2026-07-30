@@ -320,8 +320,9 @@ export function Mt5Tab() {
     fetchState()
   }
 
+  const parseNum = (val: string) => parseFloat(val.replace(',', '.'))
+  
   const openBatch = async () => {
-    const parseNum = (val: string) => parseFloat(val.replace(',', '.'))
     const lots = parseNum(openLots)
     const count = parseInt(openCount)
     const delay = parseInt(openDelay)
