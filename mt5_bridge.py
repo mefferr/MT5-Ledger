@@ -6,6 +6,8 @@ for a Next.js web frontend.
 
 import logging
 import asyncio
+import os
+import subprocess
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -91,6 +93,9 @@ app.add_middleware(
 # Pydantic models
 # ---------------------------------------------------------------------------
 
+class ConnectRequest(BaseModel):
+    path: str
+
 class ModifyRequest(BaseModel):
     ticket: int
     symbol: str
@@ -130,6 +135,50 @@ def _require_mt5():
 def _ts_to_iso(ts) -> str:
     """Convert a UNIX timestamp (int/float) to an ISO-8601 string (UTC, no tz suffix)."""
     return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+
+
+# ---------------------------------------------------------------------------
+# GET /clients
+# ---------------------------------------------------------------------------
+
+@app.get("/clients")
+def get_clients():
+    try:
+        result = subprocess.run(
+            ["powershell", "-Command", "Get-Process terminal64 | Select-Object -ExpandProperty Path"],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        paths = result.stdout.strip().split("\n")
+        clients = []
+        for path in paths:
+            path = path.strip()
+            if path:
+                name = os.path.basename(os.path.dirname(path))
+                clients.append({"name": name, "path": path})
+        return {"clients": clients}
+    except Exception as e:
+        logger.error(f"Failed to fetch clients: {e}")
+        return {"clients": []}
+
+
+# ---------------------------------------------------------------------------
+# POST /connect
+# ---------------------------------------------------------------------------
+
+@app.post("/connect")
+def connect_client(req: ConnectRequest):
+    global mt5_connected
+    logger.info(f"Switching MT5 client to {req.path}")
+    mt5.shutdown()
+    if mt5.initialize(path=req.path):
+        mt5_connected = True
+        info = mt5.account_info()
+        return {"success": True, "login": info.login if info else None, "server": info.server if info else None}
+    else:
+        mt5_connected = False
+        raise HTTPException(500, f"Failed to connect to MT5 at {req.path}")
 
 
 # ---------------------------------------------------------------------------

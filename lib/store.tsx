@@ -94,6 +94,11 @@ export interface MergeStats {
   manualGroupCount: number
 }
 
+export interface Mt5Client {
+  name: string
+  path: string
+}
+
 interface StatementContextValue {
   statement: ParsedStatement | null
   sourceTrades: Trade[]
@@ -118,6 +123,10 @@ interface StatementContextValue {
   resetMerges: () => void
   lifestyleConfig: LifestyleConfig
   updateLifestyleConfig: (config: LifestyleConfig) => void
+  mt5Clients: Mt5Client[]
+  currentMt5Client: Mt5Client | null
+  fetchMt5Clients: () => Promise<void>
+  switchMt5Client: (client: Mt5Client) => Promise<void>
 }
 
 const Ctx = createContext<StatementContextValue | null>(null)
@@ -149,6 +158,9 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [breakevenTickets, setBreakevenTickets] = useState<number[]>([])
   const [lifestyleConfig, setLifestyleConfig] = useState<LifestyleConfig>(DEFAULT_LIFESTYLE_CONFIG)
+
+  const [mt5Clients, setMt5Clients] = useState<Mt5Client[]>([])
+  const [currentMt5Client, setCurrentMt5Client] = useState<Mt5Client | null>(null)
 
   const statement = useMemo<ParsedStatement | null>(() => {
     if (!meta) return null
@@ -491,6 +503,37 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     if (meta) persist(meta, sourceTrades, mergeSettings, [], lifestyleConfig)
   }, [meta, sourceTrades, mergeSettings, lifestyleConfig])
 
+  const fetchMt5Clients = useCallback(async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/clients")
+      if (res.ok) {
+        const json = await res.json()
+        setMt5Clients(json.clients || [])
+      }
+    } catch {
+      // Bridge might be down
+      setMt5Clients([])
+    }
+  }, [])
+
+  const switchMt5Client = useCallback(async (client: Mt5Client) => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: client.path }),
+      })
+      if (res.ok) {
+        setCurrentMt5Client(client)
+        await loadFromMt5(30)
+      } else {
+        throw new Error("Failed to switch MT5 client")
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Connection failed")
+    }
+  }, [loadFromMt5])
+
   const value = useMemo(
     () => ({
       statement,
@@ -516,6 +559,10 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       resetMerges,
       lifestyleConfig,
       updateLifestyleConfig,
+      mt5Clients,
+      currentMt5Client,
+      fetchMt5Clients,
+      switchMt5Client,
     }),
     [
       statement,
@@ -541,6 +588,10 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       resetMerges,
       lifestyleConfig,
       updateLifestyleConfig,
+      mt5Clients,
+      currentMt5Client,
+      fetchMt5Clients,
+      switchMt5Client,
     ],
   )
 
