@@ -412,7 +412,7 @@ export function Mt5Tab() {
         }
       }
     } else {
-      for (let i = 0; i < count; i++) ordersToPlace.push({ price: 0, volume: baseLots })
+      for (let i = 0; i < count; i++) ordersToPlace.push({ price: 0, volume: baseLots * Math.pow(mult, i) })
     }
 
     setProgress({ current: 0, total: ordersToPlace.length, success: 0, fail: 0 })
