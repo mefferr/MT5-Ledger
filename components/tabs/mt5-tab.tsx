@@ -321,12 +321,13 @@ export function Mt5Tab() {
   }
 
   const openBatch = async () => {
-    const lots = parseFloat(openLots)
+    const parseNum = (val: string) => parseFloat(val.replace(',', '.'))
+    const lots = parseNum(openLots)
     const count = parseInt(openCount)
     const delay = parseInt(openDelay)
-    const price = parseFloat(openPrice)
-    const layerStep = parseFloat(openLayerStep) || 0
-    const layerMult = parseFloat(openLayerMult) || 1.0
+    const price = parseNum(openPrice)
+    const layerStep = parseNum(openLayerStep) || 0
+    const layerMult = parseNum(openLayerMult) || 1.0
     
     if (!openSymbol) return toast.error("Symbol required")
     if (isNaN(lots) || lots <= 0) return toast.error("Invalid lot size")
@@ -420,19 +421,19 @@ export function Mt5Tab() {
 
       if (finalExecType === "limit") {
         if (openLimitMode === "price") {
-          finalSl = openLimitSl ? parseFloat(openLimitSl) : undefined
-          finalTp = openLimitTp ? parseFloat(openLimitTp) : undefined
+          finalSl = openLimitSl ? parseNum(openLimitSl) : undefined
+          finalTp = openLimitTp ? parseNum(openLimitTp) : undefined
         } else if (openLimitMode === "pips") {
           const pipsToPrice = (pips: number) => pips * 10 * point
           // The base price for SL/TP is the execution price of this specific layer
           const layerBasePrice = finalPrice > 0 ? finalPrice : baseMarketPrice
           
           if (openDir === "buy") {
-            if (openLimitSl) finalSl = Number((layerBasePrice - pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
-            if (openLimitTp) finalTp = Number((layerBasePrice + pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
+            if (openLimitSl) finalSl = Number((layerBasePrice - pipsToPrice(parseNum(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((layerBasePrice + pipsToPrice(parseNum(openLimitTp))).toFixed(digits))
           } else {
-            if (openLimitSl) finalSl = Number((layerBasePrice + pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
-            if (openLimitTp) finalTp = Number((layerBasePrice - pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
+            if (openLimitSl) finalSl = Number((layerBasePrice + pipsToPrice(parseNum(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((layerBasePrice - pipsToPrice(parseNum(openLimitTp))).toFixed(digits))
           }
         }
       }
@@ -854,10 +855,10 @@ export function Mt5Tab() {
                         )}
                       </>
                     )}
-                    {(parseFloat(openLayerStep) > 0) && (
+                    {(parseNum(openLayerStep) > 0) && (
                       <div className="flex justify-between text-accent"><span>Smart Layering:</span> <span>{openLayerStep} pips @ {openLayerMult}x</span></div>
                     )}
-                    <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseFloat(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
+                    <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseNum(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
                     <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{openDelay}ms</span></div>
                   </div>
                 </AlertDialogHeader>
