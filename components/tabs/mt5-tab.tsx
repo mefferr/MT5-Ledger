@@ -108,14 +108,8 @@ export function Mt5Tab() {
   const [openLots, setOpenLots] = useState("0.01")
   const [openCount, setOpenCount] = useState("1")
   const [openDelay, setOpenDelay] = useState("300")
-  
-  // Smart Layering State
-  const [layerMode, setLayerMode] = useState<"single" | "stack" | "interval" | "range">("single")
-  const [stackPrices, setStackPrices] = useState("")
-  const [intervalPips, setIntervalPips] = useState("10")
-  const [rangeEnd, setRangeEnd] = useState("")
-  const [lotMultiplier, setLotMultiplier] = useState("1.0")
-  const [scaleMode, setScaleMode] = useState<"lots" | "distance">("lots")
+  const [openLayerStep, setOpenLayerStep] = useState("0")
+  const [openLayerMult, setOpenLayerMult] = useState("1.0")
   
   // Table filters
   const [entryFilter1, setEntryFilter1] = useState("")
@@ -327,132 +321,135 @@ export function Mt5Tab() {
   }
 
   const openBatch = async () => {
-    const baseLots = parseFloat(openLots)
+    const lots = parseFloat(openLots)
     const count = parseInt(openCount)
     const delay = parseInt(openDelay)
     const price = parseFloat(openPrice)
-    const mult = parseFloat(lotMultiplier) || 1.0
+    const layerStep = parseFloat(openLayerStep) || 0
+    const layerMult = parseFloat(openLayerMult) || 1.0
     
     if (!openSymbol) return toast.error("Symbol required")
-    if (isNaN(baseLots) || baseLots <= 0) return toast.error("Invalid lot size")
-    if (openExecType === "market" && (isNaN(count) || count <= 0)) return toast.error("Invalid count")
+    if (isNaN(lots) || lots <= 0) return toast.error("Invalid lot size")
+    if (isNaN(count) || count <= 0) return toast.error("Invalid count")
     if (isNaN(delay) || delay < 0) return toast.error("Invalid delay")
+    if (openExecType === "limit" && (isNaN(price) || price <= 0)) return toast.error("Invalid limit price")
 
     setIsRunning(true)
+    setProgress({ current: 0, total: count, success: 0, fail: 0 })
     abortController.current = new AbortController()
     const signal = abortController.current.signal
 
+    let successCount = 0
+    let failCount = 0
+
+    let baseMarketPrice = 0
+    try {
+      if (openExecType === "market") {
+        const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, { headers: { "ngrok-skip-browser-warning": "true" } })
+        if (symRes.ok) {
+          const symInfo = await symRes.json()
+          baseMarketPrice = openDir === "buy" ? symInfo.ask : symInfo.bid
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch initial market price", e)
+    }
+
     let point = 0.01
     let digits = 2
-    if (openExecType === "limit") {
+    if (openExecType === "limit" && openLimitMode === "pips" && (openLimitSl || openLimitTp)) {
       try {
-        const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, { headers: { "ngrok-skip-browser-warning": "true" } })
+        const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, {
+          headers: { "ngrok-skip-browser-warning": "true" }
+        })
         if (symRes.ok) {
           const symInfo = await symRes.json()
           point = symInfo.point
           digits = symInfo.digits
         }
       } catch (e) {
-        console.error("Failed to fetch symbol info", e)
+        console.error("Failed to fetch symbol info, using defaults", e)
       }
     }
 
-    let ordersToPlace: { price: number; volume: number }[] = []
-    if (openExecType === "limit") {
-      if (layerMode === "single") {
-        if (isNaN(price) || price <= 0) { setIsRunning(false); return toast.error("Invalid limit price") }
-        for (let i = 0; i < count; i++) ordersToPlace.push({ price, volume: baseLots * Math.pow(mult, i) })
-      } else if (layerMode === "stack") {
-        const prices = stackPrices.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n > 0)
-        if (prices.length === 0) { setIsRunning(false); return toast.error("No valid prices in stack") }
-        prices.forEach((p, i) => ordersToPlace.push({ price: p, volume: baseLots * Math.pow(mult, i) }))
-      } else if (layerMode === "interval") {
-        if (isNaN(price) || price <= 0) { setIsRunning(false); return toast.error("Invalid start price") }
-        const pips = parseFloat(intervalPips)
-        if (isNaN(pips)) { setIsRunning(false); return toast.error("Invalid pip interval") }
-        const pipsToPrice = pips * 10 * point
-        for (let i = 0; i < count; i++) {
-          const offset = openDir === "buy" ? -(i * pipsToPrice) : i * pipsToPrice
-          ordersToPlace.push({ price: price + offset, volume: baseLots * Math.pow(mult, i) })
-        }
-      } else if (layerMode === "range") {
-        const start = parseFloat(openPrice)
-        const end = parseFloat(rangeEnd)
-        if (isNaN(start) || start <= 0) { setIsRunning(false); return toast.error("Invalid start price") }
-        if (isNaN(end) || end <= 0) { setIsRunning(false); return toast.error("Invalid end price") }
-        if (count === 1) {
-          ordersToPlace.push({ price: start, volume: baseLots })
-        } else {
-          const step = (end - start) / (count - 1)
-          for (let i = 0; i < count; i++) {
-            ordersToPlace.push({ price: start + i * step, volume: baseLots * Math.pow(mult, i) })
-          }
-        }
-      }
-
-      if (scaleMode === "distance" && mult !== 1.0 && ordersToPlace.length > 0) {
-        const originalOrders = [...ordersToPlace]
-        let currentTotalLots = 0
-        let currentTotalValue = 0
-        const targetAverages: number[] = []
-        for (let i = 0; i < originalOrders.length; i++) {
-          currentTotalLots += originalOrders[i].volume
-          currentTotalValue += originalOrders[i].price * originalOrders[i].volume
-          targetAverages.push(currentTotalValue / currentTotalLots)
-        }
-        
-        ordersToPlace = []
-        ordersToPlace.push({ price: originalOrders[0].price, volume: baseLots })
-        for (let i = 1; i < originalOrders.length; i++) {
-          const n = i
-          const avg_n = targetAverages[i - 1]
-          const avg_n1 = targetAverages[i]
-          const newPrice = (n + 1) * avg_n1 - n * avg_n
-          ordersToPlace.push({ price: newPrice, volume: baseLots })
-        }
-      }
-    } else {
-      for (let i = 0; i < count; i++) ordersToPlace.push({ price: 0, volume: baseLots * Math.pow(mult, i) })
-    }
-
-    setProgress({ current: 0, total: ordersToPlace.length, success: 0, fail: 0 })
-    let successCount = 0
-    let failCount = 0
-
-    for (let i = 0; i < ordersToPlace.length; i++) {
+    for (let i = 0; i < count; i++) {
       if (signal.aborted) break
       
-      const order = ordersToPlace[i]
       let finalSl = undefined
       let finalTp = undefined
-      // volume must be rounded to 2 decimal places to avoid MT5 error 10014 (invalid volume)
-      const finalVol = Math.round(order.volume * 100) / 100
       
-      if (openExecType === "limit") {
+      let finalExecType = openExecType
+      let finalPrice = price
+
+      // Smart Layering Math
+      let pipOffset = 0
+      if (layerStep > 0 && i > 0) {
+        // Calculate smart pip offset
+        let sumWeights = 0
+        let sumWeightedPips = 0
+        for (let j = 0; j <= i; j++) {
+          const weight = Math.pow(layerMult, j)
+          sumWeights += weight
+          sumWeightedPips += weight * j * layerStep
+        }
+        const avgPip_i = sumWeightedPips / sumWeights
+        
+        let sumWeightsPrev = 0
+        let sumWeightedPipsPrev = 0
+        for (let j = 0; j <= i - 1; j++) {
+          const weight = Math.pow(layerMult, j)
+          sumWeightsPrev += weight
+          sumWeightedPipsPrev += weight * j * layerStep
+        }
+        const avgPip_prev = sumWeightedPipsPrev / sumWeightsPrev
+
+        pipOffset = (i + 1) * avgPip_i - i * avgPip_prev
+      }
+
+      if (pipOffset > 0) {
+        finalExecType = "limit"
+        const pipsToPrice = (pips: number) => pips * 10 * point
+        const baseExecPrice = openExecType === "market" ? baseMarketPrice : price
+        
+        if (openDir === "buy") {
+          finalPrice = Number((baseExecPrice - pipsToPrice(pipOffset)).toFixed(digits))
+        } else {
+          finalPrice = Number((baseExecPrice + pipsToPrice(pipOffset)).toFixed(digits))
+        }
+      }
+
+      if (finalExecType === "limit") {
         if (openLimitMode === "price") {
           finalSl = openLimitSl ? parseFloat(openLimitSl) : undefined
           finalTp = openLimitTp ? parseFloat(openLimitTp) : undefined
         } else if (openLimitMode === "pips") {
           const pipsToPrice = (pips: number) => pips * 10 * point
+          // The base price for SL/TP is the execution price of this specific layer
+          const layerBasePrice = finalPrice > 0 ? finalPrice : baseMarketPrice
+          
           if (openDir === "buy") {
-            if (openLimitSl) finalSl = Number((order.price - pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
-            if (openLimitTp) finalTp = Number((order.price + pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
+            if (openLimitSl) finalSl = Number((layerBasePrice - pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((layerBasePrice + pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
           } else {
-            if (openLimitSl) finalSl = Number((order.price + pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
-            if (openLimitTp) finalTp = Number((order.price - pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
+            if (openLimitSl) finalSl = Number((layerBasePrice + pipsToPrice(parseFloat(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((layerBasePrice - pipsToPrice(parseFloat(openLimitTp))).toFixed(digits))
           }
         }
       }
       
       try {
+        const payloadType = finalExecType === "market" ? openDir : `${openDir}_limit`
         const res = await fetch("/api/mt5/open", {
           method: "POST",
-          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          headers: { 
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true"
+          },
           body: JSON.stringify({ 
             symbol: openSymbol, 
-            type: openExecType === "market" ? openDir : `${openDir}_limit`, 
-            volume: finalVol,
-            price: openExecType === "limit" ? Number(order.price.toFixed(digits)) : undefined,
+            type: payloadType,
+            volume: lots,
+            price: finalExecType === "limit" ? finalPrice : undefined,
             sl: finalSl,
             tp: finalTp
           }),
@@ -463,8 +460,11 @@ export function Mt5Tab() {
           successCount++
         } else {
           failCount++
-          if (data.retcode === 10018) toast.error("Market is closed!")
-          else toast.error(`Order failed: ${data.comment || data.retcode || 'Unknown error'}`)
+          if (data.retcode === 10018) {
+            toast.error("Market is closed!")
+          } else {
+            toast.error(`Order failed: ${data.comment || data.retcode || 'Unknown error'}`)
+          }
           if (abortController.current) abortController.current.abort()
         }
       } catch (e: any) {
@@ -475,8 +475,8 @@ export function Mt5Tab() {
         }
       }
       
-      setProgress({ current: i + 1, total: ordersToPlace.length, success: successCount, fail: failCount })
-      if (i < ordersToPlace.length - 1 && !signal.aborted) {
+      setProgress({ current: i + 1, total: count, success: successCount, fail: failCount })
+      if (i < count - 1 && !signal.aborted) {
         await new Promise(r => setTimeout(r, delay))
       }
     }
@@ -765,58 +765,37 @@ export function Mt5Tab() {
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               {openExecType === "limit" && (
-                <div className="col-span-1 sm:col-span-4 p-4 border border-primary/30 bg-primary/5 rounded-lg space-y-5 shadow-inner">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 border-b border-border/50 pb-3">
-                    <Label className="text-xs uppercase text-primary font-bold tracking-widest shrink-0">Layering Mode</Label>
-                    <RadioGroup value={layerMode} onValueChange={(v: any) => setLayerMode(v)} className="flex flex-wrap items-center gap-4">
-                      <div className="flex items-center space-x-1.5"><RadioGroupItem value="single" id="lm-single" className="w-3.5 h-3.5" /><Label htmlFor="lm-single" className="text-[11px] font-semibold cursor-pointer uppercase">Single</Label></div>
-                      <div className="flex items-center space-x-1.5"><RadioGroupItem value="stack" id="lm-stack" className="w-3.5 h-3.5" /><Label htmlFor="lm-stack" className="text-[11px] font-semibold cursor-pointer uppercase">Fibo Stack</Label></div>
-                      <div className="flex items-center space-x-1.5"><RadioGroupItem value="interval" id="lm-interval" className="w-3.5 h-3.5" /><Label htmlFor="lm-interval" className="text-[11px] font-semibold cursor-pointer uppercase">Interval</Label></div>
-                      <div className="flex items-center space-x-1.5"><RadioGroupItem value="range" id="lm-range" className="w-3.5 h-3.5" /><Label htmlFor="lm-range" className="text-[11px] font-semibold cursor-pointer uppercase">Range Spaced</Label></div>
-                    </RadioGroup>
+                <>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase text-primary font-bold">Limit Price</Label>
+                    <Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono text-center sm:text-left border-primary" placeholder="0.0000" />
                   </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                     {layerMode === "single" && (
-                       <div className="space-y-2"><Label className="text-xs uppercase text-primary font-bold">Limit Price</Label><Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono border-primary shadow-sm" placeholder="0.0000" /></div>
-                     )}
-                     {layerMode === "stack" && (
-                       <div className="space-y-2 col-span-1 sm:col-span-3"><Label className="text-xs uppercase text-primary font-bold">Price Stack (Comma Separated)</Label><Input value={stackPrices} onChange={(e) => setStackPrices(e.target.value)} className="font-mono border-primary shadow-sm" placeholder="2000.50, 2005.10, 2010" /></div>
-                     )}
-                     {layerMode === "interval" && (
-                       <>
-                         <div className="space-y-2"><Label className="text-xs uppercase text-primary font-bold">Start Price</Label><Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono border-primary shadow-sm" placeholder="0.0000" /></div>
-                         <div className="space-y-2"><Label className="text-xs uppercase text-primary font-bold">Pip Interval</Label><Input value={intervalPips} onChange={(e) => setIntervalPips(e.target.value)} className="font-mono border-primary shadow-sm" placeholder="10" /></div>
-                       </>
-                     )}
-                     {layerMode === "range" && (
-                       <>
-                         <div className="space-y-2"><Label className="text-xs uppercase text-primary font-bold">Start Price</Label><Input value={openPrice} onChange={(e) => setOpenPrice(e.target.value)} className="font-mono border-primary shadow-sm" placeholder="0.0000" /></div>
-                         <div className="space-y-2"><Label className="text-xs uppercase text-primary font-bold">End Price</Label><Input value={rangeEnd} onChange={(e) => setRangeEnd(e.target.value)} className="font-mono border-primary shadow-sm" placeholder="0.0000" /></div>
-                       </>
-                     )}
-                  </div>
-                  
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-center gap-4">
-                      <Label className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Stops Mode</Label>
-                      <RadioGroup value={openLimitMode} onValueChange={(v: any) => setOpenLimitMode(v)} className="flex h-5 items-center gap-4">
-                        <div className="flex items-center space-x-1.5"><RadioGroupItem value="pips" id="olm-pips" className="w-3 h-3" /><Label htmlFor="olm-pips" className="text-[10px] uppercase cursor-pointer">Pips (Relative)</Label></div>
-                        <div className="flex items-center space-x-1.5"><RadioGroupItem value="price" id="olm-price" className="w-3 h-3" /><Label htmlFor="olm-price" className="text-[10px] uppercase cursor-pointer">Price (Absolute)</Label></div>
+                  <div className="space-y-2 col-span-1 sm:col-span-3">
+                    <div className="flex items-center gap-4 mb-2">
+                      <Label className="text-xs uppercase text-muted-foreground font-semibold">Stops Mode</Label>
+                      <RadioGroup value={openLimitMode} onValueChange={(v: any) => setOpenLimitMode(v)} className="flex h-5 items-center gap-3">
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="pips" id="olm-pips" className="w-3 h-3" />
+                          <Label htmlFor="olm-pips" className="text-[10px] uppercase cursor-pointer">Pips</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="price" id="olm-price" className="w-3 h-3" />
+                          <Label htmlFor="olm-price" className="text-[10px] uppercase cursor-pointer">Price</Label>
+                        </div>
                       </RadioGroup>
                     </div>
                     <div className="flex gap-4">
                       <div className="space-y-2 w-full">
                         <Label className="text-xs uppercase text-destructive font-bold">Limit SL {openLimitMode === "pips" ? "(pips)" : ""}</Label>
-                        <Input value={openLimitSl} onChange={(e) => setOpenLimitSl(e.target.value)} className="font-mono text-center sm:text-left border-destructive/50 focus-visible:ring-destructive shadow-sm" placeholder="Optional" />
+                        <Input value={openLimitSl} onChange={(e) => setOpenLimitSl(e.target.value)} className="font-mono text-center sm:text-left border-destructive" placeholder="Optional" />
                       </div>
                       <div className="space-y-2 w-full">
                         <Label className="text-xs uppercase text-profit font-bold">Limit TP {openLimitMode === "pips" ? "(pips)" : ""}</Label>
-                        <Input value={openLimitTp} onChange={(e) => setOpenLimitTp(e.target.value)} className="font-mono text-center sm:text-left border-profit/50 focus-visible:ring-profit shadow-sm" placeholder="Optional" />
+                        <Input value={openLimitTp} onChange={(e) => setOpenLimitTp(e.target.value)} className="font-mono text-center sm:text-left border-profit" placeholder="Optional" />
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               )}
               <div className="space-y-2">
                 <Label className="text-xs uppercase text-muted-foreground">Lots</Label>
@@ -826,26 +805,31 @@ export function Mt5Tab() {
                 <Label className="text-xs uppercase text-muted-foreground">Count</Label>
                 <Input value={openCount} onChange={(e) => setOpenCount(e.target.value)} className="font-mono text-center sm:text-left" />
               </div>
-              {openExecType === "limit" && layerMode !== "single" && layerMode !== "stack" && (
-                <div className="col-span-1 sm:col-span-2 p-3 border border-border/50 bg-secondary/10 rounded-lg space-y-3">
-                   <div className="flex justify-between items-center gap-2">
-                     <Label className="text-[10px] uppercase text-muted-foreground font-semibold">Lot Multiplier (Martingale)</Label>
-                     <Input value={lotMultiplier} onChange={(e) => setLotMultiplier(e.target.value)} className="w-20 font-mono text-center h-8" placeholder="1.0" />
-                   </div>
-                   <div className="flex justify-between items-center gap-2">
-                     <Label className="text-[10px] uppercase text-muted-foreground font-semibold">Scale Mode</Label>
-                     <RadioGroup value={scaleMode} onValueChange={(v: any) => setScaleMode(v)} className="flex h-5 items-center gap-3">
-                       <div className="flex items-center space-x-1"><RadioGroupItem value="lots" id="sm-lots" className="w-3 h-3"/><Label htmlFor="sm-lots" className="text-[10px] cursor-pointer">Scale Lots</Label></div>
-                       <div className="flex items-center space-x-1"><RadioGroupItem value="distance" id="sm-distance" className="w-3 h-3 text-accent border-accent"/><Label htmlFor="sm-distance" className="text-[10px] text-accent font-semibold cursor-pointer">Scale Distance</Label></div>
-                     </RadioGroup>
-                   </div>
-                </div>
-              )}
               <div className="space-y-2">
                 <Label className="text-xs uppercase text-muted-foreground">Delay (ms)</Label>
                 <Input value={openDelay} onChange={(e) => setOpenDelay(e.target.value)} className="font-mono text-accent text-center sm:text-left bg-accent/5 border-accent/20" />
               </div>
             </div>
+
+            <details className="border border-border rounded-md p-3 group">
+              <summary className="text-xs font-bold uppercase cursor-pointer text-muted-foreground group-hover:text-foreground list-none flex justify-between items-center">
+                <span>Smart Layering (Advanced)</span>
+                <span className="text-[10px] opacity-50 group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="grid grid-cols-2 gap-4 mt-4 border-t border-border/50 pt-3">
+                <div className="space-y-2">
+                  <Label className="text-[11px] uppercase text-muted-foreground">Layering Step (Pips)</Label>
+                  <Input value={openLayerStep} onChange={(e) => setOpenLayerStep(e.target.value)} className="font-mono text-center sm:text-left h-8" placeholder="0 (Disabled)" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[11px] uppercase text-muted-foreground">Layer Multiplier</Label>
+                  <Input value={openLayerMult} onChange={(e) => setOpenLayerMult(e.target.value)} className="font-mono text-center sm:text-left h-8" placeholder="1.0" />
+                </div>
+                <div className="col-span-2 text-[10px] text-muted-foreground bg-secondary/30 p-2 rounded leading-tight">
+                  Spreads your {openCount} limit orders to mathematically match the average price of an exponentially sized grid (e.g., {openLayerMult || 1.0}x), while strictly keeping all {openCount} positions identical at {openLots} lots.
+                </div>
+              </div>
+            </details>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -857,7 +841,7 @@ export function Mt5Tab() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Execute batch order?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will send {openCount} {openExecType} orders sequentially.
+                    This will send {openCount} orders sequentially.
                   </AlertDialogDescription>
                   <div className="mt-4 p-4 rounded bg-secondary/50 space-y-2 font-mono text-sm text-foreground">
                     <div className="flex justify-between"><span>Symbol:</span> <span className="font-bold">{openSymbol}</span></div>
@@ -866,9 +850,12 @@ export function Mt5Tab() {
                       <>
                         <div className="flex justify-between"><span>Target Price:</span> <span className="text-primary font-bold">{openPrice}</span></div>
                         {(openLimitSl || openLimitTp) && (
-                          <div className="flex justify-between"><span>Stops:</span> <span>SL: {openLimitSl || '—'} / TP: {openLimitTp || '—'} ({openLimitMode})</span></div>
+                          <div className="flex justify-between"><span>Stops:</span> <span>SL: {openLimitSl || '-'} / TP: {openLimitTp || '-'} ({openLimitMode})</span></div>
                         )}
                       </>
+                    )}
+                    {(parseFloat(openLayerStep) > 0) && (
+                      <div className="flex justify-between text-accent"><span>Smart Layering:</span> <span>{openLayerStep} pips @ {openLayerMult}x</span></div>
                     )}
                     <div className="flex justify-between"><span>Volume:</span> <span>{openLots} lots (Total: {(parseFloat(openLots) * parseInt(openCount)).toFixed(2)})</span></div>
                     <div className="flex justify-between"><span>Delay:</span> <span className="text-accent">{openDelay}ms</span></div>
