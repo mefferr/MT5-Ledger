@@ -36,6 +36,87 @@ logger = logging.getLogger("mt5_bridge")
 # ---------------------------------------------------------------------------
 mt5_connected = False
 telegram_task = None
+auto_be_task = None
+active_auto_be = {}
+
+# ---------------------------------------------------------------------------
+# Auto-Breakeven Sentinel
+# ---------------------------------------------------------------------------
+async def auto_be_sentinel():
+    while True:
+        try:
+            await asyncio.sleep(0.5)
+            if not mt5_connected:
+                continue
+
+            for symbol, config in list(active_auto_be.items()):
+                if not config.get("enabled"):
+                    continue
+
+                threshold_pips = config["threshold_pips"]
+                sl_pips = config["sl_pips"]
+
+                positions = mt5.positions_get(symbol=symbol)
+                if positions is None or len(positions) == 0:
+                    continue
+
+                total_vol = 0.0
+                weighted_sum = 0.0
+                for p in positions:
+                    vol = p.volume if p.type == mt5.POSITION_TYPE_BUY else -p.volume
+                    total_vol += vol
+                    weighted_sum += p.price_open * vol
+
+                if abs(total_vol) < 0.0001:
+                    continue  # Perfectly hedged
+
+                vwap = weighted_sum / total_vol
+                net_direction = "buy" if total_vol > 0 else "sell"
+
+                tick = mt5.symbol_info_tick(symbol)
+                sym_info = mt5.symbol_info(symbol)
+                if tick is None or sym_info is None:
+                    continue
+                
+                point = sym_info.point
+                digits = sym_info.digits
+                current_price = tick.bid if net_direction == "buy" else tick.ask
+
+                # Distance in pips from VWAP
+                if net_direction == "buy":
+                    dist_pips = (current_price - vwap) / (10 * point)
+                else:
+                    dist_pips = (vwap - current_price) / (10 * point)
+
+                if dist_pips >= threshold_pips:
+                    # Target SL
+                    if net_direction == "buy":
+                        target_sl = vwap + sl_pips * 10 * point
+                    else:
+                        target_sl = vwap - sl_pips * 10 * point
+                    
+                    target_sl = round(target_sl, digits)
+
+                    for p in positions:
+                        # Only modify if SL is not already exactly the target
+                        if abs(p.sl - target_sl) > (point / 2):
+                            req = {
+                                "action": mt5.TRADE_ACTION_SLTP,
+                                "position": p.ticket,
+                                "symbol": symbol,
+                                "sl": target_sl,
+                                "tp": p.tp,
+                            }
+                            res = mt5.order_send(req)
+                            if res and res.retcode == mt5.TRADE_RETCODE_DONE:
+                                logger.info(f"Auto-BE updated ticket {p.ticket} SL to {target_sl}")
+                            else:
+                                err = mt5.last_error()
+                                logger.error(f"Auto-BE failed to update {p.ticket}: {err}")
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Auto-BE sentinel error: {e}")
 
 # ---------------------------------------------------------------------------
 # Lifespan (startup / shutdown)
@@ -43,7 +124,7 @@ telegram_task = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global mt5_connected, telegram_task
+    global mt5_connected, telegram_task, auto_be_task
     logger.info("Initializing MetaTrader5...")
     if mt5.initialize():
         mt5_connected = True
@@ -68,9 +149,13 @@ async def lifespan(app: FastAPI):
             mt5.last_error(),
         )
         logger.error("Endpoints will return error responses until MT5 is available.")
+    
+    auto_be_task = asyncio.create_task(auto_be_sentinel())
     yield
     if telegram_task:
         telegram_task.cancel()
+    if auto_be_task:
+        auto_be_task.cancel()
     logger.info("Shutting down MetaTrader5...")
     mt5.shutdown()
     logger.info("MT5 shutdown complete.")
@@ -95,6 +180,12 @@ app.add_middleware(
 
 class ConnectRequest(BaseModel):
     path: str
+
+class AutoBeRequest(BaseModel):
+    symbol: str
+    enabled: bool
+    threshold_pips: float
+    sl_pips: float
 
 class ModifyRequest(BaseModel):
     ticket: int
@@ -180,6 +271,19 @@ def connect_client(req: ConnectRequest):
         mt5_connected = False
         raise HTTPException(500, f"Failed to connect to MT5 at {req.path}")
 
+@app.get("/auto-be")
+def get_auto_be():
+    return active_auto_be
+
+@app.post("/auto-be")
+def set_auto_be(req: AutoBeRequest):
+    active_auto_be[req.symbol] = {
+        "enabled": req.enabled,
+        "threshold_pips": req.threshold_pips,
+        "sl_pips": req.sl_pips
+    }
+    logger.info(f"Auto-BE config for {req.symbol}: {active_auto_be[req.symbol]}")
+    return {"success": True, "config": active_auto_be[req.symbol]}
 
 # ---------------------------------------------------------------------------
 # GET /account

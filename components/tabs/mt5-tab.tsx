@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import {
   AlertDialog,
@@ -110,6 +111,12 @@ export function Mt5Tab() {
   const [openDelay, setOpenDelay] = useState("300")
   const [openLayerStep, setOpenLayerStep] = useState("0")
   const [openLayerMult, setOpenLayerMult] = useState("1.0")
+
+  // Auto-BE State
+  const [autoBeSymbol, setAutoBeSymbol] = useState("XAUUSD")
+  const [autoBeEnabled, setAutoBeEnabled] = useState(false)
+  const [autoBeThreshold, setAutoBeThreshold] = useState("200")
+  const [autoBeSl, setAutoBeSl] = useState("0.1")
   
   // Table filters
   const [entryFilter1, setEntryFilter1] = useState("")
@@ -147,6 +154,21 @@ export function Mt5Tab() {
     const interval = setInterval(fetchState, 5000) // Poll every 5s
     return () => clearInterval(interval)
   }, [fetchState])
+
+  useEffect(() => {
+    fetch("/api/mt5/auto-be", { headers: { "ngrok-skip-browser-warning": "true" } })
+      .then(r => r.json())
+      .then(data => {
+        if (data && data[autoBeSymbol]) {
+          setAutoBeEnabled(data[autoBeSymbol].enabled)
+          setAutoBeThreshold(data[autoBeSymbol].threshold_pips.toString())
+          setAutoBeSl(data[autoBeSymbol].sl_pips.toString())
+        } else {
+          setAutoBeEnabled(false)
+        }
+      })
+      .catch(() => {})
+  }, [autoBeSymbol])
 
   useEffect(() => {
     const newTickets = positions.map(p => p.ticket).filter(t => !knownTickets.current.has(t))
@@ -318,6 +340,36 @@ export function Mt5Tab() {
       toast.success(`Completed: ${successCount} OK, ${failCount} failed`)
     }
     fetchState()
+  }
+
+  const applyAutoBe = async (enabled: boolean) => {
+    const parseNum = (val: string) => parseFloat(val.replace(',', '.'))
+    const thresh = parseNum(autoBeThreshold)
+    const sl = parseNum(autoBeSl)
+    
+    if (isNaN(thresh) || isNaN(sl)) {
+      toast.error("Invalid numbers for Auto-BE")
+      return
+    }
+    
+    try {
+      const res = await fetch("/api/mt5/auto-be", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+        body: JSON.stringify({
+          symbol: autoBeSymbol,
+          enabled,
+          threshold_pips: thresh,
+          sl_pips: sl
+        })
+      })
+      if (res.ok) {
+        setAutoBeEnabled(enabled)
+        toast.success(`Sentinel ${enabled ? "Activated" : "Deactivated"} for ${autoBeSymbol}`)
+      }
+    } catch (e) {
+      toast.error("Failed to update Sentinel")
+    }
   }
 
   const parseNum = (val: string) => parseFloat(val.replace(',', '.'))
@@ -872,6 +924,42 @@ export function Mt5Tab() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Auto-Breakeven Sentinel */}
+      <Card className={cn("shadow-sm transition-colors border", autoBeEnabled ? "border-primary/50 shadow-[0_0_15px_rgba(34,197,94,0.1)]" : "border-border")}>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Zap className={cn("h-5 w-5", autoBeEnabled ? "text-primary fill-primary/20" : "text-muted-foreground")} /> 
+              Global Auto-Breakeven Sentinel
+            </CardTitle>
+            <CardDescription>Background Python worker that locks in profit when global VWAP crosses a threshold.</CardDescription>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{autoBeEnabled ? "ACTIVE" : "OFF"}</span>
+            <Switch 
+              checked={autoBeEnabled} 
+              onCheckedChange={(checked) => applyAutoBe(checked)} 
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs uppercase text-muted-foreground">Target Symbol</Label>
+              <Input value={autoBeSymbol} onChange={(e) => setAutoBeSymbol(e.target.value)} className="font-mono text-center sm:text-left border-border/50" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs uppercase text-muted-foreground">Activation Threshold (Pips)</Label>
+              <Input value={autoBeThreshold} onChange={(e) => setAutoBeThreshold(e.target.value)} className="font-mono text-center sm:text-left" placeholder="200" disabled={autoBeEnabled} />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs uppercase text-profit font-bold">Target SL (Pips from VWAP)</Label>
+              <Input value={autoBeSl} onChange={(e) => setAutoBeSl(e.target.value)} className="font-mono text-center sm:text-left text-profit border-profit/30" placeholder="0.1" disabled={autoBeEnabled} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {isRunning && (
         <Card className="border-accent/50 shadow-[0_0_15px_rgba(251,146,60,0.1)]">
