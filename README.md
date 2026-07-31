@@ -91,7 +91,7 @@ This automatically boots the Next.js frontend on `localhost:3000`, fires up the 
 
 If you don't have Python or MT5 installed, the script will gracefully complain about the bridge failing, but the web UI will still boot perfectly for offline statement parsing.
 
-## Bonus: The GOYA Framework (Get Off Your Ass)
+### Bonus: The GOYA Framework (Get Off Your Ass)
 
 > *"Most people don't avoid action - they avoid evidence."*
 
@@ -99,75 +99,66 @@ P&L is a degenerate metric. It conflates execution quality with leverage exposur
 
 Dollar P&L is **cheap talk**. Pips are **costly signals**. The market doesn't care what you claim your edge is. It only respects the un-fakeable cost you paid to extract directional distance from noise. The GOYA framework strips the dollar signs and evaluates what actually matters: **raw pip extraction, risk geometry, and cognitive integrity.**
 
-### 1. Pip Extraction as the Atomic Unit of Edge
-Dollar P&L is a function of `pips × lots × contract_size`. Two of those three variables are arbitrary inputs you control. The only variable the *market* gives you is pip distance. Therefore, the only honest measure of skill is how many pips you can consistently rip from the order book. Stack pips. The capital allocation is a separate, mechanical problem solved downstream by Kelly or fixed-fractional sizing.
+**Pip Extraction as the Atomic Unit of Edge**
+Dollar P&L is a function of `pips × lots × contract_size`. You control the leverage, but the *market* dictates the distance. The only honest metric of your skill is how many raw pips you can rip from the order book. Stop worrying about account balance. Stack pips. The capital scaling is just a math problem solved downstream by the Kelly criterion.
 
-### 2. Win Rate is a Misleading Statistic
-High win rates are almost always an artifact of wide stops and tight targets - the trader is selling cheap optionality to the market in exchange for psychological comfort. GOYA inverts this: risk 50-150 pips to capture 500-1500. At a 3:1 minimum R:R, you only need a ~25% hit rate to be net positive. At 10:1, you need 10%. The math is unambiguous - **expectancy is the product of edge and payoff asymmetry**, not frequency of being "right."
+**Win Rate is a Misleading Statistic**
+High win rates are for cowards selling cheap optionality to the market just to feel the psychological comfort of being "right". GOYA inverts this. Risk 50-150 pips to capture a 500-1500 pip runner. If your payoff ratio is 10:1, you only need to be right 10% of the time to break even. The math is brutal and unambiguous - **expectancy is edge multiplied by payoff asymmetry**, not how often you stroke your ego with a green trade.
 
-### 3. Losses Are Probes, Not Failures
-Each losing trade is a probe - a low-cost, low-energy input deployed to force the market to reveal its current state. The probe extracts information. If the system rejects it, you've learned something at a fixed, predetermined cost. If the system accepts it and runs, you've found the vulnerability for a high-energy payload.
+**Losses Are Probes, Not Failures**
+Stop treating red trades as emotional events. They are invoices. Every losing trade is just a low-cost probe deployed to force the market to show its hand. The probe extracts information. If the setup fails, you learned something at a fixed, cheap cost. If it runs, you found the vulnerability. If your probes cost 80 pips and your runners yield 800, you can lose 9 out of 10 times and still compound. They are just the cost of doing business.
 
-The `Cost Per Probe` metric tracks the average pip expenditure per failed entry. If your probes cost 80 pips and your runners yield 800, you have a 10:1 payoff ratio. You could lose 9 out of 10 trades and still compound. Stop treating red trades as emotional events. They are invoices - fixed operational costs paid to the market in exchange for asymmetric information about where the next runner lives.
+**Type II Errors Will Destroy You**
+There are two ways to fail. Type I: You take a trade that doesn't work. It costs you a small probe. Type II: You see a massive setup, you hesitate, and you miss a 1,000-pip runner. The cost of a Type II error is catastrophic - not just in missed money, but in the absolute psychological devastation of watching your thesis play out without you.
 
-### 4. Type II Errors Will Destroy You
-There are two failure modes in trading:
-- **Type I (False Positive):** You take a trade that doesn't work. Cost: a small, predefined probe.
-- **Type II (False Negative):** You see a setup, hesitate, and miss a 1,000-pip runner. Cost: catastrophic - not just in missed P&L, but in the compounding psychological damage of watching a move you identified play out without you.
+Type II errors will destroy your mental capital orders of magnitude faster than a stopped-out probe. Bias your entire system toward execution. You need sharp human intuition to read the live tape, yes, but you must assume your setup is valid until the market explicitly proves otherwise. 
 
-Type II errors are **orders of magnitude more destructive** than Type I errors. A failed probe costs you 80 pips. A missed runner costs you conviction, momentum, and weeks of mental capital. Bias the system toward execution. While you absolutely need sharp discretion and human intuition to read the live market, you must assume your setup is valid until the market produces hard counter-evidence. The expected value equation is clear:
-
-$$EV = (P_{\text{success}} \times V_{\text{runner}}) - (P_{\text{failure}} \times C_{\text{probe}})$$
-
-When your probes are cheap and your runners are massive, EV is almost always positive. The only way to make it negative is to not take the trade.
-
-### 5. Stop Wasting Your Brainpower on Cope
+**Stop Wasting Your Brainpower on Cope**
 You only have so much cognitive bandwidth every day. Most of you are burning 70% of it trying to protect your ego - retroactively editing your thesis mid-trade, making up excuses for why your entry was actually "early" instead of wrong, and managing the internal narrative of being a "good trader". It's the mental equivalent of running a supercomputer just to mine dogecoin for a scammer. 
 
-This isn't just harmless fluff, it's active self-destruction. Every time you rationalize a bad trade instead of just taking the L and logging the data, you are literally wiring your brain to become a better liar. Fast forward six months, and your pattern recognition hardware is completely corrupted. You can't even tell the difference between a high-EV setup and a revenge entry because you've spent half a year lying to yourself.
+This isn't just harmless fluff; it's active self-destruction. Every time you rationalize a bad trade instead of just taking the L and logging the data, you are literally wiring your brain to become a better liar. Fast forward six months, and your pattern recognition hardware is completely corrupted. You can't even tell the difference between a high-EV setup and a revenge entry because you've spent half a year lying to yourself.
 
 The GOYA framework exists to kill the cope. The numbers don't care about your story. Pips don't lie.
 
-### 6. The Zero State: Flow State with a Sniper Rifle
-To actually print money in this game, you need to enter what I call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some zen detachment bullshit, it's just the massive mechanical advantage you get when you stop letting your ego rub against the charts.
+**The Zero State: Flow State with a Sniper Rifle**
+To actually print money in this game, you need to enter what I call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some zen detachment bullshit; it's just the massive mechanical advantage you get when you stop letting your ego rub against the charts.
 
 The golden rule of any interaction is this: whoever needs the outcome less, controls the frame. If you *need* a trade to work to pay rent or fix your mood, the market owns you. You will overtrade, you will move stops, and you will sit in drawdown praying to a god that isn't listening. But if you don't need it? You execute with the calm, chilling violence of pure process.
 
 If you can get tilted, you have no edge. I don't care how cracked your technical analysis is. If a 100-pip drawdown makes you sweat and close a trade that was three candles away from a massive runner, your charting skills are useless. Emotional sovereignty isn't a bonus perk. It's the bare minimum required to survive.
 
-### 7. Fixed Lot Sizing (1 Position Rule)
-Always 1 position. Adding a second position while the first is still in drawdown is not "averaging in" - it's doubling your exposure to a thesis that the market is already disagreeing with. Use a strict fixed lot size relative to account equity (e.g., 0.3 lots on 30k). When equity doubles, mechanically upgrade to 0.6 lots. Bonus combos (2x or 3x sizing) are only permitted after a verified series of consecutive winners and a large accumulated pip reserve - at that point you've earned the right to press, either by increasing initial size or pyramiding into a floating winner.
+**Fixed Lot Sizing (1 Position Rule)**
+Always 1 position. Do not "average in" to a loser. Averaging in is just doubling down on a thesis the market is actively disagreeing with. Use a strict, fixed lot size relative to your equity. When the equity doubles, mechanically double the lot size. You only get the right to press your size or stack combos after a verified series of winners and a massive accumulated pip reserve. Until then, you are on a strict diet. 
 
-### 8. Aggressive Trailing SL Based on Local Structure
-Once a position is live, trail your stop loss aggressively against local structure - recent swing lows for longs, swing highs for shorts. Use discretion and read the order flow, but the principle is non-negotiable: **if price chops sideways or drifts 180 pips into drawdown without immediate continuation, the explosive momentum thesis is dead.** Cut it.
+**Aggressive Trailing SL Based on Local Structure**
+When you are live in a position, trail your stop aggressively against local structure. If price chops sideways or drifts 180 pips into drawdown without immediate continuation, the explosive momentum thesis is dead. Cut it immediately. True asymmetric runners show violent rejection off the entry zone and sustained unidirectional flow. If that doesn't happen, the probe failed. Let the market take you out at structure and preserve your mental capital. Sitting in drawdown hoping a trade "comes back" isn't trading, it's gambling fueled by sunk-cost bias and ego.
 
-True asymmetric runners show violent rejection off the entry zone and sustained unidirectional flow within the first few candles. If that doesn't materialize, the probe has failed - the system has revealed its defensive algorithm, and it's not aligned with your thesis. Let the market take you out at structure and preserve your mental capital for the next setup. Holding a choppy position hoping it "comes back" is not trading - it's gambling with a sunk-cost bias, burning cognitive bandwidth on cope instead of scanning for the next high-EV probe.
+**Campaign Pyramiding & Tranche Detection**
+If you stack multiple entries on the same trend within a 4-hour window, the engine groups them into a single "Campaign". It tracks aggregate pip extraction across the entire tranche. This measures whether you have the balls to press winners when the distribution is clearly on your side, instead of taking a single conservative exit and leaving meat on the bone.
 
-### 9. Campaign Pyramiding & Tranche Detection
-The system automatically detects tranches. If you stack multiple tickets on the same trend within a 4-hour window, GOYA groups them into a single "Campaign" and tracks aggregate pip extraction across all legs. This measures how effectively you press winners when the distribution is clearly in your favor, rather than taking a single conservative exit.
-
-### 10. Human Psychology and The Market Mirror
+**Human Psychology and The Market Mirror**
 Look, the market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong - it's because you're a mess.
 
 When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and weaponized against you. 
-- **FOMO** isn't a trading mistake, it's you vibrating at a frequency of absolute scarcity, terrified that other people are eating while you starve. 
+- **FOMO** isn't a trading mistake; it's you vibrating at a frequency of absolute scarcity, terrified that other people are eating while you starve. 
 - **Moving your stop loss** isn't a "tactical adjustment." It's pure arrogance. It's an ego so unbelievably fragile that it refuses to take an L, equating a red trade with personal failure. 
 - **Revenge Trading** is a childish temper tantrum. It's you demanding the universe bend to your arbitrary standard of fairness.
 
 The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
-If you want to be a master, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold mechanical execution by a mind that has completely eradicated its need to be comfortable.
+If you want to operate at the apex, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge isn't a secret indicator; it's the cold, mechanical execution of positive EV setups by a mind that has completely eradicated its need to be comfortable.
 
-It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
+**Time in the Gulag (The Accumulation of Experience)**
+It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself; it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
 
-### 12. The Final Word: Just Stack Pips
+**The Final Word: Just Stack Pips**
 Nobody cares about your win rate. Nobody cares if your equity curve looks aesthetically pleasing or if your average win to average loss ratio makes for a good tweet. All of those metrics are irrelevant vanity stats that broke traders use to feel better about themselves. The entire game boils down to one raw mechanic: extracting distance from the market.
 
 Money is an illusion. P&L is just a side effect of leverage. If you stare at the dollar amount, you become a slave to it. You will panic close a runner because the monetary value scares you, and you will hold a loser because you refuse to accept the reality of the invoice. 
 
 Turn off the P&L display. Strip the emotional payload out of the terminal. Your only function is to acquire pips. You are a pip-stacking machine. If you can reliably pull pips out of the market, the money is just a math problem solved by lot sizing. Scale the lot size when your capital grows, but the fundamental action never changes.
 
-Kill the ego, execute the system, and stack pips. 
+Kill the ego, execute the system, and stack pips.
 
 ---
 
