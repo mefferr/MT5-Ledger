@@ -143,16 +143,9 @@ When you are live in a position, trail your stop aggressively against local stru
 
 **Human Psychology and The Market Mirror**
 
-Look, the market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong - it's because you're a mess.
+The market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong - it's because you're a mess. When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and violently weaponized against you. The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
-When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and violently weaponized against you. 
-- **FOMO** isn't a trading mistake, it's you vibrating at a frequency of absolute scarcity, terrified that other people are eating while you starve like a bitch. 
-- **Moving your stop loss** isn't a "tactical adjustment." It's pure, unadulterated arrogance. It's an ego so unbelievably fragile that it refuses to take an L, equating a red trade with personal failure. 
-- **Revenge Trading** is a childish temper tantrum. It's you demanding the universe bend to your arbitrary standard of fairness. The universe doesn't care.
-
-The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
-
-If you want to be the master, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is completely irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
+If you want to be a master you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is completely irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
 
 
 **View the market as a female Entity (Frame Control & Shit Tests).**
