@@ -127,6 +127,8 @@ interface StatementContextValue {
   currentMt5Client: Mt5Client | null
   fetchMt5Clients: () => Promise<void>
   switchMt5Client: (client: Mt5Client) => Promise<void>
+  isSimulatingFloating: boolean
+  toggleSimulateFloating: (enabled: boolean) => Promise<void>
 }
 
 const Ctx = createContext<StatementContextValue | null>(null)
@@ -161,14 +163,17 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
 
   const [mt5Clients, setMt5Clients] = useState<Mt5Client[]>([])
   const [currentMt5Client, setCurrentMt5Client] = useState<Mt5Client | null>(null)
+  const [isSimulatingFloating, setIsSimulatingFloating] = useState(false)
+  const [floatingTrades, setFloatingTrades] = useState<Trade[]>([])
 
   const statement = useMemo<ParsedStatement | null>(() => {
     if (!meta) return null
+    const allTrades = isSimulatingFloating ? [...sourceTrades, ...floatingTrades] : sourceTrades
     return {
       ...meta,
-      trades: applyTradeMerges(sourceTrades, mergeSettings),
+      trades: applyTradeMerges(allTrades, mergeSettings),
     }
-  }, [meta, sourceTrades, mergeSettings])
+  }, [meta, sourceTrades, floatingTrades, isSimulatingFloating, mergeSettings])
 
   const mergeStats = useMemo(
     () => (meta ? computeMergeStats(sourceTrades, mergeSettings) : null),
@@ -534,6 +539,45 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     }
   }, [loadFromMt5])
 
+  const toggleSimulateFloating = useCallback(async (enabled: boolean) => {
+    setIsSimulatingFloating(enabled)
+    if (!enabled) {
+      setFloatingTrades([])
+      return
+    }
+    setLoading(true)
+    setError(null)
+    try {
+      const posRes = await fetch("/api/mt5/positions", { headers: { "ngrok-skip-browser-warning": "true" } })
+      if (!posRes.ok) throw new Error("Failed to fetch MT5 positions")
+      const posData = await posRes.json()
+      
+      const now = new Date()
+      const mockTrades: Trade[] = (posData || []).map((p: any) => ({
+        ticket: -p.ticket, // negative to prevent collision with real trades
+        openTime: new Date(p.time),
+        closeTime: now,
+        type: p.type as TradeType,
+        size: p.volume,
+        symbol: p.symbol,
+        openPrice: p.price_open,
+        closePrice: p.price_current,
+        sl: p.sl || 0,
+        tp: p.tp || 0,
+        commission: p.commission || 0,
+        swap: p.swap || 0,
+        taxes: 0,
+        profit: p.profit,
+      }))
+      setFloatingTrades(mockTrades)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load floating positions.")
+      setIsSimulatingFloating(false)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   const value = useMemo(
     () => ({
       statement,
@@ -563,6 +607,8 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       currentMt5Client,
       fetchMt5Clients,
       switchMt5Client,
+      isSimulatingFloating,
+      toggleSimulateFloating,
     }),
     [
       statement,
@@ -592,6 +638,8 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       currentMt5Client,
       fetchMt5Clients,
       switchMt5Client,
+      isSimulatingFloating,
+      toggleSimulateFloating,
     ],
   )
 

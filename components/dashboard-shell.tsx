@@ -62,7 +62,7 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"]
 
 export function DashboardShell() {
-  const { statement, sourceTrades, clear, loadDemo, loadFromMt5, loading, converting, convertCurrency, simulateAccount, mergeStats, breakevenTickets, mt5Clients, currentMt5Client, fetchMt5Clients, switchMt5Client } = useStatement()
+  const { statement, sourceTrades, clear, loadDemo, loadFromMt5, loading, converting, convertCurrency, simulateAccount, mergeStats, breakevenTickets, mt5Clients, currentMt5Client, fetchMt5Clients, switchMt5Client, isSimulatingFloating, toggleSimulateFloating } = useStatement()
   const [active, setActive] = useState<TabId>("overview")
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
   const kpi = useMemo(() => (statement ? computeKPI(statement, breakevenSet) : null), [statement, breakevenSet])
@@ -183,6 +183,12 @@ export function DashboardShell() {
               <Button size="sm" variant="outline" onClick={() => loadFromMt5(30)} disabled={loading} className="px-2 sm:px-3">
                 <RefreshCw className={cn("h-3.5 w-3.5 sm:mr-2", loading && "animate-spin")} /> 
                 <span className="hidden sm:inline">Refresh MT5 Data</span>
+              </Button>
+            )}
+            {isMt5 && (
+              <Button size="sm" variant={isSimulatingFloating ? "default" : "outline"} onClick={() => toggleSimulateFloating(!isSimulatingFloating)} disabled={loading} className="px-2 sm:px-3">
+                <Target className={cn("h-3.5 w-3.5 sm:mr-2", loading && "animate-spin")} /> 
+                <span className="hidden sm:inline">{isSimulatingFloating ? "Revert Floating" : "Close All Floating"}</span>
               </Button>
             )}
             <Button size="sm" variant="outline" onClick={loadDemo} disabled={loading} className="px-2 sm:px-3">
