@@ -185,10 +185,7 @@ export function DashboardShell() {
                 <span className="hidden sm:inline">Refresh MT5 Data</span>
               </Button>
             )}
-            <Button size="sm" variant={isSimulatingFloating ? "default" : "outline"} onClick={() => toggleSimulateFloating(!isSimulatingFloating)} disabled={loading} className="px-2 sm:px-3">
-              <Target className={cn("h-3.5 w-3.5 sm:mr-2", loading && "animate-spin")} /> 
-              <span className="hidden sm:inline">{isSimulatingFloating ? "Revert Floating" : "Close All Floating"}</span>
-            </Button>
+
             <Button size="sm" variant="outline" onClick={loadDemo} disabled={loading} className="px-2 sm:px-3">
               <RefreshCw className="h-3.5 w-3.5 sm:mr-2" /> 
               <span className="hidden sm:inline">Reload demo</span>
@@ -236,6 +233,25 @@ export function DashboardShell() {
                     </div>
                     <Button className="w-full mt-2" onClick={applySimulation}>Apply Simulation</Button>
                   </div>
+
+                  <div className="h-px bg-border" />
+
+                  <div>
+                    <h4 className="font-medium leading-none">Floating Positions</h4>
+                    <p className="text-sm text-muted-foreground mt-1">Visualize stats as if all open positions were closed at current market price.</p>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    variant={isSimulatingFloating ? "secondary" : "outline"} 
+                    onClick={() => {
+                      toggleSimulateFloating(!isSimulatingFloating)
+                      setIsSimOpen(false)
+                    }}
+                    disabled={loading}
+                  >
+                    <Target className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> 
+                    {isSimulatingFloating ? "Revert Floating" : "Visualize Floating"}
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
