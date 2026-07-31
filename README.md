@@ -91,7 +91,7 @@ This automatically boots the Next.js frontend on `localhost:3000`, fires up the 
 
 If you don't have Python or MT5 installed, the script will gracefully complain about the bridge failing, but the web UI will still boot perfectly for offline statement parsing.
 
-#### The GOYA Framework (Get Off Your Ass)
+## Bonus: The GOYA Framework (Get Off Your Ass)
 
 > *"Most people don't avoid action - they avoid evidence."*
 
