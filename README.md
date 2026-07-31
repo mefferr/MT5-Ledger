@@ -121,7 +121,7 @@ This isn't just harmless fluff; it's active self-destruction. Every time you rat
 The GOYA framework exists to kill the cope. The numbers don't care about your story. Pips don't lie.
 
 **The Zero State: Flow State with a Sniper Rifle**
-To actually print money in this game, you need to enter what I call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some zen detachment bullshit; it's just the massive mechanical advantage you get when you stop letting your ego rub against the charts.
+To actually print money in this game, you need to enter what I call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some zen detachment bullshit, it's just the massive mechanical advantage you get when you stop letting your ego rub against the charts.
 
 The golden rule of any interaction is this: whoever needs the outcome less, controls the frame. If you *need* a trade to work to pay rent or fix your mood, the market owns you. You will overtrade, you will move stops, and you will sit in drawdown praying to a god that isn't listening. But if you don't need it? You execute with the calm, chilling violence of pure process.
 
@@ -133,20 +133,17 @@ Always 1 position. Do not "average in" to a loser. Averaging in is just doubling
 **Aggressive Trailing SL Based on Local Structure**
 When you are live in a position, trail your stop aggressively against local structure. If price chops sideways or drifts 180 pips into drawdown without immediate continuation, the explosive momentum thesis is dead. Cut it immediately. True asymmetric runners show violent rejection off the entry zone and sustained unidirectional flow. If that doesn't happen, the probe failed. Let the market take you out at structure and preserve your mental capital. Sitting in drawdown hoping a trade "comes back" isn't trading, it's gambling fueled by sunk-cost bias and ego.
 
-**Campaign Pyramiding & Tranche Detection**
-If you stack multiple entries on the same trend within a 4-hour window, the engine groups them into a single "Campaign". It tracks aggregate pip extraction across the entire tranche. This measures whether you have the balls to press winners when the distribution is clearly on your side, instead of taking a single conservative exit and leaving meat on the bone.
-
 **Human Psychology and The Market Mirror**
 Look, the market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong - it's because you're a mess.
 
 When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and weaponized against you. 
-- **FOMO** isn't a trading mistake; it's you vibrating at a frequency of absolute scarcity, terrified that other people are eating while you starve. 
+- **FOMO** isn't a trading mistake, it's you vibrating at a frequency of absolute scarcity, terrified that other people are eating while you starve. 
 - **Moving your stop loss** isn't a "tactical adjustment." It's pure arrogance. It's an ego so unbelievably fragile that it refuses to take an L, equating a red trade with personal failure. 
 - **Revenge Trading** is a childish temper tantrum. It's you demanding the universe bend to your arbitrary standard of fairness.
 
 The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
-If you want to operate at the apex, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge isn't a secret indicator; it's the cold, mechanical execution of positive EV setups by a mind that has completely eradicated its need to be comfortable.
+If you want to operate at the apex, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
 
 **Time in the Gulag (The Accumulation of Experience)**
 It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself; it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
