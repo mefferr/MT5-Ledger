@@ -143,10 +143,10 @@ When you sit down at the charts, every unresolved ego deficit, every insecurity,
 
 The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
-If you want to operate at the apex, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
+If you want to be the master, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
 
 **View the market as a female Entity (Frame Control & Shit Tests)**
-Trading is like an interaction with a female. It is nature's ultimate shit test mechanism. The market is not a math equation; she is an erratic, highly perceptive biological entity constantly probing you to see if your projected frame is real, or if you are a fragile, insecure fraud who will collapse the second you face actual pressure. 
+Trading is like an interaction with a female. It is nature's ultimate shit test mechanism. The market is an erratic, highly perceptive entity constantly probing you to see if your projected frame is real, or if you are a fragile, insecure fraud who will collapse the second you face actual pressure - Exactly like a woman.
 
 When the market throws a sudden red candle against your position it's like when a woman is looking dead into your eyes dropping her compliance to zero and asking: *"Are you actually a solid grounded man who stands by his thesis or are you going to have a fucking panic attack and close this trade like a coward?"* 
 
