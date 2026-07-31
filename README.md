@@ -97,7 +97,7 @@ If you don't have Python or MT5 installed, the script will gracefully complain a
 
 P&L is a degenerate metric. It conflates execution quality with leverage exposure, producing a number that tells you almost nothing about whether your process is actually extractable. A trader netting $5,000 on a 50-pip scalp at 10 lots has demonstrated zero edge - they've simply borrowed variance from a fat tail they don't understand. A trader netting $100 on 1000 pips at 0.01 lots has demonstrated a repeatable, distributional edge that scales linearly with capital.
 
-Dollar P&L is **cheap talk**. Pips are **costly signals**. The market doesn't care what you claim your edge is. It only respects the un-fakeable cost you paid to extract directional distance from noise. The GOYA engine in this dashboard strips the dollar signs and evaluates what actually matters: **raw pip extraction, risk geometry, and cognitive integrity.**
+Dollar P&L is **cheap talk**. Pips are **costly signals**. The market doesn't care what you claim your edge is. It only respects the un-fakeable cost you paid to extract directional distance from noise. The GOYA framework strips the dollar signs and evaluates what actually matters: **raw pip extraction, risk geometry, and cognitive integrity.**
 
 ### 1. Pip Extraction as the Atomic Unit of Edge
 Dollar P&L is a function of `pips × lots × contract_size`. Two of those three variables are arbitrary inputs you control. The only variable the *market* gives you is pip distance. Therefore, the only honest measure of skill is how many pips you can consistently rip from the order book. Stack pips. The capital allocation is a separate, mechanical problem solved downstream by Kelly or fixed-fractional sizing.
@@ -126,7 +126,7 @@ Most traders unconsciously allocate 40-70% of their cognitive bandwidth to ego-d
 
 This isn't neutral. It's **active negative compounding**. Every time you rationalize a bad trade instead of objectively logging the data, you are physically myelinating neural pathways for self-deception. Your brain is literally getting better at lying to itself. Over months, this produces a trader who cannot distinguish between a genuine setup and a cope-driven revenge entry - because the pattern recognition hardware has been corrupted by its own operator.
 
-The GOYA dashboard exists to make this impossible. Every trade is logged. Every pip is tracked. Every metric is computed from raw execution data, not from the story you tell yourself about what happened. The numbers don't cope.
+The GOYA framework exists to make this impossible. Every trade is logged. Every pip is tracked. Every metric is computed from raw execution data, not from the story you tell yourself about what happened. The numbers don't cope.
 
 ### 6. The Zero State: Flow State with a Sniper Rifle
 Peak trading performance occurs in a specific cognitive architecture: **cold analytical processing combined with complete outcome independence.** You are simultaneously calculating the physics of the trade with surgical precision, and genuinely indifferent to whether it works or not. This is not detachment - it's the mechanical advantage produced when ego-friction drops to zero.
