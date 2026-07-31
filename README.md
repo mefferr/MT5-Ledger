@@ -133,7 +133,7 @@ Peak trading performance occurs in a specific cognitive architecture: **cold ana
 
 When you don't need the trade to work, you don't overtrade. You don't move your stop. You don't revenge-enter. You don't sit in drawdown praying. The fulcrum of every dynamic system is *need* - whoever needs the outcome less controls the interaction. In trading, the market is the counterparty. If you need the trade to work, the market owns you. If you don't, you can execute your system with the calm violence of pure process.
 
-If you can be emotionally controlled, you lose your edge. It doesn't matter how good your analysis is - if a 100-pip drawdown sends you into tilt and makes you close a position that was seconds away from reversing and turning into a 500-pip runner, your technical skill is worthless. Emotional sovereignty is not a personality trait. It is a prerequisite.
+If you can be emotionally controlled, you lose your edge. It doesn't matter how good your analysis is - if a 100-pip drawdown sends you into tilt and makes you close a position that was 3 candles away from a 500-pip runner, your technical skill is worthless. Emotional sovereignty is not a personality trait. It is a prerequisite.
 
 ### 7. Fixed Lot Sizing (1 Position Rule)
 Always 1 position. Adding a second position while the first is still in drawdown is not "averaging in" - it's doubling your exposure to a thesis that the market is already disagreeing with. Use a strict fixed lot size relative to account equity (e.g., 0.3 lots on 30k). When equity doubles, mechanically upgrade to 0.6 lots. Bonus combos (2x or 3x sizing) are only permitted after a verified series of consecutive winners and a large accumulated pip reserve - at that point you've earned the right to press, either by increasing initial size or pyramiding into a floating winner.
@@ -155,14 +155,17 @@ The lethal amateur error is over-updating priors based on noisy, low-cost signal
 
 Stop running Monte Carlo simulations in your head after the trade is open. Pre-compute your invalidation level *before* entry. If price hits it, exit. If it doesn't, hold. There is no middle ground. The market gives you data; your job is to process it through the prior and act - not to sit there editing your thesis in real-time to match whatever price is currently doing.
 
-### 11. The Market is an Isomorphic Mirror
-The market is not an entity you fight. It is a completely inert, probabilistic void. It possesses no memory, no malice, and no awareness of your existence. Therefore, when a trader experiences emotional friction, they are not fighting the market - they are engaged in a subconscious civil war against their own ego architecture.
+### 11. Human Psychology and The Market Mirror
+Look, the market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong - it's because you're a mess.
 
-When you deploy capital, every unresolved deficit in your psyche is weaponized against you. Moving a stop loss is not a tactical error; it is an arrogant refusal to accept empirical invalidation, driven by an ego so fragile it equates a red invoice with a loss of status. FOMO is a manifestation of zero-sum scarcity. Revenge trading is the infantile demand that a dynamic system conform to your hallucinated expectations of "fairness."
+When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and weaponized against you. 
+- **FOMO** isn't a trading mistake; it's you vibrating at a frequency of absolute scarcity, terrified that other people are eating while you starve. 
+- **Moving your stop loss** isn't a "tactical adjustment." It's pure arrogance. It's an ego so unbelievably fragile that it refuses to take an L, equating a red trade with personal failure. 
+- **Revenge Trading** is a childish temper tantrum. It's you demanding the universe bend to your arbitrary standard of fairness.
 
-The single greatest filter in trading is the inability to distinguish between the market's data and your own internal coping mechanisms. When you project your needs onto the chart, you hallucinate signals that do not exist. You stop trading order flow and start trading your need for validation. 
+The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
-To execute at the apex, your ego must be violently dissolved. Your opinion is fundamentally worthless unless it aligns with the mass momentum of institutional liquidity. The ultimate edge is not a proprietary indicator. It is complete emotional sovereignty - the capacity to relentlessly execute positive expected value into the teeth of absolute uncertainty, driven by a cognitive engine that has systematically eradicated its own need for comfort.
+If you want to operate at the apex, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge isn't a secret indicator; it's the cold, mechanical execution of positive EV setups by a mind that has completely eradicated its need to be comfortable.
 
 ### 12. Time in the Gulag (The Accumulation of Experience)
 It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself; it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
