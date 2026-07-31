@@ -91,7 +91,7 @@ This automatically boots the Next.js frontend on `localhost:3000`, fires up the 
 
 If you don't have Python or MT5 installed, the script will gracefully complain about the bridge failing, but the web UI will still boot perfectly for offline statement parsing.
 
-### The GOYA Framework (Get Off Your Ass)
+#### The GOYA Framework (Get Off Your Ass)
 
 > *"Most people don't avoid action - they avoid evidence."*
 
@@ -103,7 +103,7 @@ Dollar P&L is **cheap talk**. Pips are **costly signals**. The market doesn't ca
 Dollar P&L is a function of `pips × lots × contract_size`. Two of those three variables are arbitrary inputs you control. The only variable the *market* gives you is pip distance. Therefore, the only honest measure of skill is how many pips you can consistently rip from the order book. Stack pips. The capital allocation is a separate, mechanical problem solved downstream by Kelly or fixed-fractional sizing.
 
 ### 2. Win Rate is a Misleading Statistic
-High win rates are almost always an artifact of wide stops and tight targets - the trader is selling cheap optionality to the market in exchange for psychological comfort. GOYA inverts this: risk 50–150 pips to capture 500–1500. At a 3:1 minimum R:R, you only need a ~25% hit rate to be net positive. At 10:1, you need 10%. The math is unambiguous - **expectancy is the product of edge and payoff asymmetry**, not frequency of being "right."
+High win rates are almost always an artifact of wide stops and tight targets - the trader is selling cheap optionality to the market in exchange for psychological comfort. GOYA inverts this: risk 50-150 pips to capture 500-1500. At a 3:1 minimum R:R, you only need a ~25% hit rate to be net positive. At 10:1, you need 10%. The math is unambiguous - **expectancy is the product of edge and payoff asymmetry**, not frequency of being "right."
 
 ### 3. Losses Are Probes, Not Failures
 Each losing trade is a probe - a low-cost, low-energy input deployed to force the market to reveal its current state. The probe extracts information. If the system rejects it, you've learned something at a fixed, predetermined cost. If the system accepts it and runs, you've found the vulnerability for a high-energy payload.
@@ -122,7 +122,7 @@ $$EV = (P_{\text{success}} \times V_{\text{runner}}) - (P_{\text{failure}} \time
 When your probes are cheap and your runners are massive, EV is almost always positive. The only way to make it negative is to not take the trade.
 
 ### 5. Cognitive Bandwidth is Finite - Stop Wasting It on Cope
-Most traders unconsciously allocate 40–70% of their cognitive bandwidth to ego-defense: rationalizing bad entries, retroactively editing their thesis, managing the internal narrative of "what kind of trader I am." This is the computational equivalent of a supercomputer burning half its cycles mining bitcoin for a scammer.
+Most traders unconsciously allocate 40-70% of their cognitive bandwidth to ego-defense: rationalizing bad entries, retroactively editing their thesis, managing the internal narrative of "what kind of trader I am." This is the computational equivalent of a supercomputer burning half its cycles mining bitcoin for a scammer.
 
 This isn't neutral. It's **active negative compounding**. Every time you rationalize a bad trade instead of objectively logging the data, you are physically myelinating neural pathways for self-deception. Your brain is literally getting better at lying to itself. Over months, this produces a trader who cannot distinguish between a genuine setup and a cope-driven revenge entry - because the pattern recognition hardware has been corrupted by its own operator.
 
@@ -155,7 +155,17 @@ The lethal amateur error is over-updating priors based on noisy, low-cost signal
 
 Stop running Monte Carlo simulations in your head after the trade is open. Pre-compute your invalidation level *before* entry. If price hits it, exit. If it doesn't, hold. There is no middle ground. The market gives you data; your job is to process it through the prior and act - not to sit there editing your thesis in real-time to match whatever price is currently doing.
 
----
+### 11. Human Psychology and The Market Mirror
+The market is not an external entity trying to take your money. It is an infinitely reflective mirror of your own psychological vulnerabilities. Most traders fail not because their technical analysis is wrong, but because they are engaged in a subconscious civil war.
+
+When you enter the market, every unresolved ego deficit, every insecurity about your self-worth, and every need for validation is weaponized against you. 
+- **Fear of Missing Out (FOMO)** is not a trading error; it is a manifestation of scarcity mindset - the terrifying belief that you are being left behind while others extract value. 
+- **Moving your Stop Loss** is not a tactical adjustment; it is an arrogant refusal to accept being wrong, stemming from an ego so fragile it equates a red trade with personal invalidation. 
+- **Revenge Trading** is the infantile demand that the universe must conform to your expectations of fairness.
+
+The market has no memory of you. It does not know you are in a drawdown. It does not care that you need to pay rent. When you project your emotional needs onto an inert, probabilistic system, you hallucinate patterns that do not exist. You start trading your *needs* instead of trading the *data*. 
+
+To trade at the apex level, you must undergo complete ego dissolution. You must accept that your opinion is entirely worthless unless it aligns with order flow. You must learn to view a string of losses not as a personal attack, but as statistical noise in a positively skewed distribution. The ultimate edge is not a secret indicator; it is the ruthless, mechanical execution of positive expected value in the face of absolute uncertainty, driven by a mind that has systematically eradicated its own need for comfort.
 
 ---
 
