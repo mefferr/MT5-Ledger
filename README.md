@@ -115,7 +115,7 @@ There are two failure modes in trading:
 - **Type I (False Positive):** You take a trade that doesn't work. Cost: a small, predefined probe.
 - **Type II (False Negative):** You see a setup, hesitate, and miss a 1,000-pip runner. Cost: catastrophic - not just in missed P&L, but in the compounding psychological damage of watching a move you identified play out without you.
 
-Type II errors are **orders of magnitude more destructive** than Type I errors. A failed probe costs you 80 pips. A missed runner costs you conviction, momentum, and weeks of mental capital. Bias the system toward execution. Assume the setup is valid until the market produces hard counter-evidence. The expected value equation is clear:
+Type II errors are **orders of magnitude more destructive** than Type I errors. A failed probe costs you 80 pips. A missed runner costs you conviction, momentum, and weeks of mental capital. Bias the system toward execution. While you absolutely need sharp discretion and human intuition to read the live market, you must assume your setup is valid until the market produces hard counter-evidence. The expected value equation is clear:
 
 $$EV = (P_{\text{success}} \times V_{\text{runner}}) - (P_{\text{failure}} \times C_{\text{probe}})$$
 
@@ -166,6 +166,9 @@ When you enter the market, every unresolved ego deficit, every insecurity about 
 The market has no memory of you. It does not know you are in a drawdown. It does not care that you need to pay rent. When you project your emotional needs onto an inert, probabilistic system, you hallucinate patterns that do not exist. You start trading your *needs* instead of trading the *data*. 
 
 To trade at the apex level, you must undergo complete ego dissolution. You must accept that your opinion is entirely worthless unless it aligns with order flow. You must learn to view a string of losses not as a personal attack, but as statistical noise in a positively skewed distribution. The ultimate edge is not a secret indicator; it is the ruthless, mechanical execution of positive expected value in the face of absolute uncertainty, driven by a mind that has systematically eradicated its own need for comfort.
+
+### 12. Time in the Gulag (The Accumulation of Experience)
+It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself; it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
 
 ---
 
