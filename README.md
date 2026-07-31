@@ -95,7 +95,7 @@ If you don't have Python or MT5 installed, the script will gracefully complain a
 
 > *"Most people don't avoid action - they avoid evidence."*
 
-P&L is a fucking degenerate metric for low-IQ monkeys. It conflates execution quality with leverage exposure, producing a retarded number that tells you absolutely nothing about whether your process actually works. A retard netting $5,000 on a 50-pip scalp at 10 lots has demonstrated exactly zero edge - they've simply borrowed variance from a fat tail they don't even understand. They are gambling. A trader netting $100 on 1,000 pips at 0.01 lots has demonstrated a repeatable edge that scales linearly with capital.
+P&L is a degenerate metric for low-IQ monkeys. It conflates execution quality with leverage exposure, producing a retarded number that tells you absolutely nothing about whether your process actually works. A retard netting $5,000 on a 50-pip scalp at 10 lots has demonstrated exactly zero edge - they've simply borrowed variance from a fat tail they don't even understand. They are gambling. A trader netting $100 on 1,000 pips at 0.01 lots has possibly demonstrated a repeatable edge that scales linearly with capital.
 
 Dollar P&L is **cheap talk for losers**. Pips are **costly signals**. The market doesn't give a single fuck what you claim your edge is or how much money you made yesterday. It only respects the un-fakeable cost you paid to extract directional distance from the noise. The GOYA framework completely nukes the dollar signs and evaluates what actually matters: **raw pip extraction, risk management, and emotional control.**
 
@@ -105,11 +105,11 @@ Dollar P&L is just a function of `pips × lots × contract_size`. You control th
 
 **Win Rate is a Misleading Statistic for Cowards**
 
-High win rates are for complete pussies selling cheap optionality to the market just to feel the psychological comfort of being "right." It's pure ego-stroking bullshit. GOYA completely inverts this. You risk 50-150 pips to capture a fucking 500-1500 pip runner. If your payoff ratio is 10:1, you only need to be right 10% of the time to break even. The math is brutal and completely unambiguous - **expectancy is your edge multiplied by massive payoff asymmetry**, not how often you jerk off your ego with a tiny green trade.
+High win rates are for complete pussies selling cheap optionality to the market just to feel the psychological comfort of being "right." It's pure ego-stroking bullshit. GOYA completely inverts this. You risk 50-150 pips to capture a 500-1500 pip runner. If your payoff ratio is 10:1, you only need to be right 10% of the time to break even. The math is brutal and completely unambiguous - **expectancy is your edge multiplied by massive payoff asymmetry**, not how often you jerk off your ego with a tiny green trade.
 
 **Losses Are Probes, Not Failures**
 
-Stop treating red trades like someone just shot your fucking dog. They are invoices. Every losing trade is just a cheap, low-cost probe deployed to force the market to show its hand. The probe extracts information. If the setup fails, you learned something at a fixed cost. If it runs, you violently exploit the vulnerability. If your probes cost 80 pips and your runners yield 800, you can get stopped out 9 out of 10 times and still compound your account like a psychopath. Losses are just the raw cost of doing business.
+Stop treating red trades like someone just shot your dog. They are invoices. Every losing trade is just a cheap, low-cost probe deployed to force the market to show its hand. The probe extracts information. If the setup fails, you learned something at a fixed cost. If it runs, you violently exploit the vulnerability. If your probes cost 80 pips and your runners yield 800, you can get stopped out 9 out of 10 times and still compound your account like a psychopath. Losses are just the raw cost of doing business.
 
 **Type II Errors Will Fucking Destroy You**
 
@@ -121,13 +121,13 @@ Type II errors will nuke your mental capital orders of magnitude faster than get
 
 You only have so much cognitive bandwidth every day. Most of you are burning 70% of it trying to protect your fragile ego - retroactively editing your thesis mid-trade, making up retarded excuses for why your entry was actually "early" instead of just wrong, and managing the internal narrative of being a "good trader". It's the mental equivalent of running a supercomputer just to mine dogecoin for a scammer. 
 
-It's active self-destruction. Every time you rationalize a bad trade instead of just taking the fucking L and logging the data, you are literally wiring your brain to become a better liar. Fast forward six months, and your pattern recognition hardware is completely corrupted. You can't even tell the difference between a high-EV setup and a tilted revenge entry because you've spent half a year lying to yourself.
+It's active self-destruction. Every time you rationalize a bad trade instead of just taking the L and logging the data, you are literally wiring your brain to become a better liar. Fast forward six months, and your pattern recognition hardware is completely corrupted. You can't even tell the difference between a high-EV setup and a tilted revenge entry because you've spent half a year lying to yourself.
 
 The GOYA framework exists to brutally kill the cope. The numbers don't give a shit about your story. Pips don't lie.
 
 **The Zero State: Flow State with a Sniper Rifle**
 
-To actually print money in this game, you need to enter what I call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not give a single fuck if the trade hits TP or SL. It's not some spiritual zen detachment bullshit, it's just the massive mechanical advantage you get when you stop letting your fragile ego rub against the charts.
+To actually print money in this game, you need to enter what i like to call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some spiritual zen detachment bullshit, it's just the massive mechanical advantage you get when you stop letting your fragile ego rub against the charts.
 
 The golden rule of any interaction is this: whoever needs the outcome less, controls the frame. If you *need* a trade to work to pay rent or fix your mood, the market completely owns you. You will overtrade, you will move stops, and you will sit in drawdown praying to a god that isn't listening. But if you don't need it? You execute with the cold, psychopathic precision of pure process.
 
@@ -135,7 +135,7 @@ If you can get tilted, you have no edge. I don't care how cracked your technical
 
 **Fixed Lot Sizing (1 Position Rule)**
 
-Always 1 position. Do not fucking "average in" to a loser. Averaging in is just doubling down on a thesis the market is actively telling you is wrong. Use a strict, fixed lot size relative to your equity. When the equity doubles, mechanically double the lot size. You only get the right to press your size or stack combos after a verified series of winners and a massive accumulated pip reserve. Until then, you are on a strict diet. Don't be greedy.
+Always 1 position. Do not "average in" to a loser. Averaging in is just doubling down on a thesis the market is actively telling you is wrong. Use a strict, fixed lot size relative to your equity. When the equity doubles, mechanically double the lot size. You only get the right to press your size or stack combos after a verified series of winners and a massive accumulated pip reserve. Until then, you are on a strict diet. Don't be greedy.
 
 **Aggressive Trailing SL Based on Local Structure**
 
@@ -150,7 +150,7 @@ When you sit down at the charts, every unresolved ego deficit, every insecurity,
 - **Moving your stop loss** isn't a "tactical adjustment." It's pure, unadulterated arrogance. It's an ego so unbelievably fragile that it refuses to take an L, equating a red trade with personal failure. 
 - **Revenge Trading** is a childish temper tantrum. It's you demanding the universe bend to your arbitrary standard of fairness. The universe doesn't care.
 
-The market does not give a fuck about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
+The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
 If you want to be the master, you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is completely irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
 
