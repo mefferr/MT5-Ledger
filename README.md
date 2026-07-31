@@ -161,13 +161,13 @@ If you want to be a master, you have to kill the ego. Nuke it entirely. Your opi
 It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
 
 ### 12. The Final Word: Just Stack Pips
-Let's cut through the noise. The trading industry is a circus of fake gurus selling you indicators, signals, and secret algorithms. It's all a distraction. The entire game - the only thing that actually matters - boils down to one irrefutable mechanic: extracting raw distance from the market.
+Nobody cares about your win rate. Nobody cares if your equity curve looks aesthetically pleasing or if your average win to average loss ratio makes for a good tweet. All of those metrics are irrelevant vanity stats that broke traders use to feel better about themselves. The entire game boils down to one raw mechanic: extracting distance from the market.
 
-Money is an illusion. P&L is a side effect. If you obsess over the dollar amount, you are a slave. You will get shaken out of winning trades because the absolute monetary value terrifies you, and you will hold losers because you can't stomach the realization of the loss. 
+Money is an illusion. P&L is just a side effect of leverage. If you stare at the dollar amount, you become a slave to it. You will panic close a runner because the monetary value scares you, and you will hold a loser because you refuse to accept the reality of the invoice. 
 
-Stop looking at the dollar sign. Turn off the P&L display. Strip the emotional payload out of your terminal. Your only job on this earth, as a trader, is to acquire pips. You are a pip-stacking machine. If you can reliably extract pips from the market, the money is just a math problem solved by lot size. You scale the lot size when your capital grows, but the fundamental action never changes.
+Turn off the P&L display. Strip the emotional payload out of the terminal. Your only function is to acquire pips. You are a pip-stacking machine. If you can reliably pull pips out of the market, the money is just a math problem solved by lot sizing. Scale the lot size when your capital grows, but the fundamental action never changes.
 
-You don't need a secret system. You need discipline, you need to kill your ego, and you need to spend time in the trenches learning the rhythm of the market. Cut the cope. Execute the system. Stack pips. 
+Kill the ego, execute the system, and stack pips. 
 
 ---
 
