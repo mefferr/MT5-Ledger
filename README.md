@@ -166,9 +166,9 @@ It's the accumulation of experience. All the wins, all the losses, all the lesso
 
 **The Final Word: Just Stack Pips**
 
-Nobody cares about your win rate. Nobody cares if your equity curve looks aesthetically pleasing or if your average win to average loss ratio makes for a good tweet. All of those metrics are irrelevant vanity stats that broke traders use to feel better about themselves. The entire game boils down to one raw mechanic: extracting distance from the market.
+Nobody cares about your win rate. Nobody cares if your equity curve looks aesthetically pleasing or if your average win to average loss ratio makes you feel good. All of those metrics are irrelevant vanity stats that broke traders use to feel better about themselves. The entire game boils down to one raw mechanic: extracting distance from the market.
 
-Money is an illusion. P&L is just a side effect of leverage. If you stare at the dollar amount, you become a slave to it. You will panic close a runner because the monetary value scares you, and you will hold a loser because you refuse to accept the reality of the invoice. 
+Money is an illusion. P&L is just a side effect of position sizing. If you stare at the dollar amount, you become a slave to it. You will panic close a runner because the monetary value scares you, and you will hold a loser because you refuse to accept the reality of the invoice. 
 
 Turn off the P&L display. Strip the emotional payload out of the terminal. Your only function is to acquire pips. You are a pip-stacking machine. If you can reliably pull pips out of the market, the money is just a math problem solved by lot sizing. Scale the lot size when your capital grows, but the fundamental action never changes.
 
