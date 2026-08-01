@@ -141,13 +141,13 @@ Always 1 position. Do not "average in" to a loser. Averaging in is just doubling
 
 When you are live in a position, trail your stop aggressively against local structure. If price chops sideways or drifts 180 pips into drawdown without immediate continuation, the explosive momentum thesis is dead. Cut it immediately. True asymmetric runners show violent rejection off the entry zone and sustained unidirectional flow. If that doesn't happen, the probe failed. Let the market take you out at structure and preserve your mental capital. Sitting in drawdown hoping a trade "comes back" isn't trading, it's gambling fueled by sunk-cost bias and an ego that refuses to take an L.
 
-**Mechanical Execution.**
+**Subconscious Intuition.**
 
-The market doesn't know you exist. It doesn't care about your rent, your feelings, or your last five losses. If your execution is a mess, it is because you lack discipline. You are projecting anxiety instead of reading structure. 
+Amateurs think they can just plug in a mechanical set of rules and extract pips like a robot. You can't. A robot cannot read the nuance of a liquidity sweep. The market doesn't care about rigid formulas. 
 
-Amateurs trade to feed their ego. They want the psychological comfort of being right. The market only respects mechanics. Your opinion on where price should go is completely irrelevant. You have to wire your brain to view a string of losses not as a personal attack, but as standard variance. A loss is just an invoice. It is the raw cost of doing business. If you are sweating over a drawdown, it means your position size is wrong or you don't actually trust your own analysis. 
+You need to develop a deep, subconscious feel for the market. It requires an intuition that can only be built through thousands of hours staring at the charts. What looks like cold execution to a tourist is actually a hyper-attuned instinct. You have to feel the weight of the order flow. You have to instinctively know the difference between a trap and a genuine structural shift before the candle even closes. 
 
-Kill the ego entirely. The real edge is cold, mechanical execution by a mind that has completely eradicated its need to be comfortable. If you can't sit through the turbulence without letting your emotions dictate your actions, you have no edge. Put your time in the gulag. Build the discipline. Execute the system without emotion. Lock in.
+Your opinion on where price should go is irrelevant. You have to wire your brain to sync completely with the behavior of the instrument. When you put your time in the gulag, the chart stops being a collection of candles. You stop thinking. You just feel the shift in liquidity, make the necessary adjustments, and execute without hesitation. The true edge isn't a mechanical rulebook. The edge is your subconscious. Lock in.
 
 **View the market as a female Entity (Frame Control & Shit Tests).**
 
