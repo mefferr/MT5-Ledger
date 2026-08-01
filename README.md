@@ -169,7 +169,7 @@ XAUUSD (Gold) is highly recommended. It provides the exact liquidity and massive
 
 When price drops heavily against your entry, tourists panic. A master knows it is completely normal behavior, considering large orders are shifting to restructure price before the real expansion. If the initial idea is still valid, nothing had changed. Violent liquidity sweeps happen, adjustments might need to be made, but you hold the line. The thesis remains intact. 
 
-There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition. Specialize on your craft, master it, and don't look at anything else. Lock in.
+There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition and hyperfocus. Specialize on your craft, master it, and don't look at anything else.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
