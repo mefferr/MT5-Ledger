@@ -160,9 +160,8 @@ True frame control isn't about being stubborn. It's entering what i like to call
 
 When she throws a tantrum (volatility) and you don't even blink you break her limbic defense mechanisms. When she realizes your frame is unbreakable and you genuinely don't give a single fuck if the trade hits TP or SL, you don't need the outcome to validate your existence. She submits. The order flow aligns, it bends to your reality, and you stack pips. 
 
-**Specialized On The Craft**
 
-You have to be specialized on your craft, and you shouldn't look at anything else. 
+**You have to be specialized on your craft, and you shouldn't look at anything else.**
 
 You do not trade the overall market, you trade the specific behavioral mechanics of one single instrument. Flipping between random forex pairs, crypto, and indices shows a complete lack of conviction and patience. Pick one asset. Learn how it moves. Map out its unique restructuring patterns until you know exactly how it breathes. 
 
