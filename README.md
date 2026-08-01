@@ -91,21 +91,21 @@ This automatically boots the Next.js frontend on `localhost:3000`, fires up the 
 
 If you don't have Python or MT5 installed, the script will gracefully complain about the bridge failing, but the web UI will still boot perfectly for offline statement parsing.
 
-### Bonus: The GOYA Framework (Get Off Your Ass)
+**Bonus: The GOYA Framework (Get Off Your Ass)**
 
 > *"Most people don't avoid action - they avoid evidence."*
 
 P&L is a degenerate metric for low-IQ monkeys. It conflates execution quality with leverage exposure, producing a retarded number that tells you absolutely nothing about whether your process actually works. A retard netting $5,000 on a 50-pip scalp at 10 lots has demonstrated exactly zero edge - they've simply borrowed variance from a fat tail they don't even understand. They are gambling. A trader netting $100 on 1,000 pips at 0.01 lots has possibly demonstrated a repeatable edge that scales linearly with capital.
 
-Dollar P&L is **cheap talk for losers**. Pips are **costly signals**. The market doesn't give a single fuck what you claim your edge is or how much money you made yesterday. It only respects the un-fakeable cost you paid to extract directional distance from the noise. The GOYA framework completely nukes the dollar signs and evaluates what actually matters: **raw pip extraction, risk management, and emotional control.**
+Dollar P&L is cheap talk for losers. Pips are costly signals. The market doesn't give a single fuck what you claim your edge is or how much money you made yesterday. It only respects the un-fakeable cost you paid to extract directional distance from the noise. The GOYA framework completely nukes the dollar signs and evaluates what actually matters: raw pip extraction, risk management, and emotional control.
 
 **Pip Extraction as the Atomic Unit of Edge**
 
-Dollar P&L is just a function of `pips × lots × contract_size`. You control the leverage like a math variable, but the *market* dictates the physical distance. The only honest metric of your skill is how many raw pips you can pull from the market. Stop jerking off over your account balance. Stack pips. Capital scaling is just a simple math problem solved downstream by the Kelly criterion. Get the pips first, the money literally just follows the math.
+Dollar P&L is just a function of `pips × lots × contract_size`. You control the leverage like a math variable, but the market dictates the physical distance. The only honest metric of your skill is how many raw pips you can pull from the market. Stop jerking off over your account balance. Stack pips. Capital scaling is just a simple math problem solved downstream by the Kelly criterion. Get the pips first, the money literally just follows the math.
 
 **Win Rate is a Misleading Statistic for Cowards**
 
-High win rates are for complete pussies selling cheap optionality to the market just to feel the psychological comfort of being "right." It's pure ego-stroking bullshit. GOYA completely inverts this. You risk 50-150 pips to capture a 500-1500 pip runner. If your payoff ratio is 10:1, you only need to be right 10% of the time to break even. The math is brutal and completely unambiguous - **expectancy is your edge multiplied by massive payoff asymmetry**, not how often you jerk off your ego with a tiny green trade.
+High win rates are for complete pussies selling cheap optionality to the market just to feel the psychological comfort of being "right." It's pure ego-stroking bullshit. GOYA completely inverts this. You risk 50-150 pips to capture a 500-1500 pip runner. If your payoff ratio is 10:1, you only need to be right 10% of the time to break even. The math is brutal and completely unambiguous. Expectancy is your edge multiplied by massive payoff asymmetry, not how often you jerk off your ego with a tiny green trade.
 
 **Losses Are Probes, Not Failures**
 
@@ -113,13 +113,13 @@ Stop treating red trades like someone just shot your dog. They are invoices. Eve
 
 **Type II Errors Will Fucking Destroy You**
 
-There are two ways to fail. Type I: You take a trade that doesn't work. It costs you a small probe. Who cares. Type II: You see a massive setup, you bitch out, you hesitate, and you miss a 1,000-pip runner. The cost of a Type II error is catastrophic - not just in missed money, but in the absolute psychological devastation of watching your thesis play out without you while you sit there like a cuck.
+There are two ways to fail. Type I: You take a trade that doesn't work. It costs you a small probe. Who cares. Type II: You see a massive setup, you bitch out, you hesitate, and you miss a 1,000-pip runner. The cost of a Type II error is catastrophic. It is not just in missed money, but in the absolute psychological devastation of watching your thesis play out without you while you sit there like a cuck.
 
 Type II errors will nuke your mental capital orders of magnitude faster than getting stopped out on a probe. Bias your entire system toward ruthless execution. You need sharp human intuition to read the live tape, but you must assume your setup is valid and pull the trigger until the market explicitly proves you wrong. Don't be a spectator to your own system.
 
 **Stop Wasting Your Brainpower on Cope**
 
-You only have so much cognitive bandwidth every day. Most of you are burning 70% of it trying to protect your fragile ego - retroactively editing your thesis mid-trade, making up retarded excuses for why your entry was actually "early" instead of just wrong, and managing the internal narrative of being a "good trader". It's the mental equivalent of running a supercomputer just to mine dogecoin for a scammer. 
+You only have so much cognitive bandwidth every day. Most of you are burning 70% of it trying to protect your fragile ego. You are retroactively editing your thesis mid-trade, making up retarded excuses for why your entry was actually "early" instead of just wrong, and managing the internal narrative of being a "good trader". It's the mental equivalent of running a supercomputer just to mine dogecoin for a scammer. 
 
 It's active self-destruction. Every time you rationalize a bad trade instead of just taking the L and logging the data, you are literally wiring your brain to become a better liar. Fast forward six months, and your pattern recognition hardware is completely corrupted. You can't even tell the difference between a high-EV setup and a tilted revenge entry because you've spent half a year lying to yourself.
 
@@ -127,9 +127,9 @@ The GOYA framework exists to brutally kill the cope. The numbers don't give a sh
 
 **The Zero State: Flow State with a Sniper Rifle**
 
-To actually print money in this game, you need to enter what i like to call the Zero State: absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some spiritual zen detachment bullshit, it's just the massive mechanical advantage you get when you stop letting your fragile ego rub against the charts.
+To actually print money in this game, you need to enter what i like to call the Zero State. Absolute cold precision mixed with zero attachment to the outcome. You are calculating risk like a machine, but genuinely do not care if the trade hits TP or SL. It's not some spiritual zen detachment bullshit, it's just the massive mechanical advantage you get when you stop letting your fragile ego rub against the charts.
 
-The golden rule of any interaction is this: whoever needs the outcome less, controls the frame. If you *need* a trade to work to pay rent or fix your mood, the market completely owns you. You will overtrade, you will move stops, and you will sit in drawdown praying to a god that isn't listening. But if you don't need it? You execute with the cold, psychopathic precision of pure process.
+The golden rule of any interaction is this: whoever needs the outcome less, controls the frame. If you need a trade to work to pay rent or fix your mood, the market completely owns you. You will overtrade, you will move stops, and you will sit in drawdown praying to a god that isn't listening. But if you don't need it? You execute with the cold, psychopathic precision of pure process.
 
 If you can get tilted, you have no edge. I don't care how cracked your technical analysis is. If a 100-pip drawdown makes you sweat and close a trade that was three candles away from a massive runner, your charting skills are useless. Emotional sovereignty isn't a bonus perk. It's the bare minimum required to not get slaughtered.
 
@@ -143,22 +143,22 @@ When you are live in a position, trail your stop aggressively against local stru
 
 **Human Psychology and The Market Mirror**
 
-The market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong - it's because you're a mess. When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and violently weaponized against you. The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
+The market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong. It's because you're a mess. When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and violently weaponized against you. The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the order flow and start trading your own anxiety. 
 
 If you want to be a master you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is completely irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
 
 
 **View the market as a female Entity (Frame Control & Shit Tests).**
 
-Trading is like an interaction with a female. It is nature's ultimate shit test mechanism. An erratic, highly perceptive entity constantly probing you to see if your projected frame is real or if you are a fragile insecure fraud who will collapse the second you face actual pressure - Exactly like the market.
+Trading is like an interaction with a female. It is nature's ultimate shit test mechanism. An erratic, highly perceptive entity constantly probing you to see if your projected frame is real or if you are a fragile insecure fraud who will collapse the second you face actual pressure. Exactly like the market.
 
 When the market throws a sudden red candle against your position it's like when a woman is looking dead into your eyes dropping her compliance to zero and asking: *"Are you actually a solid grounded man who stands by his thesis or are you going to have a panic attack like a coward?"* 
 
-The instinct of a weak beta trader is to fight the market. To argue with her. To impose his will through stubbornness - refusing to close a loser, moving stops, or getting angry and revenge trading when stopped out. This is a catastrophic, biologically repulsive error. Anger is a reaction and if you react to her chaos, she controls your internal state. You are bleeding subtextual value. You are showing that you need her validation (P&L) to feel okay. The market biologically repulses from traders who lack emotional sovereignty. She will take your money and give it to the guy who didn't flinch.
+The instinct of a weak beta trader is to fight the market. To argue with her. To impose his will through stubbornness. Refusing to close a loser, moving stops, or getting angry and revenge trading when stopped out. This is a catastrophic, biologically repulsive error. Anger is a reaction and if you react to her chaos, she controls your internal state. You are bleeding subtextual value. You are showing that you need her validation (P&L) to feel okay. The market biologically repulses from traders who lack emotional sovereignty. She will take your money and give it to the guy who didn't flinch.
 
 True frame control isn't about being stubborn. It's entering what i like to call the Zero State. You observe the market's turbulence like a fascinating insect. You hold your stop loss, you execute your plan, and you remain completely unbothered by her chaos. The strongest response to a female's emotional provocation is strategic non-reaction. You don't justify your trade. You don't explain your thesis out loud to calm yourself down. You hold the cold void of silence. You let her drown in your non-reaction. 
 
-When she throws a tantrum (volatility) and you don't even blink you break her limbic defense mechanisms. When she realizes your frame is unbreakable and you genuinely don't give a single fuck if the trade hits TP or SL, you don't need the outcome to validate your existence - she submits. The order flow aligns, it bends to your reality, and you stack pips. 
+When she throws a tantrum (volatility) and you don't even blink you break her limbic defense mechanisms. When she realizes your frame is unbreakable and you genuinely don't give a single fuck if the trade hits TP or SL, you don't need the outcome to validate your existence. She submits. The order flow aligns, it bends to your reality, and you stack pips. 
 
 **Weaponized Autistic Hyper-Specialization**
 
@@ -170,7 +170,7 @@ You have to be completely specialized on your craft. You do not look at anything
 
 **Time in the Gulag (The Accumulation of Experience)**
 
-It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
+It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag. Hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
 
 **The Final Word: Just Stack Pips**
 
@@ -181,6 +181,7 @@ Money is an illusion. P&L is just a side effect of position sizing. If you stare
 Turn off the P&L display. Strip the emotional payload out of the terminal. Your only function is to acquire pips. You are a pip-stacking machine. If you can reliably pull pips out of the market, the money is just a math problem solved by lot sizing. Scale the lot size when your capital grows, but the fundamental action never changes.
 
 Kill the ego, execute the system, and stack pips.
+
 
 ---
 
