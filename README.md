@@ -109,7 +109,7 @@ High win rates are for complete pussies selling cheap optionality to the market 
 
 **Losses Are Probes, Not Failures**
 
-Stop treating red trades like someone just shot your dog. They are invoices. Every losing trade is just a cheap, low-cost probe deployed to force the market to show its hand. The probe extracts information. If the setup fails, you learned something at a fixed cost. If it runs, you violently exploit the vulnerability. If your probes cost 80 pips and your runners yield 800, you can get stopped out 9 out of 10 times and still compound your account like a psychopath. Losses are just the raw cost of doing business.
+Losses are invoices. Every losing trade is just a cheap low-cost probe deployed to force the market to show its hand. The probe extracts information. If the setup fails, you learned something at a fixed cost. If it runs, you violently exploit the vulnerability. If your probes cost 80 pips and your runners yield 800, you can get stopped out 9 out of 10 times and still compound your account like crazy. Losses are just the raw cost of doing business.
 
 **Type II Errors Will Fucking Destroy You**
 
