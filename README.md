@@ -142,11 +142,11 @@ When you are live in a position, trail your stop aggressively against local stru
 
 **Mechanical Execution**
 
-The market doesn't know you exist. It doesn't care about your rent or your last five losses. If your execution is a mess, it is because you lack discipline. You are projecting anxiety instead of reading structure. 
+The market doesn't know you exist. It doesn't care about your rent, your feelings, or your last five losses. If your execution is a mess, it is because you lack discipline. You are projecting anxiety instead of reading structure. 
 
-You want to be right. The market only respects mechanics. Your opinion on where price should go is completely irrelevant. Large orders shift to restructure price. You either read the flow or you pay the spread.
+Amateurs trade to feed their ego. They want the psychological comfort of being right. The market only respects mechanics. Your opinion on where price should go is completely irrelevant. You have to wire your brain to view a string of losses not as a personal attack, but as standard variance. A loss is just an invoice. It is the raw cost of doing business. If you are sweating over a drawdown, it means your position size is wrong or you don't actually trust your own analysis. 
 
-Kill the ego. Losses are standard variance. If the idea is valid, hold the line. Edge is cold, mechanical execution. Eliminate the need to be comfortable.
+Kill the ego entirely. The real edge is cold, mechanical execution by a mind that has completely eradicated its need to be comfortable. If you can't sit through the turbulence without letting your emotions dictate your actions, you have no edge. Put your time in the gulag. Build the discipline. Execute the system without emotion. Lock in.
 
 **View the market as a female Entity (Frame Control & Shit Tests).**
 
