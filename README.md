@@ -175,15 +175,17 @@ There are a lot of pips to collect. You cannot capture a massive runner if you a
 
 It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag. Hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
 
-**The Final Word: Collect Pips**
+**The Final Word**
 
-This framework is definitely not for newbies. You need to have some experience already to understand this: nobody cares about your win rate. Vanity metrics are for tourists. The entire game is just about collecting pips. 
+This framework is definitely not for newbies. You need to have some experience already to even understand what it takes to sit in the fire. 
 
-Money is an illusion. Your dollar P&L is just a side effect of your lot size. If you stare at the dollar amount, you become a slave to it. You will panic close a massive runner because the monetary value scares you. You will hold a loser because you refuse to accept the cost of doing business. 
+The market doesn't care about your feelings, your rent, or how hard you work. It only respects cold, mechanical execution. When you finally stop fighting the tape, when you stop letting your ego dictate your entries, the entire game slows down. You start seeing the matrix. 
 
-Turn off the P&L display. Your only function is to extract distance from the market. If you can reliably collect pips, the money is just a math problem solved by lot sizing. You scale the lot size when your capital grows, but the fundamental action never changes. 
+You will face massive drawdown. You will get stopped out on violent liquidity sweeps. But if your thesis is valid, you hold the line. It's the accumulation of experience. All the wins, all the losses, all the brutal hours spent staring at the charts—it all compounds into an unbreakable frame. 
 
-There are a lot of pips to collect. Kill the ego. Execute the system. Let's roll 🛵
+Most people quit because they can't handle the psychological pressure. Don't be like them. Specialize in your craft. Shut out the noise from the tourists. There are a lot of pips to collect, but you have to earn the right to extract them. Put your time in the gulag. When you finally break through that psychological barrier, the money becomes irrelevant—it just follows the math. 
+
+Let's roll 🛵
 
 
 ---
