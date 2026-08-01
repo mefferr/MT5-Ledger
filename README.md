@@ -160,13 +160,17 @@ True frame control isn't about being stubborn. It's entering what i like to call
 
 When she throws a tantrum (volatility) and you don't even blink you break her limbic defense mechanisms. When she realizes your frame is unbreakable and you genuinely don't give a single fuck if the trade hits TP or SL, you don't need the outcome to validate your existence. She submits. The order flow aligns, it bends to your reality, and you stack pips. 
 
-**Specialized On My Craft**
+**Specialized On The Craft**
 
-I'm specialized on my craft, I dont look at anything else. 
+You have to be specialized on your craft, and you shouldn't look at anything else. 
 
-You don't trade the market, you trade the behavioral mechanics of one single instrument. Flipping between pairs shows a complete lack of conviction. Pick one asset. Learn its liquidity sweeps. Map its exact restructuring patterns. 
+You do not trade the overall market, you trade the specific behavioral mechanics of one single instrument. Flipping between random forex pairs, crypto, and indices every morning shows a complete lack of conviction. It is the behavior of a tourist paying the spread. Pick one asset. Learn its exact liquidity sweeps. Map out its unique restructuring patterns until you know exactly how it breathes. 
 
-When price drops heavily against you, it's normal, considering large orders shifting to restructure price. If the idea is still valid, nothing had changed. Liquidity sweeps happen, adjustments need to be made, but you hold the line. There are a lot of pips to collect. You can't do that if you're distracted by noise. Specialize on your craft and dont look at anything else.
+XAUUSD (Gold) is highly recommended. It provides the exact liquidity and massive pip distance required for this framework to function optimally. When you specialize entirely on XAUUSD, you stop seeing random chaos and start seeing the underlying mechanical shifts. You don't need another pair when one asset offers all the distance you need to extract.
+
+When price drops heavily against your entry, tourists panic. A specialist knows it is completely normal behavior, considering large orders are shifting to restructure price before the real expansion. If the initial idea is still valid, nothing had changed. Violent liquidity sweeps happen, adjustments might need to be made, but you hold the line. The thesis remains intact. 
+
+There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition. Specialize on your craft, master XAUUSD, and don't look at anything else.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
