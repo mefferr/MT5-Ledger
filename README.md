@@ -160,6 +160,10 @@ True frame control isn't about being stubborn. It's entering what i like to call
 
 When she throws a tantrum (volatility) and you don't even blink you break her limbic defense mechanisms. When she realizes your frame is unbreakable and you genuinely don't give a single fuck if the trade hits TP or SL, you don't need the outcome to validate your existence - she submits. The order flow aligns, it bends to your reality, and you stack pips. 
 
+**Weaponized Autistic Hyper-Specialization**
+
+You don't need to look at fifteen different FX pairs, crypto, and indices every morning like a clueless ADHD tourist begging the market for a setup. True GOYA extraction requires blinding, obsessive specialization on a single asset. It's weaponized autism. You don't trade the "market"—you trade the specific behavioral tics of one single instrument until you know exactly how it breathes. If you're flipping between NAS, BTC, and EURUSD because you're bored or desperate, you have absolutely zero edge. You are just a tourist paying the spread. Pick one pair. Marry it. Study its liquidity sweeps, its fakeouts, its exact restructuring patterns until you are completely specialized in your craft. You don't look at anything else. You just ruthlessly extract pips from that one ticker until they bleed out.
+
 **Time in the Gulag (The Accumulation of Experience)**
 
 It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag - hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
