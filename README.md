@@ -134,19 +134,19 @@ The golden rule of any interaction is this: whoever needs the outcome less, cont
 If you can get tilted, you have no edge. I don't care how cracked your technical analysis is. If a 100-pip drawdown makes you sweat and close a trade that was three candles away from a massive runner, your charting skills are useless. Emotional sovereignty isn't a bonus perk. It's the bare minimum required to not get slaughtered.
 
 **Fixed Lot Sizing (1 Position Rule)**
-
 Always 1 position. Do not "average in" to a loser. Averaging in is just doubling down on a thesis the market is actively telling you is wrong. Use a strict, fixed lot size relative to your equity. When the equity doubles, mechanically double the lot size. You only get the right to press your size or stack combos after a verified series of winners and a massive accumulated pip reserve. But until then, fixed lot size. Don't be greedy.
 
 **Aggressive Trailing SL Based on Local Structure**
 
 When you are live in a position, trail your stop aggressively against local structure. If price chops sideways or drifts 180 pips into drawdown without immediate continuation, the explosive momentum thesis is dead. Cut it immediately. True asymmetric runners show violent rejection off the entry zone and sustained unidirectional flow. If that doesn't happen, the probe failed. Let the market take you out at structure and preserve your mental capital. Sitting in drawdown hoping a trade "comes back" isn't trading, it's gambling fueled by sunk-cost bias and an ego that refuses to take an L.
 
-**Human Psychology and The Market Mirror**
+**Mechanical Execution**
 
-The market isn't out to get you. It doesn't even know you exist. The market is just a massive, completely indifferent mirror reflecting your own bullshit back at you. If your trading is a mess, it's not because your moving average settings are wrong. It's because you're a mess. When you sit down at the charts, every unresolved ego deficit, every insecurity, and every deep-seated need to be "right" gets exposed and violently weaponized against you. The market does not care about your rent. It has zero memory of your last 5 losses. When you project your emotional baggage onto a purely probabilistic system, you start hallucinating. You stop trading the price action and start trading your own anxiety. 
+The market doesn't know you exist. It doesn't care about your rent or your last five losses. If your execution is a mess, it is because you lack discipline. You are projecting anxiety instead of reading structure. 
 
-If you want to be a master you have to kill the ego. Nuke it entirely. Your opinion on where price "should" go is completely irrelevant unless the order flow agrees with you. You have to wire your brain to view a string of losses not as a personal attack from the universe, but as standard statistical variance. The real edge is the cold, mechanical execution by a mind that has completely eradicated its need to be comfortable.
+You want to be right. The market only respects mechanics. Your opinion on where price should go is completely irrelevant. Large orders shift to restructure price. You either read the flow or you pay the spread.
 
+Kill the ego. Losses are standard variance. If the idea is valid, hold the line. Edge is cold, mechanical execution. Eliminate the need to be comfortable.
 
 **View the market as a female Entity (Frame Control & Shit Tests).**
 
