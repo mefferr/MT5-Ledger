@@ -177,9 +177,9 @@ It's the accumulation of experience. All the wins, all the losses, all the lesso
 
 **The Final Word**
 
-This framework is definitely not for newbies. You need to have some experience already. But if you actually want to make the most out of this market phase, you have to stop looking for shortcuts. There is no secret. It is just raw repetition, specializing in your craft, and holding your thesis when the tourists are panicking. 
+This framework is definitely not for newbies. You need to have some experience already. But if you actually want to make the most out of this market you have to stop looking for shortcuts. There is no secret. It is just raw repetition, specializing in your craft, and holding your thesis when the tourists are panicking. 
 
-Most people will never make it because they refuse to put in the hours. They want the outcome without paying the friction. If you're serious, you sit down, you map the structure, and you execute without emotion. Every single morning is a new opportunity. Make the necessary adjustments, trust your analysis, and show up ready to work. There are a lot of pips to collect this year. Let's roll 🛵
+Most people will never make it because they refuse to put in the hours. They want the outcome without paying the friction. If you're serious, you sit down, you map the structure, and you execute without emotion. Every single morning is a new opportunity. Make the necessary adjustments, trust your analysis, and show up ready to work. There are a lot of pips to collect. Lock in.
 
 
 ---
