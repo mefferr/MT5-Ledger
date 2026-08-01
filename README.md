@@ -162,7 +162,11 @@ When she throws a tantrum (volatility) and you don't even blink you break her li
 
 **Weaponized Autistic Hyper-Specialization**
 
-Scanning fifteen different charts every morning is a sign of weakness. It shows a complete lack of conviction. Real edge requires weaponized autism applied to a single asset. You do not trade the market. You trade the specific behavioral mechanics of one instrument. If you are flipping between gold, crypto and forex pairs because you are bored or desperate for a setup, you have zero edge. You are just a tourist paying the spread. Pick one asset. Learn how it sweeps liquidity. Map its exact restructuring patterns. Specialize in your craft and ignore literally everything else. Stacking pips requires absolute focus, not scattered attention.
+Scanning fifteen different charts every morning is a sign of weakness. It shows a complete lack of conviction. Real edge requires weaponized autism applied to a single asset. If you are flipping between gold, crypto and random forex pairs because you are bored or desperate for a setup, you have zero edge. You are just a tourist paying the spread. 
+
+You do not trade the market. You trade the specific behavioral mechanics of one instrument. Pick one asset. Learn how it sweeps liquidity. Map its exact restructuring patterns. When price violently drops into drawdown, a tourist panics. A specialist knows it is just normal behavior, considering large orders are shifting to restructure price. If the thesis is still valid, nothing has changed. Adjustments might need to be made, but you hold the line because you know exactly how your instrument breathes.
+
+You have to be completely specialized on your craft. You do not look at anything else. There are a lot of pips to collect, but stacking them requires absolute focus. Ignore the noise. Master one ticker.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
