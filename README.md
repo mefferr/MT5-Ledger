@@ -175,15 +175,15 @@ There are a lot of pips to collect. You cannot capture a massive runner if you a
 
 It's the accumulation of experience. All the wins, all the losses, all the lessons and observations. The market doesn't move by itself, it requires big money to fluctuate. That big money is in the hands of individuals that need to make those decisions. If you're able to understand how those individuals think and process information, you're able to predict the market as a result. There is no magic way to learn what the big players do. It's all about spending time in the gulag. Hours and hours observing movements on the chart and correlating them with fundamentals and the overarching storyline. In simple terms: understanding the worldwide financial agenda and following it to the best of your ability. Stacking pips.
 
-**The Final Word: Just Stack Pips**
+**The Final Word: Collect Pips**
 
-Nobody cares about your win rate. Nobody cares if your equity curve looks aesthetically pleasing or if your average win to average loss ratio makes you feel good. All of those metrics are irrelevant vanity stats that broke traders use to feel better about themselves. The entire game boils down to one raw mechanic: extracting distance from the market.
+This framework is definitely not for newbies. You need to have some experience already to understand this: nobody cares about your win rate. Vanity metrics are for tourists. The entire game is just about collecting pips. 
 
-Money is an illusion. P&L is just a side effect of position sizing. If you stare at the dollar amount, you become a slave to it. You will panic close a runner because the monetary value scares you, and you will hold a loser because you refuse to accept the reality of the invoice. 
+Money is an illusion. Your dollar P&L is just a side effect of your lot size. If you stare at the dollar amount, you become a slave to it. You will panic close a massive runner because the monetary value scares you. You will hold a loser because you refuse to accept the cost of doing business. 
 
-Turn off the P&L display. Strip the emotional payload out of the terminal. Your only function is to acquire pips. You are a pip-stacking machine. If you can reliably pull pips out of the market, the money is just a math problem solved by lot sizing. Scale the lot size when your capital grows, but the fundamental action never changes.
+Turn off the P&L display. Your only function is to extract distance from the market. If you can reliably collect pips, the money is just a math problem solved by lot sizing. You scale the lot size when your capital grows, but the fundamental action never changes. 
 
-Kill the ego, execute the system, and stack pips.
+There are a lot of pips to collect. Kill the ego. Execute the system. Let's roll 🛵
 
 
 ---
