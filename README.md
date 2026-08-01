@@ -177,15 +177,9 @@ It's the accumulation of experience. All the wins, all the losses, all the lesso
 
 **The Final Word**
 
-This framework is definitely not for newbies. You need to have some experience already to even understand what it takes to sit in the fire. 
+This framework is definitely not for newbies. You need to have some experience already. But if you actually want to make the most out of this market phase, you have to stop looking for shortcuts. There is no secret. It is just raw repetition, specializing in your craft, and holding your thesis when the tourists are panicking. 
 
-The market doesn't care about your feelings, your rent, or how hard you work. It only respects cold, mechanical execution. When you finally stop fighting the tape, when you stop letting your ego dictate your entries, the entire game slows down. You start seeing the matrix. 
-
-You will face massive drawdown. You will get stopped out on violent liquidity sweeps. But if your thesis is valid, you hold the line. It's the accumulation of experience. All the wins, all the losses, all the brutal hours spent staring at the charts—it all compounds into an unbreakable frame. 
-
-Most people quit because they can't handle the psychological pressure. Don't be like them. Specialize in your craft. Shut out the noise from the tourists. There are a lot of pips to collect, but you have to earn the right to extract them. Put your time in the gulag. When you finally break through that psychological barrier, the money becomes irrelevant—it just follows the math. 
-
-Let's roll 🛵
+Most people will never make it because they refuse to put in the hours. They want the outcome without paying the friction. If you're serious, you sit down, you map the structure, and you execute without emotion. Every single morning is a new opportunity. Make the necessary adjustments, trust your analysis, and show up ready to work. There are a lot of pips to collect this year. Let's roll 🛵
 
 
 ---
