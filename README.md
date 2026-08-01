@@ -135,7 +135,7 @@ If you can get tilted, you have no edge. I don't care how cracked your technical
 
 **Fixed Lot Sizing (1 Position Rule)**
 
-Always 1 position. Do not "average in" to a loser. Averaging in is just doubling down on a thesis the market is actively telling you is wrong. Use a strict, fixed lot size relative to your equity. When the equity doubles, mechanically double the lot size. You only get the right to press your size or stack combos after a verified series of winners and a massive accumulated pip reserve. Until then, you are on a strict diet. Don't be greedy.
+Always 1 position. Do not "average in" to a loser. Averaging in is just doubling down on a thesis the market is actively telling you is wrong. Use a strict, fixed lot size relative to your equity. When the equity doubles, mechanically double the lot size. You only get the right to press your size or stack combos after a verified series of winners and a massive accumulated pip reserve. But until then, fixed lot size. Don't be greedy.
 
 **Aggressive Trailing SL Based on Local Structure**
 
