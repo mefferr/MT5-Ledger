@@ -165,11 +165,11 @@ When she throws a tantrum (volatility) and you don't even blink you break her li
 
 You do not trade the overall market, you trade the specific behavioral mechanics of one single instrument. Flipping between random forex pairs, crypto, and indices shows a complete lack of conviction and patience. Pick one asset. Learn how it moves. Map out its unique restructuring patterns until you know exactly how it breathes. 
 
-XAUUSD (Gold) is highly recommended. It provides the exact liquidity and massive pip distance required for this framework to function optimally. When you specialize entirely on XAUUSD, you stop seeing random chaos and start seeing the underlying mechanical shifts. You don't need another pair when one asset offers all the distance you need to extract.
+XAUUSD (Gold) is highly recommended. It provides the exact liquidity and massive pip distance required for this framework to function optimally. When you specialize entirely on one asset you stop seeing random chaos and start seeing the underlying mechanical shifts. You don't need another pair when one asset offers all the distance you need to extract.
 
-When price drops heavily against your entry, tourists panic. A specialist knows it is completely normal behavior, considering large orders are shifting to restructure price before the real expansion. If the initial idea is still valid, nothing had changed. Violent liquidity sweeps happen, adjustments might need to be made, but you hold the line. The thesis remains intact. 
+When price drops heavily against your entry, tourists panic. A master knows it is completely normal behavior, considering large orders are shifting to restructure price before the real expansion. If the initial idea is still valid, nothing had changed. Violent liquidity sweeps happen, adjustments might need to be made, but you hold the line. The thesis remains intact. 
 
-There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition. Specialize on your craft, master XAUUSD, and don't look at anything else.
+There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition. Specialize on your craft, master it, and don't look at anything else.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
