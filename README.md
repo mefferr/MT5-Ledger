@@ -141,13 +141,6 @@ Always 1 position. Do not "average in" to a loser. Averaging in is just doubling
 
 When you are live in a position, trail your stop aggressively against local structure. If price chops sideways or drifts 180 pips into drawdown without immediate continuation, the explosive momentum thesis is dead. Cut it immediately. True asymmetric runners show violent rejection off the entry zone and sustained unidirectional flow. If that doesn't happen, the probe failed. Let the market take you out at structure and preserve your mental capital. Sitting in drawdown hoping a trade "comes back" isn't trading, it's gambling fueled by sunk-cost bias and an ego that refuses to take an L.
 
-**Subconscious Intuition.**
-
-Amateurs think they can just plug in a mechanical set of rules and extract pips like a robot. You can't. A robot cannot read the nuance of a liquidity sweep. The market doesn't care about rigid formulas. 
-
-You need to develop a deep, subconscious feel for the market. It requires an intuition that can only be built through thousands of hours staring at the charts. What looks like cold execution to a tourist is actually a hyper-attuned instinct. You have to feel the weight of the order flow. You have to instinctively know the difference between a trap and a genuine structural shift before the candle even closes. 
-
-Your opinion on where price should go is irrelevant. You have to wire your brain to sync completely with the behavior of the instrument. When you put your time in the gulag, the chart stops being a collection of candles. You stop thinking. You just feel the shift in liquidity, make the necessary adjustments, and execute without hesitation. The true edge isn't a mechanical rulebook. The edge is your subconscious. Lock in.
 
 **View the market as a female Entity (Frame Control & Shit Tests).**
 
@@ -164,13 +157,19 @@ When she throws a tantrum (volatility) and you don't even blink you break her li
 
 **You have to be specialized on your craft, and you shouldn't look at anything else.**
 
+Amateurs think they can just plug in a mechanical set of rules and extract pips like a robot. You can't. A robot cannot read the nuance of a liquidity sweep. The market doesn't care about rigid formulas. 
+
+You need to develop a deep, subconscious feel for the market. It requires an intuition that can only be built through thousands of hours staring at the charts. What looks like cold execution to a tourist is actually a hyper-attuned instinct. You have to feel the weight of the order flow. You have to instinctively know the difference between a trap and a genuine structural shift before the candle even closes. 
+
+Your opinion on where price should go is irrelevant. You have to wire your brain to sync completely with the behavior of the instrument. When you put your time in the gulag, the chart stops being a collection of candles. You stop thinking. You just feel the shift in liquidity, make the necessary adjustments, and execute without hesitation. The true edge isn't a mechanical rulebook. The edge is your subconscious.
+
 You do not trade the overall market, you trade the specific behavioral mechanics of one single instrument. Flipping between random forex pairs, crypto, and indices shows a complete lack of conviction and patience. Pick one asset. Learn how it moves. Map out its unique restructuring patterns until you know exactly how it breathes. 
 
 XAUUSD (Gold) is highly recommended. It provides the exact liquidity and massive pip distance required for this framework to function optimally. When you specialize entirely on one asset you stop seeing random chaos and start seeing the underlying mechanical shifts. You don't need another pair when one asset offers all the distance you need to extract.
 
 When price drops heavily against your entry, tourists panic. A master knows it is completely normal behavior, considering large orders are shifting to restructure price before the real expansion. If the initial idea is still valid, nothing had changed. Violent liquidity sweeps happen, adjustments might need to be made, but you hold the line. The thesis remains intact. 
 
-There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition. Specialize on your craft, master it, and don't look at anything else.
+There are a lot of pips to collect. You cannot capture a massive runner if you are constantly distracted by noise from five different charts. Edge is found in absolute, obsessive repetition. Specialize on your craft, master it, and don't look at anything else. Lock in.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
