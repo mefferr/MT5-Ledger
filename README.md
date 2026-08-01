@@ -162,7 +162,7 @@ When she throws a tantrum (volatility) and you don't even blink you break her li
 
 **Weaponized Autistic Hyper-Specialization**
 
-You don't need to look at fifteen different FX pairs, crypto, and indices every morning like a clueless ADHD tourist begging the market for a setup. True GOYA extraction requires blinding, obsessive specialization on a single asset. It's weaponized autism. You don't trade the "market"—you trade the specific behavioral tics of one single instrument until you know exactly how it breathes. If you're flipping between NAS, BTC, and EURUSD because you're bored or desperate, you have absolutely zero edge. You are just a tourist paying the spread. Pick one pair. Marry it. Study its liquidity sweeps, its fakeouts, its exact restructuring patterns until you are completely specialized in your craft. You don't look at anything else. You just ruthlessly extract pips from that one ticker until they bleed out.
+Scanning fifteen different charts every morning is a sign of weakness. It shows a complete lack of conviction. Real edge requires weaponized autism applied to a single asset. You do not trade the market. You trade the specific behavioral mechanics of one instrument. If you are flipping between gold, crypto and forex pairs because you are bored or desperate for a setup, you have zero edge. You are just a tourist paying the spread. Pick one asset. Learn how it sweeps liquidity. Map its exact restructuring patterns. Specialize in your craft and ignore literally everything else. Stacking pips requires absolute focus, not scattered attention.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
