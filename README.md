@@ -160,13 +160,13 @@ True frame control isn't about being stubborn. It's entering what i like to call
 
 When she throws a tantrum (volatility) and you don't even blink you break her limbic defense mechanisms. When she realizes your frame is unbreakable and you genuinely don't give a single fuck if the trade hits TP or SL, you don't need the outcome to validate your existence. She submits. The order flow aligns, it bends to your reality, and you stack pips. 
 
-**Weaponized Autistic Hyper-Specialization**
+**Specialized On My Craft**
 
-Scanning fifteen different charts every morning is a sign of weakness. It shows a complete lack of conviction. Real edge requires weaponized autism applied to a single asset. If you are flipping between gold, crypto and random forex pairs because you are bored or desperate for a setup, you have zero edge. You are just a tourist paying the spread. 
+I'm specialized on my craft, I dont look at anything else. 
 
-You do not trade the market. You trade the specific behavioral mechanics of one instrument. Pick one asset. Learn how it sweeps liquidity. Map its exact restructuring patterns. When price violently drops into drawdown, a tourist panics. A specialist knows it is just normal behavior, considering large orders are shifting to restructure price. If the thesis is still valid, nothing has changed. Adjustments might need to be made, but you hold the line because you know exactly how your instrument breathes.
+You don't trade the market, you trade the behavioral mechanics of one single instrument. Flipping between pairs shows a complete lack of conviction. Pick one asset. Learn its liquidity sweeps. Map its exact restructuring patterns. 
 
-You have to be completely specialized on your craft. You do not look at anything else. There are a lot of pips to collect, but stacking them requires absolute focus. Ignore the noise. Master one ticker.
+When price drops heavily against you, it's normal, considering large orders shifting to restructure price. If the idea is still valid, nothing had changed. Liquidity sweeps happen, adjustments need to be made, but you hold the line. There are a lot of pips to collect. You can't do that if you're distracted by noise. Specialize on your craft and dont look at anything else.
 
 **Time in the Gulag (The Accumulation of Experience)**
 
