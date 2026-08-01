@@ -164,7 +164,7 @@ When she throws a tantrum (volatility) and you don't even blink you break her li
 
 You have to be specialized on your craft, and you shouldn't look at anything else. 
 
-You do not trade the overall market, you trade the specific behavioral mechanics of one single instrument. Flipping between random forex pairs, crypto, and indices every morning shows a complete lack of conviction. It is the behavior of a tourist paying the spread. Pick one asset. Learn its exact liquidity sweeps. Map out its unique restructuring patterns until you know exactly how it breathes. 
+You do not trade the overall market, you trade the specific behavioral mechanics of one single instrument. Flipping between random forex pairs, crypto, and indices shows a complete lack of conviction and patience. Pick one asset. Learn how it moves. Map out its unique restructuring patterns until you know exactly how it breathes. 
 
 XAUUSD (Gold) is highly recommended. It provides the exact liquidity and massive pip distance required for this framework to function optimally. When you specialize entirely on XAUUSD, you stop seeing random chaos and start seeing the underlying mechanical shifts. You don't need another pair when one asset offers all the distance you need to extract.
 
