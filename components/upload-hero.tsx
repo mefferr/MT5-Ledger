@@ -64,7 +64,7 @@ export function UploadHero() {
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => loadFromMt5(30)} disabled={loading}>
+          <Button variant="outline" size="sm" onClick={() => loadFromMt5(0)} disabled={loading}>
             <Activity className="mr-2 h-3.5 w-3.5" />
             Sync MT5
           </Button>
@@ -149,7 +149,7 @@ export function UploadHero() {
                 <FileUp className="mr-2 h-4 w-4" />
                 Select file
               </Button>
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto" onClick={() => loadFromMt5(30)} disabled={loading}>
+              <Button size="lg" variant="secondary" className="w-full sm:w-auto" onClick={() => loadFromMt5(0)} disabled={loading}>
                 <Activity className="mr-2 h-4 w-4" />
                 Sync Live MT5 Data
               </Button>

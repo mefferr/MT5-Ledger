@@ -180,10 +180,29 @@ export function DashboardShell() {
               </DropdownMenu>
             )}
             {isMt5 && (
-              <Button size="sm" variant="outline" onClick={() => loadFromMt5(30)} disabled={loading} className="px-2 sm:px-3">
-                <RefreshCw className={cn("h-3.5 w-3.5 sm:mr-2", loading && "animate-spin")} /> 
-                <span className="hidden sm:inline">Refresh MT5 Data</span>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" disabled={loading} className="px-2 sm:px-3">
+                    <RefreshCw className={cn("h-3.5 w-3.5 sm:mr-2", loading && "animate-spin")} /> 
+                    <span className="hidden sm:inline">Refresh MT5</span>
+                    <ChevronDown className="ml-1 h-3.5 w-3.5 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => loadFromMt5(0)}>
+                    All Time History (Full)
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => loadFromMt5(30)}>
+                    Last 30 Days
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => loadFromMt5(90)}>
+                    Last 90 Days
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => loadFromMt5(365)}>
+                    Last 365 Days
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             <Button size="sm" variant={isSimulatingFloating ? "default" : "outline"} onClick={() => toggleSimulateFloating(!isSimulatingFloating)} disabled={loading} className="px-2 sm:px-3">
               <Target className={cn("h-3.5 w-3.5 sm:mr-2", loading && "animate-spin")} /> 

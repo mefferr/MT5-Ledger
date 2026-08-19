@@ -195,6 +195,18 @@ class ModifyRequest(BaseModel):
     is_pending: bool = False
     price: float = 0.0
 
+class ModifyItem(BaseModel):
+    ticket: int
+    symbol: str
+    sl: float
+    tp: float
+    is_pending: bool = False
+    price: float = 0.0
+
+class ModifyBatchRequest(BaseModel):
+    items: list[ModifyItem]
+    delay_ms: int = 0
+
 class OpenRequest(BaseModel):
     symbol: str
     type: str  # "buy", "sell", "buy_limit", "sell_limit"
@@ -209,6 +221,19 @@ class CloseRequest(BaseModel):
     type: str
     volume: float
     is_pending: bool = False
+
+class CloseItem(BaseModel):
+    ticket: int
+    symbol: str
+    type: str
+    volume: float
+    is_pending: bool = False
+
+class CloseBatchRequest(BaseModel):
+    items: list[CloseItem]
+    delay_ms: int = 0
+
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -466,6 +491,75 @@ def modify_position(req: ModifyRequest):
 
 
 # ---------------------------------------------------------------------------
+# POST /modify-batch (Instant Batch SL/TP Execution)
+# ---------------------------------------------------------------------------
+
+@app.post("/modify-batch")
+def modify_positions_batch(req: ModifyBatchRequest):
+    _require_mt5()
+    import time
+    logger.info("Batch modifying %d positions (delay=%dms)", len(req.items), req.delay_ms)
+
+    results = []
+    success_count = 0
+    fail_count = 0
+
+    for i, item in enumerate(req.items):
+        if item.is_pending:
+            request = {
+                "action": mt5.TRADE_ACTION_MODIFY,
+                "order": item.ticket,
+                "symbol": item.symbol,
+                "price": item.price,
+                "sl": item.sl,
+                "tp": item.tp,
+            }
+        else:
+            request = {
+                "action": mt5.TRADE_ACTION_SLTP,
+                "position": item.ticket,
+                "symbol": item.symbol,
+                "sl": item.sl,
+                "tp": item.tp,
+            }
+
+        result = mt5.order_send(request)
+        if result is None:
+            err = mt5.last_error()
+            results.append({
+                "ticket": item.ticket,
+                "success": False,
+                "retcode": err[0] if isinstance(err, tuple) else -1,
+                "comment": err[1] if isinstance(err, tuple) else str(err)
+            })
+            fail_count += 1
+        else:
+            success = result.retcode == mt5.TRADE_RETCODE_DONE
+            results.append({
+                "ticket": item.ticket,
+                "success": success,
+                "retcode": result.retcode,
+                "comment": result.comment
+            })
+            if success:
+                success_count += 1
+            else:
+                fail_count += 1
+
+        if req.delay_ms > 0 and i < len(req.items) - 1:
+            time.sleep(req.delay_ms / 1000.0)
+
+    logger.info("Batch modify finished: %d/%d succeeded (%d failed)", success_count, len(req.items), fail_count)
+    return {
+        "total": len(req.items),
+        "success_count": success_count,
+        "fail_count": fail_count,
+        "results": results
+    }
+
+
+
+# ---------------------------------------------------------------------------
 # POST /open
 # ---------------------------------------------------------------------------
 
@@ -623,11 +717,96 @@ def close_position(req: CloseRequest):
 
 
 # ---------------------------------------------------------------------------
+# POST /close-batch (Instant Batch Close Execution)
+# ---------------------------------------------------------------------------
+
+@app.post("/close-batch")
+def close_positions_batch(req: CloseBatchRequest):
+    _require_mt5()
+    import time
+    logger.info("Batch closing %d positions (delay=%dms)", len(req.items), req.delay_ms)
+
+    results = []
+    success_count = 0
+    fail_count = 0
+
+    for i, item in enumerate(req.items):
+        if item.is_pending:
+            request = {
+                "action": mt5.TRADE_ACTION_REMOVE,
+                "order": item.ticket,
+            }
+        else:
+            tick = mt5.symbol_info_tick(item.symbol)
+            if not tick:
+                results.append({
+                    "ticket": item.ticket,
+                    "success": False,
+                    "retcode": -1,
+                    "comment": f"Cannot get tick data for {item.symbol}"
+                })
+                fail_count += 1
+                continue
+
+            is_buy = item.type.lower() == "buy"
+            order_type = mt5.ORDER_TYPE_SELL if is_buy else mt5.ORDER_TYPE_BUY
+            price = tick.bid if is_buy else tick.ask
+
+            request = {
+                "action": mt5.TRADE_ACTION_DEAL,
+                "symbol": item.symbol,
+                "volume": item.volume,
+                "type": order_type,
+                "position": item.ticket,
+                "price": price,
+                "deviation": 20,
+                "magic": 123456,
+                "comment": "Batch close",
+                "type_time": mt5.ORDER_TIME_GTC,
+                "type_filling": mt5.ORDER_FILLING_IOC,
+            }
+
+        result = mt5.order_send(request)
+        if result is None:
+            err = mt5.last_error()
+            results.append({
+                "ticket": item.ticket,
+                "success": False,
+                "retcode": err[0] if isinstance(err, tuple) else -1,
+                "comment": err[1] if isinstance(err, tuple) else str(err)
+            })
+            fail_count += 1
+        else:
+            success = result.retcode == mt5.TRADE_RETCODE_DONE
+            results.append({
+                "ticket": item.ticket,
+                "success": success,
+                "retcode": result.retcode,
+                "comment": result.comment
+            })
+            if success:
+                success_count += 1
+            else:
+                fail_count += 1
+
+        if req.delay_ms > 0 and i < len(req.items) - 1:
+            time.sleep(req.delay_ms / 1000.0)
+
+    logger.info("Batch close finished: %d/%d succeeded (%d failed)", success_count, len(req.items), fail_count)
+    return {
+        "total": len(req.items),
+        "success_count": success_count,
+        "fail_count": fail_count,
+        "results": results
+    }
+
+
+# ---------------------------------------------------------------------------
 # GET /history
 # ---------------------------------------------------------------------------
 
 @app.get("/history")
-def get_history(days: int = Query(default=30, ge=1)):
+def get_history(days: int = Query(default=0, ge=0)):
     _require_mt5()
 
     # ------------------------------------------------------------------
@@ -642,13 +821,18 @@ def get_history(days: int = Query(default=30, ge=1)):
         "name": acct.name,
         "currency": acct.currency,
         "leverage": f"1:{acct.leverage}",
+        "balance": acct.balance,
+        "equity": acct.equity,
     }
 
     # ------------------------------------------------------------------
     # Fetch deals
     # ------------------------------------------------------------------
     date_to = datetime.now(tz=timezone.utc) + timedelta(days=1)  # inclusive
-    date_from = date_to - timedelta(days=days + 1)
+    if days == 0 or days >= 3650:
+        date_from = datetime.fromtimestamp(0, tz=timezone.utc)
+    else:
+        date_from = date_to - timedelta(days=days + 1)
 
     deals = mt5.history_deals_get(date_from, date_to)
     if deals is None:
@@ -660,7 +844,7 @@ def get_history(days: int = Query(default=30, ge=1)):
             "initialDeposit": 0.0,
         }
 
-    logger.info("Fetched %d deal(s) for the last %d day(s).", len(deals), days)
+    logger.info("Fetched %d deal(s) for history (days=%d).", len(deals), days)
 
     # ------------------------------------------------------------------
     # Separate balance deals and trade deals
@@ -743,13 +927,9 @@ def get_history(days: int = Query(default=30, ge=1)):
     trades.sort(key=lambda t: t["openTime"])
 
     # ------------------------------------------------------------------
-    # Initial deposit = first positive balance entry
+    # Initial deposit = sum of all positive deposit balance entries
     # ------------------------------------------------------------------
-    initial_deposit = 0.0
-    for entry in balance_entries:
-        if entry["amount"] > 0:
-            initial_deposit = entry["amount"]
-            break
+    initial_deposit = sum(entry["amount"] for entry in balance_entries if entry["amount"] > 0)
 
     logger.info(
         "History: %d closed trade(s), %d balance entr(y/ies), initial deposit=%.2f",

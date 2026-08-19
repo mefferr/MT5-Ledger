@@ -233,7 +233,8 @@ export function getStartingCapital(statement: ParsedStatement): number {
       capital += b.amount
     }
   }
-  return capital !== 0 ? capital : (statement.initialDeposit || 0)
+  const starting = capital !== 0 ? capital : (statement.initialDeposit || 0)
+  return Math.max(starting, statement.initialDeposit || 0)
 }
 
 export function buildEquityCurve(statement: ParsedStatement): EquityPoint[] {

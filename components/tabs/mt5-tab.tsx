@@ -96,7 +96,7 @@ export function Mt5Tab() {
   const [tpEnabled, setTpEnabled] = useState(true)
   const [slValue, setSlValue] = useState("150")
   const [tpValue, setTpValue] = useState("300")
-  const [sltpDelay, setSltpDelay] = useState("300")
+  const [sltpDelay, setSltpDelay] = useState("0")
   
   // Open Position State
   const [openSymbol, setOpenSymbol] = useState("XAUUSD")
@@ -178,7 +178,10 @@ export function Mt5Tab() {
     }
   }, [positions])
 
-  const breakeven = useMemo(() => calcBreakeven(positions), [positions])
+  const breakeven = useMemo(() => {
+    const selectedPositions = positions.filter(p => selectedTickets.includes(p.ticket))
+    return calcBreakeven(selectedPositions)
+  }, [positions, selectedTickets])
 
   const { totalRisk, totalReward } = useMemo(() => {
     let risk = 0
@@ -265,13 +268,10 @@ export function Mt5Tab() {
       }
     }
 
-    for (let i = 0; i < targets.length; i++) {
-      if (signal.aborted) break
-      
-      const p = targets[i]
+    const items = targets.map((p) => {
       let newSl = p.sl
       let newTp = p.tp
-      
+
       if (mode === "absolute") {
         if (slEnabled) newSl = sl
         if (tpEnabled) newTp = tp
@@ -288,57 +288,53 @@ export function Mt5Tab() {
         if (slEnabled) newSl = beSlPrice
         if (tpEnabled) newTp = beTpPrice
       }
-      
+
       newSl = Number(newSl.toFixed(digits))
       newTp = Number(newTp.toFixed(digits))
-      
-      try {
-        const res = await fetch("/api/mt5/modify", {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true"
-          },
-          body: JSON.stringify({ 
-            ticket: p.ticket, 
-            symbol: p.symbol, 
-            sl: newSl, 
-            tp: newTp,
-            is_pending: p.is_pending || false,
-            price: p.price_open
-          }),
-          signal
-        })
-        const data = await res.json()
-        if (data.success) {
-          successCount++
-        } else {
-          failCount++
-          if (data.retcode === 10018) {
-            toast.error("Market is closed!")
-          } else {
-            toast.error(`Order failed: ${data.comment || data.retcode || 'Unknown error'}`)
-          }
-          if (abortController.current) abortController.current.abort()
-        }
-      } catch (e: any) {
-        if (!signal.aborted) {
-          failCount++
-          toast.error(`Execution error: ${e.message}`)
-          if (abortController.current) abortController.current.abort()
-        }
+
+      return {
+        ticket: p.ticket,
+        symbol: p.symbol,
+        sl: newSl,
+        tp: newTp,
+        is_pending: p.is_pending || false,
+        price: p.price_open,
       }
-      
-      setProgress({ current: i + 1, total: targets.length, success: successCount, fail: failCount })
-      if (i < targets.length - 1 && !signal.aborted) {
-        await new Promise(r => setTimeout(r, delay))
+    })
+
+    try {
+      const res = await fetch("/api/mt5/modify-batch", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ 
+          items,
+          delay_ms: delay
+        }),
+        signal
+      })
+      const data = await res.json()
+      setProgress({
+        current: targets.length,
+        total: targets.length,
+        success: data.success_count || 0,
+        fail: data.fail_count || 0,
+      })
+
+      if (data.fail_count === 0) {
+        toast.success(`Instantly modified SL/TP for ${data.success_count} position(s)`)
+      } else {
+        toast.warning(`Modified ${data.success_count} OK, ${data.fail_count} failed`)
+      }
+    } catch (e: any) {
+      if (!signal.aborted) {
+        toast.error(`Execution error: ${e.message}`)
       }
     }
 
     setIsRunning(false)
-    if (!signal.aborted) {
-      toast.success(`Completed: ${successCount} OK, ${failCount} failed`)
-    }
     fetchState()
   }
 
@@ -551,61 +547,47 @@ export function Mt5Tab() {
     const signal = abortController.current.signal
     
     let successCount = 0
-    let failCount = 0
-    const delay = parseInt(sltpDelay) || 300
-    
-    const targets = positions.filter(p => selectedTickets.includes(p.ticket))
-    
-    for (let i = 0; i < targets.length; i++) {
-      if (signal.aborted) break
-      const p = targets[i]
-      
-      try {
-        const res = await fetch("/api/mt5/close", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true"
-          },
-          body: JSON.stringify({
-            ticket: p.ticket,
-            symbol: p.symbol,
-            type: p.type,
-            volume: p.volume,
-            is_pending: p.is_pending || false
-          }),
-          signal
-        })
-        const data = await res.json()
-        if (data.success) {
-          successCount++
-        } else {
-          failCount++
-          if (data.retcode === 10018) {
-            toast.error("Market is closed!")
-          } else {
-            toast.error(`Close failed for ${p.ticket}: ${data.comment}`)
-          }
-          if (abortController.current) abortController.current.abort()
-        }
-      } catch (e: any) {
-        if (!signal.aborted) {
-          failCount++
-          toast.error(`Execution error: ${e.message}`)
-          if (abortController.current) abortController.current.abort()
-        }
+    const items = targets.map((p) => ({
+      ticket: p.ticket,
+      symbol: p.symbol,
+      type: p.type,
+      volume: p.volume,
+      is_pending: p.is_pending || false,
+    }))
+
+    try {
+      const res = await fetch("/api/mt5/close-batch", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({
+          items,
+          delay_ms: delay
+        }),
+        signal
+      })
+      const data = await res.json()
+      setProgress({
+        current: targets.length,
+        total: targets.length,
+        success: data.success_count || 0,
+        fail: data.fail_count || 0,
+      })
+
+      if (data.fail_count === 0) {
+        toast.success(`Instantly closed ${data.success_count} position(s)`)
+      } else {
+        toast.warning(`Closed ${data.success_count} OK, ${data.fail_count} failed`)
       }
-      
-      setProgress({ current: i + 1, total: targets.length, success: successCount, fail: failCount })
-      if (i < targets.length - 1 && !signal.aborted) {
-        await new Promise(r => setTimeout(r, delay))
+    } catch (e: any) {
+      if (!signal.aborted) {
+        toast.error(`Execution error: ${e.message}`)
       }
     }
-    
+
     setIsRunning(false)
-    if (!signal.aborted) {
-      toast.success(`Completed: ${successCount} closed, ${failCount} failed`)
-    }
     setSelectedTickets([])
     fetchState()
   }
@@ -995,6 +977,12 @@ export function Mt5Tab() {
               <CardDescription>{filteredPositions.length} active positions</CardDescription>
             </div>
             <div className="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-6 sm:text-right font-mono text-sm">
+              <div className="flex flex-col sm:items-end">
+                <span className="text-muted-foreground uppercase text-[10px] tracking-wider mb-1">Breakeven</span>
+                <span className={cn("font-bold text-lg", breakeven.price > 0 ? "text-accent" : "text-muted-foreground")}>
+                  {breakeven.price > 0 ? breakeven.price.toFixed(5) : "—"}
+                </span>
+              </div>
               <div className="flex flex-col sm:items-end">
                 <span className="text-muted-foreground uppercase text-[10px] tracking-wider mb-1">Total Risk</span>
                 <span className={cn("font-bold text-lg", totalRisk < 0 ? "text-destructive" : "text-muted-foreground")}>

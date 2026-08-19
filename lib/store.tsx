@@ -240,7 +240,7 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     [commitParsed],
   )
 
-  const loadFromMt5 = useCallback(async (days = 30) => {
+  const loadFromMt5 = useCallback(async (days = 0) => {
     setLoading(true)
     setError(null)
     try {
@@ -275,22 +275,26 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
         amount: b.amount as number,
       }))
 
+      const totalDeposit = balanceEntries.filter((b) => b.amount > 0).reduce((s, b) => s + b.amount, 0)
+      const initialDeposit = data.initialDeposit || totalDeposit || balanceEntries[0]?.amount || 0
+      const closedPL = trades.reduce((s, t) => s + t.profit + t.commission + t.swap, 0)
+
       const parsed: ParsedStatement = {
         account: {
           account: data.account?.account || "",
           name: data.account?.name || "",
           currency: data.account?.currency || "USD",
           leverage: data.account?.leverage || "",
-          title: `MT5 Live — ${days} days`,
+          title: days === 0 ? "MT5 Live — All Time" : `MT5 Live — ${days} days`,
         },
         trades,
         balanceEntries,
-        initialDeposit: data.initialDeposit || balanceEntries[0]?.amount || 0,
+        initialDeposit,
         summary: {
-          closedPL: 0,
-          balance: data.account?.balance || data.initialDeposit || 0,
-          equity: data.account?.equity || data.initialDeposit || 0,
-          freeMargin: data.account?.balance || 0,
+          closedPL,
+          balance: data.account?.balance ?? (initialDeposit + closedPL),
+          equity: data.account?.equity ?? (initialDeposit + closedPL),
+          freeMargin: data.account?.balance ?? (initialDeposit + closedPL),
         }
       }
       commitParsed(parsed, DEFAULT_MERGE_SETTINGS)
