@@ -426,16 +426,21 @@ export function Mt5Tab() {
 
     const baseExecPrice = openExecType === "limit" ? price : baseMarketPrice
     const pipsToPrice = (pips: number) => pips * 10 * point
+    const totalRangePips = (count - 1) * layerStep
 
     const items = []
     for (let i = 0; i < count; i++) {
       let pipOffset = 0
-      if (layerStep > 0 && i > 0) {
-        if (Math.abs(layerMult - 1.0) < 0.001) {
+      if (layerStep > 0 && i > 0 && count > 1) {
+        const t = i / (count - 1)
+        if (Math.abs(layerMult - 1.0) < 0.001 || layerMult <= 0) {
+          // Linear uniform grid spacing
           pipOffset = i * layerStep
         } else {
-          // Progressive layer expansion
-          pipOffset = i * layerStep * (1 + (layerMult - 1) * (i / Math.max(count - 1, 1)))
+          // Progressive concentration: spacing shrinks towards the extreme
+          // (meaning orders get tighter and more layered as price extends further)
+          const f_t = Math.log(1 + (layerMult - 1) * t) / Math.log(layerMult)
+          pipOffset = f_t * totalRangePips
         }
       }
 
