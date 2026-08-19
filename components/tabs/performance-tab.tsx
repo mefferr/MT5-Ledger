@@ -28,14 +28,14 @@ import {
 } from "recharts"
 
 export function PerformanceTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
-  const kpi = useMemo(() => computeKPI(statement, breakevenSet), [statement, breakevenSet])
+  const kpi = useMemo(() => computeKPI(statement, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
   const equity = useMemo(() => buildEquityCurve(statement), [statement])
-  const months = useMemo(() => monthlyStats(statement.trades, breakevenSet), [statement, breakevenSet])
-  const days = useMemo(() => dailyStats(statement.trades, breakevenSet), [statement, breakevenSet])
+  const months = useMemo(() => monthlyStats(statement.trades, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
+  const days = useMemo(() => dailyStats(statement.trades, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
   const rolling = useMemo(() => rollingWinRate(statement.trades, 20, breakevenSet), [statement, breakevenSet])
 
   const equityData = equity.map((p, i) => ({

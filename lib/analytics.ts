@@ -103,19 +103,28 @@ export interface SessionStat {
 
 /* ─── Helpers: classify a trade as win/loss/breakeven ─── */
 
-function isWin(t: Trade, be: Set<number>): boolean {
-  return t.profit > 0 && !be.has(t.ticket)
+export function isTradeBreakeven(t: Trade, be: Set<number> = new Set(), autoBeThreshold: number = 0): boolean {
+  return t.profit === 0 || (autoBeThreshold > 0 && t.profit > 0 && t.profit <= autoBeThreshold) || be.has(t.ticket)
 }
 
-function isLoss(t: Trade, be: Set<number>): boolean {
+export function isWin(t: Trade, be: Set<number> = new Set(), autoBeThreshold: number = 0): boolean {
+  const minWinProfit = autoBeThreshold > 0 ? autoBeThreshold : 0
+  return t.profit > minWinProfit && !be.has(t.ticket)
+}
+
+export function isLoss(t: Trade, be: Set<number> = new Set()): boolean {
   return t.profit < 0 && !be.has(t.ticket)
 }
 
-export function computeKPI(statement: ParsedStatement, breakevenTickets: Set<number> = new Set()): KPI {
+export function computeKPI(
+  statement: ParsedStatement,
+  breakevenTickets: Set<number> = new Set(),
+  autoBeThreshold: number = 0
+): KPI {
   const trades = statement.trades
-  const wins = trades.filter((t) => isWin(t, breakevenTickets))
+  const wins = trades.filter((t) => isWin(t, breakevenTickets, autoBeThreshold))
   const losses = trades.filter((t) => isLoss(t, breakevenTickets))
-  const breakeven = trades.filter((t) => t.profit === 0 || breakevenTickets.has(t.ticket))
+  const breakeven = trades.filter((t) => isTradeBreakeven(t, breakevenTickets, autoBeThreshold))
 
   const grossProfit = wins.reduce((s, t) => s + t.profit, 0)
   const grossLoss = losses.reduce((s, t) => s + t.profit, 0) // negative
@@ -176,7 +185,7 @@ export function computeKPI(statement: ParsedStatement, breakevenTickets: Set<num
   // We use dollar risk ≈ size * |open - sl| * 100 for XAUUSD-like, generalize: profit / (size * |open-sl|) as proxy
   const rMultiples: number[] = []
   for (const t of trades) {
-    if (breakevenTickets.has(t.ticket)) continue
+    if (isTradeBreakeven(t, breakevenTickets, autoBeThreshold)) continue
     const riskPerUnit = Math.abs(t.openPrice - t.sl)
     if (riskPerUnit > 0 && t.size > 0) {
       // crude but consistent R proxy across trades
@@ -186,7 +195,7 @@ export function computeKPI(statement: ParsedStatement, breakevenTickets: Set<num
   }
   const avgRMultiple = rMultiples.length ? rMultiples.reduce((a, b) => a + b, 0) / rMultiples.length : 0
 
-  const { maxWinStreak, maxLossStreak } = computeStreaks(trades, breakevenTickets)
+  const { maxWinStreak, maxLossStreak } = computeStreaks(trades, breakevenTickets, autoBeThreshold)
 
   return {
     totalTrades: trades.length,
@@ -287,21 +296,21 @@ export function buildEquityCurve(statement: ParsedStatement): EquityPoint[] {
   return out
 }
 
-export function computeStreaks(trades: Trade[], breakevenTickets: Set<number> = new Set()) {
+export function computeStreaks(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0) {
   let maxWinStreak = 0
   let maxLossStreak = 0
   let curWin = 0
   let curLoss = 0
   for (const t of trades) {
-    if (breakevenTickets.has(t.ticket)) {
+    if (isTradeBreakeven(t, breakevenTickets, autoBeThreshold)) {
       // BE-marked trades don't break or extend streaks
       continue
     }
-    if (t.profit > 0) {
+    if (isWin(t, breakevenTickets, autoBeThreshold)) {
       curWin++
       curLoss = 0
       if (curWin > maxWinStreak) maxWinStreak = curWin
-    } else if (t.profit < 0) {
+    } else if (isLoss(t, breakevenTickets)) {
       curLoss++
       curWin = 0
       if (curLoss > maxLossStreak) maxLossStreak = curLoss
@@ -313,7 +322,7 @@ export function computeStreaks(trades: Trade[], breakevenTickets: Set<number> = 
   return { maxWinStreak, maxLossStreak }
 }
 
-export function dailyStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): DailyStat[] {
+export function dailyStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0): DailyStat[] {
   const map = new Map<string, DailyStat>()
   for (const t of trades) {
     const d = t.closeTime
@@ -325,14 +334,14 @@ export function dailyStats(trades: Trade[], breakevenTickets: Set<number> = new 
     cur.profit += t.profit + t.commission + t.swap
     cur.trades += 1
     cur.volume += t.size
-    if (isWin(t, breakevenTickets)) cur.wins += 1
+    if (isWin(t, breakevenTickets, autoBeThreshold)) cur.wins += 1
     else if (isLoss(t, breakevenTickets)) cur.losses += 1
     map.set(key, cur)
   }
   return Array.from(map.values()).sort((a, b) => (a.date < b.date ? -1 : 1))
 }
 
-export function monthlyStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): MonthlyStat[] {
+export function monthlyStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0): MonthlyStat[] {
   const map = new Map<string, MonthlyStat>()
   for (const t of trades) {
     const d = t.closeTime
@@ -342,7 +351,7 @@ export function monthlyStats(trades: Trade[], breakevenTickets: Set<number> = ne
     const cur = map.get(key) ?? { key, label, profit: 0, trades: 0, wins: 0, losses: 0, winRate: 0 }
     cur.profit += t.profit + t.commission + t.swap
     cur.trades += 1
-    if (isWin(t, breakevenTickets)) cur.wins += 1
+    if (isWin(t, breakevenTickets, autoBeThreshold)) cur.wins += 1
     else if (isLoss(t, breakevenTickets)) cur.losses += 1
     map.set(key, cur)
   }
@@ -354,7 +363,7 @@ export function monthlyStats(trades: Trade[], breakevenTickets: Set<number> = ne
   return list
 }
 
-export function timeframeStats(trades: Trade[], timeframe: Timeframe, breakevenTickets: Set<number> = new Set()): TimeframeStat[] {
+export function timeframeStats(trades: Trade[], timeframe: Timeframe, breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0): TimeframeStat[] {
   const map = new Map<string, TimeframeStat>()
   for (const t of trades) {
     const d = t.closeTime
@@ -385,7 +394,7 @@ export function timeframeStats(trades: Trade[], timeframe: Timeframe, breakevenT
     const cur = map.get(key) ?? { key, label, profit: 0, trades: 0, wins: 0, losses: 0, winRate: 0 }
     cur.profit += t.profit + t.commission + t.swap
     cur.trades += 1
-    if (isWin(t, breakevenTickets)) cur.wins += 1
+    if (isWin(t, breakevenTickets, autoBeThreshold)) cur.wins += 1
     else if (isLoss(t, breakevenTickets)) cur.losses += 1
     map.set(key, cur)
   }
@@ -403,7 +412,7 @@ export function timeframeStats(trades: Trade[], timeframe: Timeframe, breakevenT
   return list
 }
 
-export function symbolStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): SymbolStat[] {
+export function symbolStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0): SymbolStat[] {
   const map = new Map<string, SymbolStat>()
   for (const t of trades) {
     const cur =
@@ -424,7 +433,7 @@ export function symbolStats(trades: Trade[], breakevenTickets: Set<number> = new
     cur.trades += 1
     cur.profit += t.profit + t.commission + t.swap
     cur.volume += t.size
-    if (isWin(t, breakevenTickets)) {
+    if (isWin(t, breakevenTickets, autoBeThreshold)) {
       cur.wins += 1
       if (t.profit > cur.largestWin) cur.largestWin = t.profit
     } else if (isLoss(t, breakevenTickets)) {
@@ -439,7 +448,7 @@ export function symbolStats(trades: Trade[], breakevenTickets: Set<number> = new
     const nonBE = s.wins + s.losses
     s.winRate = nonBE ? s.wins / nonBE : 0
     const sTrades = trades.filter((t) => t.symbol === s.symbol)
-    const gp = sTrades.filter((t) => isWin(t, breakevenTickets)).reduce((a, t) => a + t.profit, 0)
+    const gp = sTrades.filter((t) => isWin(t, breakevenTickets, autoBeThreshold)).reduce((a, t) => a + t.profit, 0)
     const gl = Math.abs(sTrades.filter((t) => isLoss(t, breakevenTickets)).reduce((a, t) => a + t.profit, 0))
     s.profitFactor = gl === 0 ? (gp > 0 ? Number.POSITIVE_INFINITY : 0) : gp / gl
   }
@@ -459,13 +468,13 @@ function inSession(hour: number, s: { start: number; end: number }) {
   return hour >= s.start || hour < s.end
 }
 
-export function sessionStats(trades: Trade[], breakevenTickets: Set<number> = new Set()): SessionStat[] {
+export function sessionStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0): SessionStat[] {
   return SESSIONS.map((s) => {
     const inside = trades.filter((t) => {
       const h = t.openTime.getUTCHours()
       return inSession(h, s)
     })
-    const wins = inside.filter((t) => isWin(t, breakevenTickets)).length
+    const wins = inside.filter((t) => isWin(t, breakevenTickets, autoBeThreshold)).length
     const losses = inside.filter((t) => isLoss(t, breakevenTickets)).length
     const profit = inside.reduce((a, t) => a + t.profit + t.commission + t.swap, 0)
     const nonBE = wins + losses
@@ -481,7 +490,7 @@ export function sessionStats(trades: Trade[], breakevenTickets: Set<number> = ne
   })
 }
 
-export function hourlyStats(trades: Trade[], breakevenTickets: Set<number> = new Set()) {
+export function hourlyStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0) {
   const out = Array.from({ length: 24 }, (_, h) => ({
     hour: h,
     label: `${String(h).padStart(2, "0")}:00`,
@@ -495,7 +504,7 @@ export function hourlyStats(trades: Trade[], breakevenTickets: Set<number> = new
     if (!Number.isFinite(h)) continue
     out[h].trades += 1
     out[h].profit += t.profit + t.commission + t.swap
-    if (isWin(t, breakevenTickets)) out[h].wins += 1
+    if (isWin(t, breakevenTickets, autoBeThreshold)) out[h].wins += 1
     else if (isLoss(t, breakevenTickets)) out[h].losses += 1
   }
   return out
@@ -503,7 +512,7 @@ export function hourlyStats(trades: Trade[], breakevenTickets: Set<number> = new
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-export function dayOfWeekStats(trades: Trade[], breakevenTickets: Set<number> = new Set()) {
+export function dayOfWeekStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0) {
   const out = DAY_NAMES.map((d, i) => ({
     day: d,
     index: i,
@@ -517,16 +526,16 @@ export function dayOfWeekStats(trades: Trade[], breakevenTickets: Set<number> = 
     if (!Number.isFinite(d)) continue
     out[d].trades += 1
     out[d].profit += t.profit + t.commission + t.swap
-    if (isWin(t, breakevenTickets)) out[d].wins += 1
+    if (isWin(t, breakevenTickets, autoBeThreshold)) out[d].wins += 1
     else if (isLoss(t, breakevenTickets)) out[d].losses += 1
   }
   return out
 }
 
-export function typeStats(trades: Trade[], breakevenTickets: Set<number> = new Set()) {
+export function typeStats(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0) {
   const build = (type: "buy" | "sell") => {
     const sub = trades.filter((t) => t.type === type)
-    const wins = sub.filter((t) => isWin(t, breakevenTickets)).length
+    const wins = sub.filter((t) => isWin(t, breakevenTickets, autoBeThreshold)).length
     const losses = sub.filter((t) => isLoss(t, breakevenTickets)).length
     const nonBE = wins + losses
     return {
@@ -541,7 +550,7 @@ export function typeStats(trades: Trade[], breakevenTickets: Set<number> = new S
   return [build("buy"), build("sell")]
 }
 
-export function durationBuckets(trades: Trade[], breakevenTickets: Set<number> = new Set()) {
+export function durationBuckets(trades: Trade[], breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0) {
   const buckets = [
     { label: "< 15m", min: 0, max: 15 },
     { label: "15m\u20131h", min: 15, max: 60 },
@@ -557,13 +566,13 @@ export function durationBuckets(trades: Trade[], breakevenTickets: Set<number> =
     if (!b) continue
     b.trades += 1
     b.profit += t.profit + t.commission + t.swap
-    if (isWin(t, breakevenTickets)) b.wins += 1
+    if (isWin(t, breakevenTickets, autoBeThreshold)) b.wins += 1
   }
   return buckets
 }
 
-export function profitDistribution(trades: Trade[], bucketCount = 20, breakevenTickets: Set<number> = new Set()) {
-  const filtered = trades.filter((t) => !breakevenTickets.has(t.ticket))
+export function profitDistribution(trades: Trade[], bucketCount = 20, breakevenTickets: Set<number> = new Set(), autoBeThreshold: number = 0) {
+  const filtered = trades.filter((t) => !isTradeBreakeven(t, breakevenTickets, autoBeThreshold))
   if (filtered.length === 0) return [] as Array<{ label: string; count: number; from: number; to: number }>
   const values = filtered.map((t) => t.profit + t.commission + t.swap)
   const min = Math.min(...values)

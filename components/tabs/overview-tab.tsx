@@ -47,7 +47,7 @@ import {
 import { cn } from "@/lib/utils"
 
 export function OverviewTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
 
@@ -55,11 +55,11 @@ export function OverviewTab() {
 
   const [timeframe, setTimeframe] = useState<Timeframe>("monthly")
   
-  const kpi = useMemo(() => computeKPI(statement, breakevenSet), [statement, breakevenSet])
+  const kpi = useMemo(() => computeKPI(statement, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
   const equity = useMemo(() => buildEquityCurve(statement), [statement])
-  const chartStats = useMemo(() => timeframeStats(statement.trades, timeframe, breakevenSet), [statement, timeframe, breakevenSet])
-  const types = useMemo(() => typeStats(statement.trades, breakevenSet), [statement, breakevenSet])
-  const days = useMemo(() => dailyStats(statement.trades, breakevenSet), [statement, breakevenSet])
+  const chartStats = useMemo(() => timeframeStats(statement.trades, timeframe, breakevenSet, autoBeThreshold), [statement, timeframe, breakevenSet, autoBeThreshold])
+  const types = useMemo(() => typeStats(statement.trades, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
+  const days = useMemo(() => dailyStats(statement.trades, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
 
   const equityData = equity.map((p, i) => ({
     i,

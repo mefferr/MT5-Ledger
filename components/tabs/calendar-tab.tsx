@@ -27,10 +27,10 @@ function daysInMonth(y: number, m: number) {
 const WEEK_HEADERS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 export function CalendarTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
-  const daily = useMemo(() => (statement ? dailyStats(statement.trades, breakevenSet) : []), [statement, breakevenSet])
-  const monthly = useMemo(() => (statement ? monthlyStats(statement.trades, breakevenSet) : []), [statement, breakevenSet])
+  const daily = useMemo(() => (statement ? dailyStats(statement.trades, breakevenSet, autoBeThreshold) : []), [statement, breakevenSet, autoBeThreshold])
+  const monthly = useMemo(() => (statement ? monthlyStats(statement.trades, breakevenSet, autoBeThreshold) : []), [statement, breakevenSet, autoBeThreshold])
 
   const dailyMap = useMemo(() => new Map(daily.map((d) => [d.date, d])), [daily])
   const monthlyMap = useMemo(() => new Map(monthly.map((m) => [m.key, m])), [monthly])

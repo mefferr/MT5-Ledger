@@ -2,7 +2,7 @@
 
 import { Fragment, useMemo, useState } from "react"
 import { useStatement } from "@/lib/store"
-import { formatCurrency } from "@/lib/analytics"
+import { formatCurrency, isTradeBreakeven, isWin, isLoss } from "@/lib/analytics"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -19,6 +19,8 @@ export function TradesTab() {
     mergeSettings,
     mergeStats,
     breakevenTickets,
+    autoBeThreshold,
+    setAutoBeThreshold,
     addManualMerge,
     removeManualMergeForTickets,
     setAutoBurstMerge,
@@ -54,14 +56,14 @@ export function TradesTab() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     const res = tableTrades.filter((t) => {
-      if (filter === "wins" && t.profit <= 0) return false
-      if (filter === "losses" && t.profit >= 0) return false
+      if (filter === "wins" && !isWin(t, breakevenSet, autoBeThreshold)) return false
+      if (filter === "losses" && !isLoss(t, breakevenSet)) return false
       if (filter === "buys" && t.type !== "buy") return false
       if (filter === "sells" && t.type !== "sell") return false
       if (filter === "sl" && t.closedBy !== "sl") return false
       if (filter === "tp" && t.closedBy !== "tp") return false
       if (filter === "merged" && !t.mergeLegs?.length) return false
-      if (filter === "breakeven" && !breakevenSet.has(t.ticket)) return false
+      if (filter === "breakeven" && !isTradeBreakeven(t, breakevenSet, autoBeThreshold)) return false
       if (!q) return true
       const legStr = t.mergeLegs?.join(" ") ?? ""
       return (
@@ -97,7 +99,7 @@ export function TradesTab() {
       }
     })
     return res
-  }, [tableTrades, query, filter, sortKey, sortDir, breakevenSet])
+  }, [tableTrades, query, filter, sortKey, sortDir, breakevenSet, autoBeThreshold])
 
   function toggleSort(k: SortKey) {
     if (sortKey === k) setSortDir((d) => (d === "asc" ? "desc" : "asc"))
@@ -174,6 +176,11 @@ export function TradesTab() {
 
   if (!statement) return null
 
+  const totalBeCount = useMemo(
+    () => tableTrades.filter((t) => isTradeBreakeven(t, breakevenSet, autoBeThreshold)).length,
+    [tableTrades, breakevenSet, autoBeThreshold],
+  )
+
   const FILTER_OPTIONS: Array<{ id: typeof filter; label: string }> = [
     { id: "all", label: "All" },
     { id: "wins", label: "Wins" },
@@ -181,7 +188,7 @@ export function TradesTab() {
     { id: "buys", label: "Buys" },
     { id: "sells", label: "Sells" },
     { id: "merged", label: "Merged" },
-    { id: "breakeven", label: `BE (${breakevenTickets.length})` },
+    { id: "breakeven", label: `BE (${totalBeCount})` },
     { id: "sl", label: "Hit SL" },
     { id: "tp", label: "Hit TP" },
   ]
@@ -196,11 +203,9 @@ export function TradesTab() {
       <div className="rounded-xl border border-border bg-card p-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-1">
-            <h3 className="text-sm font-medium">Position merging</h3>
+            <h3 className="text-sm font-medium">Position merging & Breakeven</h3>
             <p className="max-w-xl text-xs text-muted-foreground">
-              Brokers often split one logical trade into several tickets. Auto-merge combines legs with the same
-              symbol, direction, and open/close time (within a tolerance). Use manual merge for scale-ins, partial
-              exits, or any custom grouping.
+              Brokers often split one logical trade into several tickets. Auto-merge combines burst legs. Trades with profit &le; Auto-BE threshold are automatically classified as Breakeven (scratch trades).
             </p>
             {mergeStats && mergeStats.burstGroupsAvailable > 0 && !mergeSettings.autoBurstMerge && (
               <p className="text-xs text-primary">
@@ -218,6 +223,19 @@ export function TradesTab() {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <label className="flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-1.5 text-xs">
+              <Equal className="h-3.5 w-3.5 text-amber-400" />
+              <span className="text-muted-foreground">Auto-BE Threshold</span>
+              <input
+                type="number"
+                step="5000"
+                className="w-24 bg-transparent font-mono font-bold text-amber-400 outline-none text-right"
+                value={autoBeThreshold}
+                onChange={(e) => setAutoBeThreshold(Math.max(0, Number(e.target.value) || 0))}
+                placeholder="50000"
+              />
+              <span className="text-[10px] text-muted-foreground font-mono">{currency}</span>
+            </label>
             <label className="flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-xs">
               <span className="text-muted-foreground">Burst tolerance</span>
               <select
@@ -366,7 +384,9 @@ export function TradesTab() {
                       disabled={inManualGroup}
                       onToggleSelect={() => toggleSelect(t.ticket)}
                       showActions={!mergeMode}
-                      isBreakeven={breakevenSet.has(t.ticket)}
+                      isBreakeven={isTradeBreakeven(t, breakevenSet, autoBeThreshold)}
+                      isAutoBreakeven={autoBeThreshold > 0 && t.profit > 0 && t.profit <= autoBeThreshold && !breakevenSet.has(t.ticket)}
+                      autoBeThreshold={autoBeThreshold}
                       onToggleBreakeven={() => toggleBreakeven(t.ticket)}
                       onUnmerge={
                         t.mergeKind === "manual" && t.mergeLegs
@@ -452,6 +472,8 @@ function TradeRow({
   onToggleSelect,
   showActions,
   isBreakeven,
+  isAutoBreakeven,
+  autoBeThreshold,
   onToggleBreakeven,
   onUnmerge,
   onToggleExpand,
@@ -465,6 +487,8 @@ function TradeRow({
   onToggleSelect: () => void
   showActions: boolean
   isBreakeven: boolean
+  isAutoBreakeven?: boolean
+  autoBeThreshold?: number
   onToggleBreakeven: () => void
   onUnmerge?: () => void
   onToggleExpand?: () => void
@@ -567,16 +591,22 @@ function TradeRow({
               size="sm"
               variant="ghost"
               className={cn(
-                "h-7 px-2 text-xs",
+                "h-7 px-2 text-xs font-mono font-medium",
                 isBreakeven
-                  ? "bg-amber-500/15 text-amber-400 hover:bg-amber-500/25 hover:text-amber-300"
+                  ? "bg-amber-500/15 text-amber-400 hover:bg-amber-500/25 hover:text-amber-300 border border-amber-500/30"
                   : "text-muted-foreground hover:text-foreground",
               )}
               onClick={onToggleBreakeven}
-              title={isBreakeven ? "Unmark breakeven" : "Mark as breakeven (exclude from avg win/loss)"}
+              title={
+                isAutoBreakeven
+                  ? `Auto Breakeven: profit (${formatCurrency(t.profit, currency)}) is within 0 \u2013 ${formatCurrency(autoBeThreshold || 0, currency)}. Click to toggle explicit manual override.`
+                  : isBreakeven
+                    ? "Unmark breakeven"
+                    : "Mark as breakeven (exclude from avg win/loss)"
+              }
             >
               <Equal className="mr-1 h-3 w-3" />
-              BE
+              {isAutoBreakeven ? "AUTO BE" : "BE"}
             </Button>
             {onToggleExpand && (
               <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={onToggleExpand}>

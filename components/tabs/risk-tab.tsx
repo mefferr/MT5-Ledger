@@ -15,11 +15,11 @@ import {
 import { cn } from "@/lib/utils"
 
 export function RiskTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
-  const kpi = useMemo(() => computeKPI(statement, breakevenSet), [statement, breakevenSet])
+  const kpi = useMemo(() => computeKPI(statement, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
   const equity = useMemo(() => buildEquityCurve(statement), [statement])
   const dd = equity.map((p, i) => ({ i, drawdown: -p.drawdown, ddPct: -p.drawdownPct }))
 

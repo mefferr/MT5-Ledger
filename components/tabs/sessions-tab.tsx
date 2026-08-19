@@ -15,11 +15,11 @@ const ICONS: Record<string, typeof Clock> = {
 }
 
 export function SessionsTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
-  const sessions = useMemo(() => sessionStats(statement.trades, breakevenSet), [statement, breakevenSet])
+  const sessions = useMemo(() => sessionStats(statement.trades, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
 
   // heatmap: hour (UTC) x day-of-week
   const heat = useMemo(() => {

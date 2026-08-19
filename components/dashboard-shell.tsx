@@ -62,10 +62,10 @@ const TABS = [
 type TabId = (typeof TABS)[number]["id"]
 
 export function DashboardShell() {
-  const { statement, sourceTrades, clear, loadDemo, loadFromMt5, loading, converting, convertCurrency, simulateAccount, mergeStats, breakevenTickets, mt5Clients, currentMt5Client, fetchMt5Clients, switchMt5Client, isSimulatingFloating, toggleSimulateFloating } = useStatement()
+  const { statement, sourceTrades, clear, loadDemo, loadFromMt5, loading, converting, convertCurrency, simulateAccount, mergeStats, breakevenTickets, autoBeThreshold, setAutoBeThreshold, mt5Clients, currentMt5Client, fetchMt5Clients, switchMt5Client, isSimulatingFloating, toggleSimulateFloating } = useStatement()
   const [active, setActive] = useState<TabId>("overview")
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
-  const kpi = useMemo(() => (statement ? computeKPI(statement, breakevenSet) : null), [statement, breakevenSet])
+  const kpi = useMemo(() => (statement ? computeKPI(statement, breakevenSet, autoBeThreshold) : null), [statement, breakevenSet, autoBeThreshold])
 
   const [simDeposit, setSimDeposit] = useState<string>("")
   const [simLot, setSimLot] = useState<string>("")

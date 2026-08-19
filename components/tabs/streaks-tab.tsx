@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { useStatement } from "@/lib/store"
-import { formatCompact, formatCurrency, formatPct, rollingWinRate } from "@/lib/analytics"
+import { formatCompact, formatCurrency, formatPct, isTradeBreakeven, isWin, isLoss, rollingWinRate } from "@/lib/analytics"
 import {
   Area,
   AreaChart,
@@ -26,7 +26,7 @@ interface Streak {
 }
 
 export function StreaksTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
   const trades = statement.trades
@@ -36,8 +36,8 @@ export function StreaksTab() {
     const out: Streak[] = []
     let cur: Streak | null = null
     for (const t of trades) {
-      if (breakevenSet.has(t.ticket)) continue
-      const res = t.profit > 0 ? "win" : t.profit < 0 ? "loss" : null
+      if (isTradeBreakeven(t, breakevenSet, autoBeThreshold)) continue
+      const res = isWin(t, breakevenSet, autoBeThreshold) ? "win" : isLoss(t, breakevenSet) ? "loss" : null
       const profit = t.profit + t.commission + t.swap
       if (!res) continue
       if (!cur || cur.type !== res) {

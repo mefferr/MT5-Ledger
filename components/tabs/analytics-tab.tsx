@@ -29,17 +29,17 @@ import {
 } from "recharts"
 
 export function AnalyticsTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
   const trades = statement.trades
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
 
-  const hourly = useMemo(() => hourlyStats(trades, breakevenSet), [trades, breakevenSet])
-  const dow = useMemo(() => dayOfWeekStats(trades, breakevenSet), [trades, breakevenSet])
-  const types = useMemo(() => typeStats(trades, breakevenSet), [trades, breakevenSet])
-  const durations = useMemo(() => durationBuckets(trades, breakevenSet), [trades, breakevenSet])
-  const dist = useMemo(() => profitDistribution(trades, 24, breakevenSet), [trades, breakevenSet])
+  const hourly = useMemo(() => hourlyStats(trades, breakevenSet, autoBeThreshold), [trades, breakevenSet, autoBeThreshold])
+  const dow = useMemo(() => dayOfWeekStats(trades, breakevenSet, autoBeThreshold), [trades, breakevenSet, autoBeThreshold])
+  const types = useMemo(() => typeStats(trades, breakevenSet, autoBeThreshold), [trades, breakevenSet, autoBeThreshold])
+  const durations = useMemo(() => durationBuckets(trades, breakevenSet, autoBeThreshold), [trades, breakevenSet, autoBeThreshold])
+  const dist = useMemo(() => profitDistribution(trades, 24, breakevenSet, autoBeThreshold), [trades, breakevenSet, autoBeThreshold])
 
   // Scatter: size vs profit
   const scatter = trades.map((t) => ({

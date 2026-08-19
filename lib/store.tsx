@@ -40,6 +40,7 @@ interface StatementSerialized {
   balanceEntries: Array<{ ticket: number; time: string; description: string; amount: number }>
   mergeSettings?: MergeSettings
   breakevenTickets?: number[]
+  autoBeThreshold?: number
   lifestyleConfig?: LifestyleConfig
 }
 
@@ -67,7 +68,14 @@ function deserializePayload(raw: StatementSerialized): { meta: StatementMeta; so
   }
 }
 
-function persist(meta: StatementMeta, sourceTrades: Trade[], mergeSettings: MergeSettings, breakevenTickets: number[], lifestyleConfig: LifestyleConfig) {
+function persist(
+  meta: StatementMeta,
+  sourceTrades: Trade[],
+  mergeSettings: MergeSettings,
+  breakevenTickets: number[],
+  lifestyleConfig: LifestyleConfig,
+  autoBeThreshold: number = 50000
+) {
   const payload: StatementSerialized = {
     account: meta.account,
     initialDeposit: meta.initialDeposit,
@@ -76,6 +84,7 @@ function persist(meta: StatementMeta, sourceTrades: Trade[], mergeSettings: Merg
     trades: serializeTrades(sourceTrades),
     mergeSettings,
     breakevenTickets,
+    autoBeThreshold,
     lifestyleConfig,
   }
   try {
@@ -108,6 +117,8 @@ interface StatementContextValue {
   converting: boolean
   error: string | null
   breakevenTickets: number[]
+  autoBeThreshold: number
+  setAutoBeThreshold: (threshold: number) => void
   toggleBreakeven: (ticket: number) => void
   clearBreakevenMarks: () => void
   loadFromHtml: (html: string) => void
@@ -159,6 +170,7 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
   const [converting, setConverting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [breakevenTickets, setBreakevenTickets] = useState<number[]>([])
+  const [autoBeThreshold, setAutoBeThresholdState] = useState<number>(50000)
   const [lifestyleConfig, setLifestyleConfig] = useState<LifestyleConfig>(DEFAULT_LIFESTYLE_CONFIG)
 
   const [mt5Clients, setMt5Clients] = useState<Mt5Client[]>([])
@@ -186,23 +198,31 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
     setMeta(nextMeta)
     setSourceTrades(nextSource)
     setMergeSettings(nextMerge)
-    persist(nextMeta, nextSource, nextMerge, [], lifestyleConfig)
-  }, [lifestyleConfig])
+    persist(nextMeta, nextSource, nextMerge, [], lifestyleConfig, autoBeThreshold)
+  }, [lifestyleConfig, autoBeThreshold])
 
   const updateMergeSettings = useCallback(
     (next: MergeSettings) => {
       setMergeSettings(next)
-      if (meta) persist(meta, sourceTrades, next, breakevenTickets, lifestyleConfig)
+      if (meta) persist(meta, sourceTrades, next, breakevenTickets, lifestyleConfig, autoBeThreshold)
     },
-    [meta, sourceTrades, breakevenTickets, lifestyleConfig],
+    [meta, sourceTrades, breakevenTickets, lifestyleConfig, autoBeThreshold],
   )
 
   const updateLifestyleConfig = useCallback(
     (next: LifestyleConfig) => {
       setLifestyleConfig(next)
-      if (meta) persist(meta, sourceTrades, mergeSettings, breakevenTickets, next)
+      if (meta) persist(meta, sourceTrades, mergeSettings, breakevenTickets, next, autoBeThreshold)
     },
-    [meta, sourceTrades, mergeSettings, breakevenTickets],
+    [meta, sourceTrades, mergeSettings, breakevenTickets, autoBeThreshold],
+  )
+
+  const setAutoBeThreshold = useCallback(
+    (val: number) => {
+      setAutoBeThresholdState(val)
+      if (meta) persist(meta, sourceTrades, mergeSettings, breakevenTickets, lifestyleConfig, val)
+    },
+    [meta, sourceTrades, mergeSettings, breakevenTickets, lifestyleConfig],
   )
 
   useEffect(() => {
@@ -215,6 +235,9 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       setSourceTrades(storedSource)
       setMergeSettings(parsed.mergeSettings ?? DEFAULT_MERGE_SETTINGS)
       setBreakevenTickets(parsed.breakevenTickets ?? [])
+      if (typeof parsed.autoBeThreshold === "number") {
+        setAutoBeThresholdState(parsed.autoBeThreshold)
+      }
       setLifestyleConfig(parsed.lifestyleConfig ?? DEFAULT_LIFESTYLE_CONFIG)
     } catch {
       /* ignore */
@@ -598,6 +621,8 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       converting,
       error,
       breakevenTickets,
+      autoBeThreshold,
+      setAutoBeThreshold,
       toggleBreakeven,
       clearBreakevenMarks,
       loadFromHtml,
@@ -629,6 +654,8 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
       converting,
       error,
       breakevenTickets,
+      autoBeThreshold,
+      setAutoBeThreshold,
       toggleBreakeven,
       clearBreakevenMarks,
       loadFromHtml,

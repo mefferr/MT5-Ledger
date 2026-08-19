@@ -7,11 +7,11 @@ import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis
 import { cn } from "@/lib/utils"
 
 export function SymbolsTab() {
-  const { statement, breakevenTickets } = useStatement()
+  const { statement, breakevenTickets, autoBeThreshold } = useStatement()
   if (!statement) return null
   const currency = statement.account.currency
   const breakevenSet = useMemo(() => new Set(breakevenTickets), [breakevenTickets])
-  const stats = useMemo(() => symbolStats(statement.trades, breakevenSet), [statement, breakevenSet])
+  const stats = useMemo(() => symbolStats(statement.trades, breakevenSet, autoBeThreshold), [statement, breakevenSet, autoBeThreshold])
 
   return (
     <div className="space-y-6">
