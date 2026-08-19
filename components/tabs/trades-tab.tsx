@@ -1,13 +1,13 @@
 "use client"
 
-import { Fragment, useMemo, useState } from "react"
+import { Fragment, memo, useEffect, useMemo, useState } from "react"
 import { useStatement } from "@/lib/store"
 import { formatCurrency, isTradeBreakeven, isWin, isLoss } from "@/lib/analytics"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
-import { ArrowDownUp, Download, Equal, GitMerge, Search, Undo2 } from "lucide-react"
+import { ArrowDownUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Equal, GitMerge, Search, Undo2 } from "lucide-react"
 import type { Trade } from "@/lib/types"
 
 type SortKey = "ticket" | "openTime" | "closeTime" | "symbol" | "type" | "size" | "profit" | "duration"
@@ -38,6 +38,9 @@ export function TradesTab() {
   const [selectedTickets, setSelectedTickets] = useState<number[]>([])
   const [mergeError, setMergeError] = useState<string | null>(null)
   const [expandedTickets, setExpandedTickets] = useState<number[]>([])
+
+  const [pageSize, setPageSize] = useState<number>(50)
+  const [currentPage, setCurrentPage] = useState<number>(1)
 
   const displayTrades = statement?.trades ?? []
   const currency = statement?.account.currency ?? "USD"
@@ -100,6 +103,18 @@ export function TradesTab() {
     })
     return res
   }, [tableTrades, query, filter, sortKey, sortDir, breakevenSet, autoBeThreshold])
+
+  // Reset to page 1 on search, filter, sort, or page size change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [query, filter, sortKey, sortDir, pageSize])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const paginatedTrades = useMemo(() => {
+    if (pageSize >= filtered.length) return filtered
+    const start = (currentPage - 1) * pageSize
+    return filtered.slice(start, start + pageSize)
+  }, [filtered, currentPage, pageSize])
 
   function toggleSort(k: SortKey) {
     if (sortKey === k) setSortDir((d) => (d === "asc" ? "desc" : "asc"))
@@ -366,7 +381,7 @@ export function TradesTab() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((t) => {
+              {paginatedTrades.map((t) => {
                 const isExpanded = expandedTickets.includes(t.ticket)
                 const legDetails =
                   !mergeMode && t.mergeLegs && t.mergeLegs.length > 1
@@ -429,6 +444,73 @@ export function TradesTab() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 p-3 bg-card text-xs">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <span>Rows per page:</span>
+            <select
+              className="rounded border border-border bg-background px-2 py-1 font-mono text-foreground outline-none cursor-pointer"
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+            >
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={250}>250</option>
+              <option value={500}>500</option>
+              <option value={tableTrades.length || 10000}>All ({filtered.length})</option>
+            </select>
+            <span className="font-mono text-muted-foreground">
+              Showing {filtered.length === 0 ? 0 : (currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filtered.length)} of {filtered.length} trades
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(1)}
+              title="First page"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              title="Previous page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="px-2 font-mono font-medium text-foreground">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              title="Next page"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+              title="Last page"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -463,7 +545,7 @@ function Th({
   )
 }
 
-function TradeRow({
+const TradeRow = memo(function TradeRow({
   t,
   currency,
   mergeMode,
@@ -623,9 +705,9 @@ function TradeRow({
       )}
     </tr>
   )
-}
+})
 
-function LegSummary({ leg, currency }: { leg: Trade; currency: string }) {
+const LegSummary = memo(function LegSummary({ leg, currency }: { leg: Trade; currency: string }) {
   return (
     <div className="flex flex-wrap items-center gap-3 pl-6 font-mono text-[11px] text-muted-foreground">
       <span>#{leg.ticket}</span>
@@ -638,7 +720,7 @@ function LegSummary({ leg, currency }: { leg: Trade; currency: string }) {
       </span>
     </div>
   )
-}
+})
 
 function formatDurationShort(ms: number) {
   if (!Number.isFinite(ms) || ms <= 0) return "—"
