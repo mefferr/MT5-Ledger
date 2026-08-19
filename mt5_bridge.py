@@ -215,6 +215,18 @@ class OpenRequest(BaseModel):
     sl: float | None = None
     tp: float | None = None
 
+class OpenItem(BaseModel):
+    symbol: str
+    type: str  # "buy", "sell", "buy_limit", "sell_limit"
+    volume: float
+    price: float | None = None
+    sl: float | None = None
+    tp: float | None = None
+
+class OpenBatchRequest(BaseModel):
+    items: list[OpenItem]
+    delay_ms: int = 0
+
 class CloseRequest(BaseModel):
     ticket: int
     symbol: str
@@ -656,6 +668,125 @@ def open_position(req: OpenRequest):
         "retcode": result.retcode,
         "comment": result.comment,
         "ticket": result.order,
+    }
+
+
+# ---------------------------------------------------------------------------
+# POST /open-batch (Instant Batch Open & Layering Execution)
+# ---------------------------------------------------------------------------
+
+@app.post("/open-batch")
+def open_positions_batch(req: OpenBatchRequest):
+    _require_mt5()
+    import time
+    logger.info("Batch opening %d orders (delay=%dms)", len(req.items), req.delay_ms)
+
+    results = []
+    success_count = 0
+    fail_count = 0
+
+    for i, item in enumerate(req.items):
+        symbol = item.symbol
+        order_type_str = item.type.lower()
+
+        if not mt5.symbol_select(symbol, True):
+            results.append({
+                "index": i,
+                "success": False,
+                "retcode": -1,
+                "comment": f"Failed to select symbol '{symbol}'"
+            })
+            fail_count += 1
+            continue
+
+        tick = mt5.symbol_info_tick(symbol)
+        if tick is None:
+            results.append({
+                "index": i,
+                "success": False,
+                "retcode": -1,
+                "comment": f"Failed to get tick for '{symbol}'"
+            })
+            fail_count += 1
+            continue
+
+        if order_type_str == "buy":
+            order_type = mt5.ORDER_TYPE_BUY
+            price = tick.ask
+        elif order_type_str == "sell":
+            order_type = mt5.ORDER_TYPE_SELL
+            price = tick.bid
+        elif order_type_str == "buy_limit":
+            order_type = mt5.ORDER_TYPE_BUY_LIMIT
+            price = item.price
+        elif order_type_str == "sell_limit":
+            order_type = mt5.ORDER_TYPE_SELL_LIMIT
+            price = item.price
+        else:
+            results.append({
+                "index": i,
+                "success": False,
+                "retcode": -1,
+                "comment": f"Invalid order type '{item.type}'"
+            })
+            fail_count += 1
+            continue
+
+        action = mt5.TRADE_ACTION_PENDING if "limit" in order_type_str else mt5.TRADE_ACTION_DEAL
+
+        request = {
+            "action": action,
+            "symbol": symbol,
+            "volume": item.volume,
+            "type": order_type,
+            "price": price,
+            "magic": 123456,
+            "comment": "Batch open",
+            "type_time": mt5.ORDER_TIME_GTC,
+        }
+
+        if item.sl is not None and item.sl > 0:
+            request["sl"] = item.sl
+        if item.tp is not None and item.tp > 0:
+            request["tp"] = item.tp
+
+        if action == mt5.TRADE_ACTION_DEAL:
+            request["deviation"] = 20
+            request["type_filling"] = mt5.ORDER_FILLING_IOC
+
+        result = mt5.order_send(request)
+        if result is None:
+            err = mt5.last_error()
+            results.append({
+                "index": i,
+                "success": False,
+                "retcode": err[0] if isinstance(err, tuple) else -1,
+                "comment": err[1] if isinstance(err, tuple) else str(err)
+            })
+            fail_count += 1
+        else:
+            success = result.retcode == mt5.TRADE_RETCODE_DONE
+            results.append({
+                "index": i,
+                "success": success,
+                "retcode": result.retcode,
+                "comment": result.comment,
+                "ticket": result.order
+            })
+            if success:
+                success_count += 1
+            else:
+                fail_count += 1
+
+        if req.delay_ms > 0 and i < len(req.items) - 1:
+            time.sleep(req.delay_ms / 1000.0)
+
+    logger.info("Batch open finished: %d/%d succeeded (%d failed)", success_count, len(req.items), fail_count)
+    return {
+        "total": len(req.items),
+        "success_count": success_count,
+        "fail_count": fail_count,
+        "results": results
     }
 
 

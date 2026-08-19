@@ -373,7 +373,7 @@ export function Mt5Tab() {
   const openBatch = async () => {
     const lots = parseNum(openLots)
     const count = parseInt(openCount)
-    const delay = parseInt(openDelay)
+    const delay = parseInt(openDelay) || 0
     const price = parseNum(openPrice)
     const layerStep = parseNum(openLayerStep) || 0
     const layerMult = parseNum(openLayerMult) || 1.0
@@ -389,78 +389,44 @@ export function Mt5Tab() {
     abortController.current = new AbortController()
     const signal = abortController.current.signal
 
-    let successCount = 0
-    let failCount = 0
-
-    let baseMarketPrice = 0
-    try {
-      if (openExecType === "market") {
-        const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, { headers: { "ngrok-skip-browser-warning": "true" } })
-        if (symRes.ok) {
-          const symInfo = await symRes.json()
-          baseMarketPrice = openDir === "buy" ? symInfo.ask : symInfo.bid
-        }
-      }
-    } catch (e) {
-      console.error("Failed to fetch initial market price", e)
-    }
-
     let point = 0.01
     let digits = 2
-    if (openExecType === "limit" && openLimitMode === "pips" && (openLimitSl || openLimitTp)) {
-      try {
-        const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, {
-          headers: { "ngrok-skip-browser-warning": "true" }
-        })
-        if (symRes.ok) {
-          const symInfo = await symRes.json()
-          point = symInfo.point
-          digits = symInfo.digits
-        }
-      } catch (e) {
-        console.error("Failed to fetch symbol info, using defaults", e)
+    let baseMarketPrice = 0
+
+    try {
+      const symRes = await fetch(`/api/mt5/symbol-info/${openSymbol}`, {
+        headers: { "ngrok-skip-browser-warning": "true" }
+      })
+      if (symRes.ok) {
+        const symInfo = await symRes.json()
+        point = symInfo.point || 0.01
+        digits = symInfo.digits || 2
+        baseMarketPrice = openDir === "buy" ? symInfo.ask : symInfo.bid
       }
+    } catch (e) {
+      console.error("Failed to fetch symbol info", e)
     }
 
-    for (let i = 0; i < count; i++) {
-      if (signal.aborted) break
-      
-      let finalSl = undefined
-      let finalTp = undefined
-      
-      let finalExecType = openExecType
-      let finalPrice = price
+    const baseExecPrice = openExecType === "limit" ? price : baseMarketPrice
+    const pipsToPrice = (pips: number) => pips * 10 * point
 
-      // Smart Layering Math
+    const items = []
+    for (let i = 0; i < count; i++) {
       let pipOffset = 0
       if (layerStep > 0 && i > 0) {
-        // Calculate smart pip offset
-        let sumWeights = 0
-        let sumWeightedPips = 0
-        for (let j = 0; j <= i; j++) {
-          const weight = Math.pow(layerMult, j)
-          sumWeights += weight
-          sumWeightedPips += weight * j * layerStep
+        if (Math.abs(layerMult - 1.0) < 0.001) {
+          pipOffset = i * layerStep
+        } else {
+          // Progressive layer expansion
+          pipOffset = i * layerStep * (1 + (layerMult - 1) * (i / Math.max(count - 1, 1)))
         }
-        const avgPip_i = sumWeightedPips / sumWeights
-        
-        let sumWeightsPrev = 0
-        let sumWeightedPipsPrev = 0
-        for (let j = 0; j <= i - 1; j++) {
-          const weight = Math.pow(layerMult, j)
-          sumWeightsPrev += weight
-          sumWeightedPipsPrev += weight * j * layerStep
-        }
-        const avgPip_prev = sumWeightedPipsPrev / sumWeightsPrev
-
-        pipOffset = (i + 1) * avgPip_i - i * avgPip_prev
       }
 
-      if (pipOffset > 0) {
+      let finalExecType = openExecType
+      let finalPrice: number | undefined = undefined
+
+      if (openExecType === "limit" || pipOffset > 0) {
         finalExecType = "limit"
-        const pipsToPrice = (pips: number) => pips * 10 * point
-        const baseExecPrice = openExecType === "market" ? baseMarketPrice : price
-        
         if (openDir === "buy") {
           finalPrice = Number((baseExecPrice - pipsToPrice(pipOffset)).toFixed(digits))
         } else {
@@ -468,73 +434,69 @@ export function Mt5Tab() {
         }
       }
 
-      if (finalExecType === "limit") {
+      let finalSl: number | undefined = undefined
+      let finalTp: number | undefined = undefined
+
+      if (openLimitSl || openLimitTp) {
         if (openLimitMode === "price") {
           finalSl = openLimitSl ? parseNum(openLimitSl) : undefined
           finalTp = openLimitTp ? parseNum(openLimitTp) : undefined
         } else if (openLimitMode === "pips") {
-          const pipsToPrice = (pips: number) => pips * 10 * point
-          // The base price for SL/TP is the execution price of this specific layer
-          const layerBasePrice = finalPrice > 0 ? finalPrice : baseMarketPrice
-          
+          const refPrice = finalPrice ?? baseExecPrice
           if (openDir === "buy") {
-            if (openLimitSl) finalSl = Number((layerBasePrice - pipsToPrice(parseNum(openLimitSl))).toFixed(digits))
-            if (openLimitTp) finalTp = Number((layerBasePrice + pipsToPrice(parseNum(openLimitTp))).toFixed(digits))
+            if (openLimitSl) finalSl = Number((refPrice - pipsToPrice(parseNum(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((refPrice + pipsToPrice(parseNum(openLimitTp))).toFixed(digits))
           } else {
-            if (openLimitSl) finalSl = Number((layerBasePrice + pipsToPrice(parseNum(openLimitSl))).toFixed(digits))
-            if (openLimitTp) finalTp = Number((layerBasePrice - pipsToPrice(parseNum(openLimitTp))).toFixed(digits))
+            if (openLimitSl) finalSl = Number((refPrice + pipsToPrice(parseNum(openLimitSl))).toFixed(digits))
+            if (openLimitTp) finalTp = Number((refPrice - pipsToPrice(parseNum(openLimitTp))).toFixed(digits))
           }
         }
       }
-      
-      try {
-        const payloadType = finalExecType === "market" ? openDir : `${openDir}_limit`
-        const res = await fetch("/api/mt5/open", {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true"
-          },
-          body: JSON.stringify({ 
-            symbol: openSymbol, 
-            type: payloadType,
-            volume: lots,
-            price: finalExecType === "limit" ? finalPrice : undefined,
-            sl: finalSl,
-            tp: finalTp
-          }),
-          signal
-        })
-        const data = await res.json()
-        if (data.success) {
-          successCount++
-        } else {
-          failCount++
-          if (data.retcode === 10018) {
-            toast.error("Market is closed!")
-          } else {
-            toast.error(`Order failed: ${data.comment || data.retcode || 'Unknown error'}`)
-          }
-          if (abortController.current) abortController.current.abort()
-        }
-      } catch (e: any) {
-        if (!signal.aborted) {
-          failCount++
-          toast.error(`Execution error: ${e.message}`)
-          if (abortController.current) abortController.current.abort()
-        }
+
+      const payloadType = finalExecType === "market" ? openDir : `${openDir}_limit`
+      items.push({
+        symbol: openSymbol,
+        type: payloadType,
+        volume: lots,
+        price: finalPrice,
+        sl: finalSl,
+        tp: finalTp,
+      })
+    }
+
+    try {
+      const res = await fetch("/api/mt5/open-batch", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ 
+          items,
+          delay_ms: delay
+        }),
+        signal
+      })
+      const data = await res.json()
+      setProgress({
+        current: count,
+        total: count,
+        success: data.success_count || 0,
+        fail: data.fail_count || 0,
+      })
+
+      if (data.fail_count === 0) {
+        toast.success(`Successfully deployed all ${data.success_count} position(s)`)
+      } else {
+        toast.warning(`Deployed ${data.success_count} OK, ${data.fail_count} failed`)
       }
-      
-      setProgress({ current: i + 1, total: count, success: successCount, fail: failCount })
-      if (i < count - 1 && !signal.aborted) {
-        await new Promise(r => setTimeout(r, delay))
+    } catch (e: any) {
+      if (!signal.aborted) {
+        toast.error(`Execution error: ${e.message}`)
       }
     }
 
     setIsRunning(false)
-    if (!signal.aborted) {
-      toast.success(`Completed: ${successCount} opened, ${failCount} failed`)
-    }
     fetchState()
   }
 
