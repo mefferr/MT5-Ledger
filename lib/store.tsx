@@ -248,7 +248,13 @@ export function StatementProvider({ children }: { children: React.ReactNode }) {
         headers: { "ngrok-skip-browser-warning": "true" }
       })
       if (!res.ok) throw new Error("Failed to fetch history from MT5 bridge. Make sure mt5_bridge.py is running.")
-      const data = await res.json()
+      const text = await res.text()
+      let data: any
+      try {
+        data = JSON.parse(text)
+      } catch {
+        throw new Error("MT5 bridge returned invalid non-JSON response. Ensure mt5_bridge.py is running without errors.")
+      }
       
       const trades: Trade[] = (data.trades || []).map((t: Record<string, unknown>) => ({
         ticket: t.ticket as number,

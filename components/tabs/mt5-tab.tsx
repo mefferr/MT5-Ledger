@@ -136,11 +136,18 @@ export function Mt5Tab() {
       
       if (!accRes.ok || !posRes.ok) throw new Error("Bridge returning error")
       
-      const acc = await accRes.json()
-      const pos = await posRes.json()
+      const accText = await accRes.text()
+      const posText = await posRes.text()
+      let acc, pos
+      try {
+        acc = JSON.parse(accText)
+        pos = JSON.parse(posText)
+      } catch {
+        throw new Error("Bridge returned non-JSON response")
+      }
       
       setAccount(acc)
-      setPositions(pos)
+      setPositions(Array.isArray(pos) ? pos : [])
       setError(null)
     } catch (err) {
       setError("Could not connect to MT5 bridge. Ensure mt5_bridge.py is running.")
@@ -157,8 +164,16 @@ export function Mt5Tab() {
 
   useEffect(() => {
     fetch("/api/mt5/auto-be", { headers: { "ngrok-skip-browser-warning": "true" } })
-      .then(r => r.json())
-      .then(data => {
+      .then(async (r) => {
+        if (!r.ok) return null
+        const text = await r.text()
+        try {
+          return JSON.parse(text)
+        } catch {
+          return null
+        }
+      })
+      .then((data) => {
         if (data && data[autoBeSymbol]) {
           setAutoBeEnabled(data[autoBeSymbol].enabled)
           setAutoBeThreshold(data[autoBeSymbol].threshold_pips.toString())
@@ -315,7 +330,9 @@ export function Mt5Tab() {
         }),
         signal
       })
-      const data = await res.json()
+      if (!res.ok) throw new Error(`Modify batch failed with status ${res.status}`)
+      const text = await res.text()
+      const data = JSON.parse(text)
       setProgress({
         current: targets.length,
         total: targets.length,
@@ -477,7 +494,9 @@ export function Mt5Tab() {
         }),
         signal
       })
-      const data = await res.json()
+      if (!res.ok) throw new Error(`Open batch failed with status ${res.status}`)
+      const text = await res.text()
+      const data = JSON.parse(text)
       setProgress({
         current: count,
         total: count,
@@ -503,12 +522,15 @@ export function Mt5Tab() {
   const closeBatch = async () => {
     if (selectedTickets.length === 0) return toast.error("No positions selected")
     
+    const targets = positions.filter((p) => selectedTickets.includes(p.ticket))
+    if (targets.length === 0) return toast.error("No positions selected")
+
+    const delay = parseInt(sltpDelay) || 0
     setIsRunning(true)
-    setProgress({ current: 0, total: selectedTickets.length, success: 0, fail: 0 })
+    setProgress({ current: 0, total: targets.length, success: 0, fail: 0 })
     abortController.current = new AbortController()
     const signal = abortController.current.signal
     
-    let successCount = 0
     const items = targets.map((p) => ({
       ticket: p.ticket,
       symbol: p.symbol,
@@ -530,7 +552,9 @@ export function Mt5Tab() {
         }),
         signal
       })
-      const data = await res.json()
+      if (!res.ok) throw new Error(`Close batch failed with status ${res.status}`)
+      const text = await res.text()
+      const data = JSON.parse(text)
       setProgress({
         current: targets.length,
         total: targets.length,
